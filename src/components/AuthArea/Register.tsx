@@ -6,11 +6,15 @@ import {
   FormHelperText,
   Box,
   Button,
+  TextField,
 } from "@mui/material";
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import { UserModel, userSchema } from "../../models/UserModel";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { userService } from "../../services/userServices";
+import { useMutation } from "@tanstack/react-query";
+import { LoadingButton } from "@mui/lab";
 
 const Register: React.FC = () => {
   const {
@@ -26,8 +30,20 @@ const Register: React.FC = () => {
     ),
   });
 
-  const onSubmit = async (data: UserModel) => {
-    alert("success");
+  const formMutation = useMutation({
+    mutationFn: userService.register,
+    onError: (err) => console.log(err),
+  });
+
+  const imageMutation = useMutation({
+    mutationFn: userService.uploadImage,
+    onError: (err) => console.log(err), // maybe delete image from db if an error accured
+  });
+
+  const onSubmit = (data: UserModel) => {
+    imageMutation.mutateAsync(data.image as FileList).then((imgData) => {
+      formMutation.mutate({ ...data, image: imgData.url });
+    });
   };
 
   return (
@@ -66,10 +82,21 @@ const Register: React.FC = () => {
           )}
         </FormControl>
         {/* add input tipe file */}
+        <Box>
+          <InputLabel>Profile image</InputLabel>
+          <Input type="file" {...register("image")} />
+          {errors?.image && (
+            <FormHelperText>{errors.image.message}</FormHelperText>
+          )}
+        </Box>
         <Box p={1}>
-          <Button variant="contained" type="submit">
+          <LoadingButton
+            variant="contained"
+            type="submit"
+            loading={imageMutation.isLoading || formMutation.isLoading}
+          >
             Register
-          </Button>
+          </LoadingButton>
           <Button sx={{ ml: 2 }} variant="outlined" type="reset">
             Reset
           </Button>

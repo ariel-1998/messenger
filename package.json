@@ -14,10 +14,17 @@
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
     "@hookform/resolvers": "^3.3.1",
+    "@mui/lab": "^5.0.0-alpha.145",
     "@mui/material": "^5.14.10",
+    "@reduxjs/toolkit": "^1.9.5",
+    "@tanstack/react-query": "^4.35.3",
+    "axios": "^1.5.0",
+    "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
+    "react-redux": "^8.1.2",
+    "redux": "^4.2.1",
     "zod": "^3.22.2"
   },
   "devDependencies": {

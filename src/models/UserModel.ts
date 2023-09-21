@@ -5,7 +5,7 @@ export type UserModel = {
   email: string;
   password: string;
   confirmPassword?: string;
-  image: string;
+  image: string | FileList;
 };
 
 const passwordSchema = z
@@ -13,6 +13,13 @@ const passwordSchema = z
   .min(8, "Min number of letters is 8")
   .max(20, "Max number of letters is 20")
   .trim();
+
+const imageSchema = z.instanceof(FileList).refine((files) => {
+  const type = files?.[0]?.type;
+  if (!type) return false;
+  if (!type.startsWith("image/") || type.endsWith("gif")) return false;
+  return true;
+}, "Image required, only image files are valid");
 
 export const userSchema = z.object({
   name: z
@@ -23,7 +30,7 @@ export const userSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: passwordSchema,
   confirmPassword: passwordSchema,
-  image: z.instanceof(FileList),
+  image: imageSchema,
 });
 
 export const loginSchema = userSchema.pick({ email: true, password: true });
