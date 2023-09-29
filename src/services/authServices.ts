@@ -10,8 +10,8 @@ type cloudinaryImgRes = {
 
 const postImgEndpoint =
   "https://api.cloudinary.com/v1_1/dnlv6fy3z/image/upload";
-const registerEndpoint = "user/register";
-const loginEndpoint = "user/login";
+const registerEndpoint = "auth/register";
+const loginEndpoint = "auth/login";
 
 class UserService {
   async uploadImage(image: FileList): Promise<cloudinaryImgRes> {

@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import { CredentialsModel, loginSchema } from "../../models/UserModel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { userService } from "../../services/userServices";
+import { userService } from "../../services/authServices";
 
 const Login: React.FC = () => {
   const {
@@ -56,7 +56,7 @@ const Login: React.FC = () => {
             type="submit"
             loading={loginMutation.isLoading}
           >
-            {!loginMutation.isLoading ? "Login" : "Loading"}
+            Login
           </LoadingButton>
           <Button sx={{ ml: 2 }} variant="outlined" type="reset">
             Reset
