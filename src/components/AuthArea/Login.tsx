@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import { CredentialsModel, loginSchema } from "../../models/UserModel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { userService } from "../../services/authServices";
+import { authService } from "../../services/authServices";
 
 const Login: React.FC = () => {
   const {
@@ -25,8 +25,8 @@ const Login: React.FC = () => {
   });
 
   const loginMutation = useMutation({
-    mutationFn: userService.login,
-    onError: (err) => console.log(err),
+    mutationFn: authService.login,
+    onError: (err: any) => console.log(err),
   });
 
   const onSubmit = async (data: CredentialsModel) => {
@@ -36,14 +36,14 @@ const Login: React.FC = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack>
-        <FormControl margin="dense" required>
+        <FormControl margin="dense">
           <InputLabel htmlFor="email">Email address</InputLabel>
           <Input id="email" type="email" {...register("email")} />
           {errors?.email && (
             <FormHelperText>{errors.email.message}</FormHelperText>
           )}
         </FormControl>
-        <FormControl margin="dense" required>
+        <FormControl margin="dense">
           <InputLabel htmlFor="password">Password</InputLabel>
           <Input id="password" type="password" {...register("password")} />
           {errors?.password && (

@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import HomePage from "./Pages/Home/HomePage";
 import { useSelector } from "react-redux";
 import { RootState } from "../utils/reduxStore";

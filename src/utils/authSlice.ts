@@ -1,8 +1,8 @@
 import jwtDecode from "jwt-decode";
 import { UserModel } from "../models/UserModel";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
-type UserToken = Omit<UserModel, "confirmPassword" | "password">;
+type Token = { token: string };
+type UserToken = Omit<UserModel, "confirmPassword" | "password"> & Token;
 let initialState: UserToken | null = null;
 const token = window.localStorage.getItem("token");
 
@@ -18,6 +18,7 @@ const authSlice = createSlice({
     login(state, action: PayloadAction<string>) {
       const token = action.payload;
       const user = jwtDecode<UserToken>(token);
+      user.token = token;
       window.localStorage.setItem("token", token);
       state = user;
       return state;

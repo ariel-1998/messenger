@@ -11,9 +11,10 @@ import React from "react";
 import { UserModel, userSchema } from "../../models/UserModel";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userService } from "../../services/authServices";
+import { authService } from "../../services/authServices";
 import { useMutation } from "@tanstack/react-query";
 import { LoadingButton } from "@mui/lab";
+import { userService } from "../../services/userService";
 
 const Register: React.FC = () => {
   const {
@@ -30,7 +31,7 @@ const Register: React.FC = () => {
   });
 
   const formMutation = useMutation({
-    mutationFn: userService.register,
+    mutationFn: authService.register,
     onError: (err) => console.log(err),
   });
 

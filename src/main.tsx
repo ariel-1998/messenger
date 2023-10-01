@@ -8,6 +8,7 @@ import { store } from "./utils/reduxStore.ts";
 import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import AppRouter from "./components/AppRouter.tsx";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,7 +18,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -31,6 +31,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             theme={"colored"}
           />
         </Provider>
+        <ReactQueryDevtools />
       </QueryClientProvider>
     </BrowserRouter>
   </React.StrictMode>

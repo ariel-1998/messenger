@@ -1,5 +1,5 @@
 import React from "react";
-import SideDrawer from "../ChatArea/SideDrawer";
+import SideDrawer from "../AppBarArea/SideDrawer";
 import ChatList from "../ChatArea/ChatList";
 import ChatBox from "../ChatArea/ChatBox";
 import { Box } from "@mui/material";

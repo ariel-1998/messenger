@@ -1,44 +1,29 @@
-import axios from "axios";
-import { apiConfig } from "../utils/config";
 import { CredentialsModel, UserModel } from "../models/UserModel";
 import { store } from "../utils/reduxStore";
-import { login } from "../utils/authSlice";
+import { login, logout } from "../utils/authSlice";
+import { defaultAxios } from "../utils/axiosInterceptors";
 
-type cloudinaryImgRes = {
-  url: string;
-};
-
-const postImgEndpoint =
-  "https://api.cloudinary.com/v1_1/dnlv6fy3z/image/upload";
 const registerEndpoint = "auth/register";
 const loginEndpoint = "auth/login";
 
-class UserService {
-  async uploadImage(image: FileList): Promise<cloudinaryImgRes> {
-    const formData = new FormData();
-    formData.append("file", image[0]);
-    formData.append("upload_preset", "messenger"); // put it in .env
-    formData.append("cloud_name", "dnlv6fy3z"); // put it in .env
-    const { data } = await axios.post(postImgEndpoint, formData);
-    return data;
-  }
-
+class AuthService {
   async register(user: UserModel) {
     console.log(registerEndpoint);
-    const { data } = await axios.post<string>(
-      apiConfig.BASE_URL + registerEndpoint,
-      user
-    );
+    const { data } = await defaultAxios.post<string>(registerEndpoint, user);
     store.dispatch(login(data));
   }
 
   async login(credentials: CredentialsModel) {
-    const { data } = await axios.post<string>(
-      apiConfig.BASE_URL + loginEndpoint,
+    const { data } = await defaultAxios.post<string>(
+      loginEndpoint,
       credentials
     );
     store.dispatch(login(data));
   }
+
+  logout() {
+    store.dispatch(logout());
+  }
 }
 
-export const userService = new UserService();
+export const authService = new AuthService();

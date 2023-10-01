@@ -35,7 +35,9 @@ export const userSchema = z.object({
 
 export const loginSchema = userSchema.pick({ email: true }).merge(
   z.object({
-    password: z.string({ required_error: "password is required" }),
+    password: z
+      .string({ required_error: "password is required" })
+      .min(1, "password is required"),
   })
 );
 export type CredentialsModel = z.infer<typeof loginSchema>;
