@@ -14,10 +14,12 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: Infinity,
-      // keepPreviousData: true,
+      refetchOnWindowFocus: false,
+      retry: 0,
     },
   },
 });
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>

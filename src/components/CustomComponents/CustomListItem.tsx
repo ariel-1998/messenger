@@ -13,10 +13,10 @@ type CustomListItemProps = {
 
 const CustomListItem: React.FC<CustomListItemProps> = ({ text, children }) => {
   return (
-    <ListItem disablePadding>
+    <ListItem disablePadding sx={{ bgcolor: "#ddd" }}>
       <ListItemButton>
-        <ListItemIcon>{children}</ListItemIcon>
         <ListItemText primary={text} />
+        <ListItemIcon>{children}</ListItemIcon>
       </ListItemButton>
     </ListItem>
   );

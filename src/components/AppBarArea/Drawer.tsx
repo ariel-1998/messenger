@@ -17,6 +17,7 @@ import InputBase from "@mui/material/InputBase";
 import { Search as SearchIcon } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "../../services/userService";
+import { toastifyService } from "../../services/toastifyService";
 
 type DrawerProps = {
   children: ReactNode;
@@ -24,26 +25,8 @@ type DrawerProps = {
 
 const Drawer: React.FC<DrawerProps> = ({ children }) => {
   const [anchor, setAnchor] = useState(false);
-  const searchRef = useRef<HTMLInputElement>(null);
   const toggleDrawer = () => setAnchor((prevAnchor) => !prevAnchor);
 
-  const fetchUsers = async () => {
-    if (!searchRef.current?.value) return console.log("no value");
-    // return console.log(searchRef.current.value);
-    try {
-      const data = await userService.searchUsers(searchRef.current?.value);
-      console.log(data);
-    } catch (error: any) {
-      console.log(error.message);
-    }
-  };
-  // useQuery(
-  //   {
-  //     queryKey: ["search", { search: searchRef.current?.value }],
-  //     queryFn: () => userService.searchUsers(searchRef.current?.value || ""),
-  //   },
-  //   { onSuccess: (data) => console.log(data) }
-  // );
   //   const list = (
   //     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer}>
   //       <List>
@@ -75,46 +58,34 @@ const Drawer: React.FC<DrawerProps> = ({ children }) => {
   //   );
 
   return (
-    <div>
-      <div>
-        <CustomSearchInput
-          disabled
-          inputCursor="pointer"
-          placeholder="Search..."
-          boxClick={toggleDrawer}
-        />
-        <MuiDrawer anchor={"left"} open={anchor} onClose={toggleDrawer}>
+    <>
+      <CustomSearchInput
+        disabled
+        inputCursor="pointer"
+        placeholder="Search..."
+        boxClick={toggleDrawer}
+        disableFocusRipple
+        disableRipple
+      />
+      <MuiDrawer anchor={"left"} open={anchor} onClose={toggleDrawer}>
+        <div className="custom-scrollbar">
           <Box
             sx={{
-              width: 250,
+              width: 270,
               display: "flex",
               justifyContent: "center",
-              mb: 5,
+              height: "100vh",
+              bgcolor: "#eee",
+              overflowY: "auto",
+              m: 0,
+              p: 0,
             }}
           >
-            <List>
-              <Box mb={2}>
-                <CustomSearchInput
-                  ref={searchRef}
-                  inputCursor="auto"
-                  placeholder="Search..."
-                  iconClick={fetchUsers}
-                />
-              </Box>
-              {children}
-            </List>
+            {children}
           </Box>
-        </MuiDrawer>
-      </div>
-      {/* {(["left"] as const).map((anchorText) => (
-        <div key={anchorText}>
-          <Button onClick={toggleDrawer}>{anchorText}</Button>
-          <MuiDrawer anchor={anchorText} open={anchor} onClose={toggleDrawer}>
-            {list}
-          </MuiDrawer>
         </div>
-      ))} */}
-    </div>
+      </MuiDrawer>
+    </>
   );
 };
 

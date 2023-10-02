@@ -3,24 +3,25 @@ import { Route, Routes } from "react-router-dom";
 import HomePage from "./Pages/Home/HomePage";
 import { useSelector } from "react-redux";
 import { RootState } from "../utils/reduxStore";
-import ChatPage from "./Pages/ChatPage";
+import ChatPage from "./Pages/AuthedPages/ChatPage";
 import ErrorPage from "./Pages/ErrorPage";
+import AuthedHeader from "./Pages/AuthedPages/AuthedHeader";
 
 const AppRouter: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth);
 
   return (
-    <div>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        {user && (
-          <>
-            <Route path="/chat" element={<ChatPage />} />
-          </>
-        )}
-        <Route path="*" element={<ErrorPage />} />
-      </Routes>
-    </div>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+
+      {user && (
+        <Route path="/chat" element={<AuthedHeader />}>
+          <Route path="" element={<ChatPage />} />
+        </Route>
+      )}
+
+      <Route path="*" element={<ErrorPage />} />
+    </Routes>
   );
 };
 

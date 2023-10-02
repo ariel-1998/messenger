@@ -1,6 +1,6 @@
 import {
   Box,
-  AppBar,
+  AppBar as MuiAppBar,
   Toolbar,
   Typography,
   Avatar,
@@ -15,12 +15,12 @@ import { RootState } from "../../utils/reduxStore";
 import Logout from "../AuthArea/Logout";
 import ProfileModal from "./ProfileModal";
 import Drawer from "./Drawer";
-import CustomListItem from "../CustomComponents/CustomListItem";
+import DrawerSearch from "./DrawerSearch";
 
 const iconSize: SxProps<Theme> = { width: 25, height: 25 };
 const menuItemPadding: SxProps<Theme> = { px: 2, py: 1 };
 
-const SideDrawer: React.FC = () => {
+const AppBar: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth);
   const avatarIcon = <Avatar sx={iconSize} src={user?.image as string} />;
 
@@ -32,13 +32,11 @@ const SideDrawer: React.FC = () => {
 
   return (
     <Box>
-      <AppBar position="static" sx={{ maxHeight: "60px" }}>
+      <MuiAppBar position="static" sx={{ maxHeight: "60px" }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Box>
             <Drawer>
-              <CustomListItem text={"Notifications"}>
-                <Notifications />
-              </CustomListItem>
+              <DrawerSearch />
             </Drawer>
           </Box>
           <Typography variant="h4">Messenger</Typography>
@@ -47,9 +45,9 @@ const SideDrawer: React.FC = () => {
             <CustomMenu icon={avatarIcon} menuItems={avatatMenuItems} />
           </Box>
         </Toolbar>
-      </AppBar>
+      </MuiAppBar>
     </Box>
   );
 };
 
-export default SideDrawer;
+export default AppBar;

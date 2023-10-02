@@ -1,3 +1,15 @@
+.custom-input {
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 10px 20px;
+  text-indent: 50px;
+  font-size: 1rem;
+}
+
+#chat-search {
+  text-indent: 70px;
+}
+
 html,
 body {
   margin: 0;

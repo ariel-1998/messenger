@@ -8,6 +8,9 @@ type CustomSearchInputProps = {
   iconClick?: () => void;
   inputCursor?: string;
   iconCursor?: string;
+  disableRipple?: boolean;
+  disableFocusRipple?: boolean;
+  isIcon?: boolean;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 const CustomSearchInput = forwardRef<HTMLInputElement, CustomSearchInputProps>(
@@ -15,8 +18,11 @@ const CustomSearchInput = forwardRef<HTMLInputElement, CustomSearchInputProps>(
     {
       boxClick,
       iconClick,
+      isIcon = true,
       iconCursor = "pointer",
       inputCursor = "pointer",
+      disableFocusRipple = false,
+      disableRipple = false,
       ...rest
     },
     ref
@@ -24,30 +30,23 @@ const CustomSearchInput = forwardRef<HTMLInputElement, CustomSearchInputProps>(
     return (
       <Box
         onClick={boxClick}
-        style={{
-          position: "relative",
-          cursor: "pointer",
-        }}
+        sx={{ position: "relative", display: "flex", justifyContent: "center" }}
       >
-        <IconButton
-          onClick={iconClick}
-          disableFocusRipple
-          disableRipple
-          sx={{ position: "absolute", left: "6%", cursor: iconCursor }}
-        >
-          <SearchIcon />
-        </IconButton>
+        {isIcon && (
+          <IconButton
+            onClick={iconClick}
+            disableFocusRipple={disableFocusRipple}
+            disableRipple={disableRipple}
+            sx={{ position: "absolute", left: "6%", cursor: iconCursor }}
+          >
+            <SearchIcon />
+          </IconButton>
+        )}
         <input
-          {...rest}
+          className="custom-input"
           ref={ref}
-          style={{
-            cursor: inputCursor,
-            border: "1px solid #ccc",
-            borderRadius: 20,
-            padding: "10px 20px",
-            textIndent: "50px",
-            fontSize: "1rem",
-          }}
+          style={{ cursor: inputCursor }}
+          {...rest}
         />
       </Box>
     );

@@ -1,6 +1,7 @@
 import axios from "axios";
-import authenticatedAxios from "../utils/axiosInterceptors";
+import { authenticatedAxios } from "../utils/axiosInterceptors";
 import { UserModel } from "../models/UserModel";
+import { toastifyService } from "./toastifyService";
 
 type cloudinaryImgRes = {
   url: string;
@@ -20,7 +21,7 @@ class UserService {
     return data;
   }
 
-  async searchUsers(search: string): Promise<UserModel> {
+  async searchUsers(search: string | undefined): Promise<UserModel[]> {
     const { data } = await authenticatedAxios.get(searchEndpoint, {
       params: { search: search },
     });
