@@ -17,6 +17,8 @@ const AppRouter: React.FC = () => {
       {user && (
         <Route path="/chat" element={<AuthedHeader />}>
           <Route path="" element={<ChatPage />} />
+          <Route path=":id" element={<ChatPage />} />
+          <Route path="group/:id" element={<ChatPage />} />
         </Route>
       )}
 

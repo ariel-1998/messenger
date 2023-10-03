@@ -1,28 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import AppBar from "../../AppBarArea/AppBar";
 import ChatList from "../../ChatArea/ChatList";
 import ChatBox from "../../ChatArea/ChatBox";
-import { Box, Grid, useMediaQuery, useTheme } from "@mui/material";
+import { Grid, useMediaQuery, useTheme } from "@mui/material";
+import { useParams } from "react-router-dom";
 
 const ChatPage: React.FC = () => {
   const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.up("sm"));
+  const matches = useMediaQuery(theme.breakpoints.up("md"));
+  const { id } = useParams();
   return (
     <>
       {matches ? (
-        <Grid container height={"100%"} p={2} justifyContent="space-around">
-          <Grid sm={5} md={3} item bgcolor={"yellow"} height={"100%"}>
+        <Grid
+          container
+          height={"100%"}
+          width={"100%"}
+          p={2}
+          justifyContent="space-around"
+        >
+          <Grid md={4} item height={"100%"}>
             <ChatList />
           </Grid>
-          <Grid sm={6} md={8} item bgcolor={"green"} height={"100%"}>
+          <Grid md={7} item height={"100%"}>
             <ChatBox />
           </Grid>
         </Grid>
       ) : (
-        <>
-          <ChatList />
-          <ChatBox />
-        </>
+        <>{id ? <ChatBox /> : <ChatList />}</>
       )}
     </>
   );

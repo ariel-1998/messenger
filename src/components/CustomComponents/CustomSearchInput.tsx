@@ -45,7 +45,11 @@ const CustomSearchInput = forwardRef<HTMLInputElement, CustomSearchInputProps>(
         <input
           className="custom-input"
           ref={ref}
-          style={{ cursor: inputCursor }}
+          style={{
+            cursor: inputCursor,
+            textAlign: "center",
+            textIndent: 0,
+          }}
           {...rest}
         />
       </Box>

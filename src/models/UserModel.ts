@@ -4,7 +4,7 @@ export type UserModel = {
   _id: string;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   confirmPassword?: string;
   image: string | FileList;
 };
