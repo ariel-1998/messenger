@@ -1,4 +1,5 @@
 import { ChatModel } from "../models/ChatModel";
+import { UserModel } from "../models/UserModel";
 import { authenticatedAxios } from "../utils/axiosInterceptors";
 
 const chatEndpoint = "chat";
@@ -20,10 +21,17 @@ class ChatService {
     return data;
   }
 
-  async createGroupChat(usersIds: string[], chatName: string) {
-    const users = JSON.stringify(usersIds);
+  async createGroupChat({
+    users,
+    chatName,
+  }: {
+    users: UserModel[];
+    chatName: string;
+  }) {
+    const usersIds = users.map((user) => user._id);
+    const stringifyIds = JSON.stringify(usersIds);
     const { data } = await authenticatedAxios.post(createGroupEndpoint, {
-      users,
+      stringifyIds,
       chatName,
     });
     return data;

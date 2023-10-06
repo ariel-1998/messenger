@@ -30,7 +30,12 @@ const CustomSearchInput = forwardRef<HTMLInputElement, CustomSearchInputProps>(
     return (
       <Box
         onClick={boxClick}
-        sx={{ position: "relative", display: "flex", justifyContent: "center" }}
+        sx={{
+          position: "relative",
+          display: "flex",
+          justifyContent: "center",
+          width: "fit-content",
+        }}
       >
         {isIcon && (
           <IconButton

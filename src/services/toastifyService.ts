@@ -8,7 +8,7 @@ type ErrorMessage = {
   message?: string;
 };
 
-type ErrorModels = ErrorMessage & ErrorResponse;
+export type ErrorModels = ErrorMessage & ErrorResponse;
 
 class ToastifyService {
   error(err: ErrorModels) {

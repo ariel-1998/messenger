@@ -1,4 +1,4 @@
-import { List, Box, Skeleton, Avatar, Stack, Typography } from "@mui/material";
+import { List, Avatar, Stack, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import CustomSearchInput from "../CustomComponents/CustomSearchInput";
 import { useQuery } from "@tanstack/react-query";
@@ -6,70 +6,97 @@ import { toastifyService } from "../../services/toastifyService";
 import { userService } from "../../services/userService";
 import CustomListItem from "../CustomComponents/CustomListItem";
 import LoadingSkeletons from "../CustomComponents/LoadingSkeletons";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { chatService } from "../../services/chatService";
 
-const SearchError: React.FC = () => {
-  return <Typography align="center">Users not found!</Typography>;
+type DrawerSearchProps = {
+  toggleDrawer?: () => void;
 };
 
-const DrawerSearch: React.FC = () => {
+const DrawerSearch: React.FC<DrawerSearchProps> = ({ toggleDrawer }) => {
   const searchRef = useRef<HTMLInputElement>(null);
-  const [enabled, setEnabled] = useState(false);
-  const [dependency, setDependency] = useState(false);
-  const isInitialRender = useRef(true);
+  const [userSearch, setUserSearch] = useState("");
+  const [userId, setUserId] = useState("");
+  const navigate = useNavigate();
+  const toggleDrowerFn = toggleDrawer || (() => undefined);
 
-  const { data, isFetching, isError } = useQuery({
-    queryKey: ["search", searchRef.current?.value || ""],
-    queryFn: () => userService.searchUsers(searchRef.current?.value || ""),
-    enabled,
+  const {
+    data: users,
+    isFetching: isUserFetch,
+    isError,
+  } = useQuery({
+    queryKey: ["search", userSearch],
+    queryFn: () => userService.searchUsers(userSearch),
+    enabled: !!userSearch,
+  });
+
+  const { data: chat, isLoading } = useQuery({
+    queryKey: ["chat", `{chat: ${userId}}`],
+    queryFn: () => chatService.accessChat(userId || ""),
+    onSuccess: (data) => {
+      navigate(`/chat/${data?._id}`);
+      toggleDrowerFn();
+    },
+    onError: () => toastifyService.info("User notFound"),
+    enabled: !!userId,
   });
 
   useEffect(() => {
-    if (!isInitialRender.current) {
-      setEnabled(true);
-    } else {
-      isInitialRender.current = false;
+    if (userId && !isLoading) {
+      navigate(`/chat/${chat?._id}`);
+      toggleDrowerFn();
     }
-  }, [dependency]);
+  }, [userId]);
 
   const fetchUsers = () => {
     if (!searchRef.current?.value)
       return toastifyService.info("Fill Search bar!");
-    setDependency((prev) => !prev);
+    setUserSearch(searchRef.current?.value);
+  };
+
+  const onUserClick = (userId: string) => {
+    setUserId(userId);
   };
 
   return (
-    <List>
-      <Box mb={2}>
+    <List sx={{ width: "100%" }}>
+      <Stack mb={2} width={"100%"} alignItems={"center"}>
         <CustomSearchInput
           ref={searchRef}
           inputCursor="auto"
           placeholder="Search..."
           iconClick={fetchUsers}
-          disabled={isFetching}
+          disabled={isUserFetch}
         />
-      </Box>
+      </Stack>
 
-      {isError && <SearchError />}
+      {isError && <Typography align="center">Users not found!</Typography>}
 
-      {isFetching && (
+      {isUserFetch && (
         <Stack height={"88vh"}>
           <LoadingSkeletons amount={12} />
         </Stack>
       )}
-
-      {data && (
+      {users && (
         <Stack spacing={1} pb={2}>
-          {data.map((user) => (
-            <Link
-              to={`/chat/${user._id}`}
+          {users.map((user) => (
+            <CustomListItem
+              onClick={() => onUserClick(user._id)}
               key={user._id}
-              style={{ color: "#333" }}
+              sx={{ height: "80px" }}
             >
-              <CustomListItem text={user.name}>
+              <Stack flexDirection={"row"} width={"100%"} alignItems={"center"}>
+                <Stack spacing={1} p={2} width={"100%"}>
+                  <Typography variant="h6">{user.name}</Typography>
+                  <Typography>Email: {user.email}</Typography>
+                </Stack>
                 <Avatar src={user.image as string} />
-              </CustomListItem>
-            </Link>
+              </Stack>
+              {/* change to loading gif */}
+              {isLoading && userId === user._id && (
+                <Typography>loading...</Typography>
+              )}
+            </CustomListItem>
           ))}
         </Stack>
       )}
