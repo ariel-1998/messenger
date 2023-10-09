@@ -6,8 +6,8 @@ import {
   Avatar,
   Theme,
 } from "@mui/material";
-import CustomListItem from "../CustomComponents/CustomListItem";
-import { UserModel } from "../../models/UserModel";
+import CustomListItem from "../../CustomComponents/CustomListItem";
+import { UserModel } from "../../../models/UserModel";
 
 type UserListItemProps = {
   user: UserModel;

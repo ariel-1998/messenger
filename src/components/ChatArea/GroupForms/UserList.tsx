@@ -1,6 +1,6 @@
 import { ListItemProps, List } from "@mui/material";
-import { UserModel } from "../../models/UserModel";
-import { isUserInArr } from "../../utils/userMethods";
+import { UserModel } from "../../../models/UserModel";
+import { isUserInArr } from "../../../utils/userMethods";
 import UserListItem from "./UserListItem";
 
 type UserListProps = {
@@ -17,10 +17,10 @@ const UserList: React.FC<UserListProps> = ({
   return (
     <List
       sx={{
-        width: "90%",
+        width: "100%",
         zIndex: 1,
         overflow: "auto",
-        maxHeight: "60vh",
+        maxHeight: "48vh",
         margin: "auto",
       }}
     >
@@ -30,7 +30,7 @@ const UserList: React.FC<UserListProps> = ({
           sx={{
             bgcolor:
               isUserInArr(selectedUsers, user) === -1 ? "#ddd" : "#bbdefb",
-            transition: "background-color 500ms ease",
+            transition: "background-color 900ms ease",
           }}
           onClick={() => onUserClick(user)}
           user={user}

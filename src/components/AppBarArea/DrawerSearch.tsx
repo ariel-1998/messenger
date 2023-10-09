@@ -1,8 +1,8 @@
 import { List, Avatar, Stack, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import CustomSearchInput from "../CustomComponents/CustomSearchInput";
-import { useQuery } from "@tanstack/react-query";
-import { toastifyService } from "../../services/toastifyService";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ErrorModels, toastifyService } from "../../services/toastifyService";
 import { userService } from "../../services/userService";
 import CustomListItem from "../CustomComponents/CustomListItem";
 import LoadingSkeletons from "../CustomComponents/LoadingSkeletons";
@@ -19,6 +19,7 @@ const DrawerSearch: React.FC<DrawerSearchProps> = ({ toggleDrawer }) => {
   const [userId, setUserId] = useState("");
   const navigate = useNavigate();
   const toggleDrowerFn = toggleDrawer || (() => undefined);
+  const queryClient = useQueryClient();
 
   const {
     data: users,
@@ -31,19 +32,25 @@ const DrawerSearch: React.FC<DrawerSearchProps> = ({ toggleDrawer }) => {
   });
 
   const { data: chat, isLoading } = useQuery({
-    queryKey: ["chat", `{chat: ${userId}}`],
+    queryKey: ["chatList", `{chat: ${userId}}`],
     queryFn: () => chatService.accessChat(userId || ""),
     onSuccess: (data) => {
-      navigate(`/chat/${data?._id}`);
+      if (data.isGroupChat) {
+        queryClient.setQueryData(["chatList", `{chat: ${data._id}}`], data);
+      }
+      navigate(`/chat/${data?._id}?isGroupChat=${data.isGroupChat}`);
       toggleDrowerFn();
     },
-    onError: () => toastifyService.info("User notFound"),
+    onError: (err: ErrorModels) => toastifyService.error(err),
     enabled: !!userId,
   });
 
   useEffect(() => {
     if (userId && !isLoading) {
-      navigate(`/chat/${chat?._id}`);
+      if (chat?.isGroupChat) {
+        queryClient.setQueryData(["chatList", `{chat: ${chat?._id}}`], chat);
+      }
+      navigate(`/chat/${chat?._id}?isGroupChat=${chat?.isGroupChat}`);
       toggleDrowerFn();
     }
   }, [userId]);

@@ -1,5 +1,5 @@
 import React from "react";
-import { UserModel } from "../../models/UserModel";
+import { UserModel } from "../../../models/UserModel";
 import { Chip } from "@mui/material";
 
 interface SelectedUserProps {
@@ -10,6 +10,7 @@ interface SelectedUserProps {
 const SelectedUser: React.FC<SelectedUserProps> = ({ user, onDelete }) => {
   return (
     <Chip
+      sx={{ height: "100%" }}
       label={user?.name}
       variant="outlined"
       onDelete={() => onDelete(user)}

@@ -1,13 +1,15 @@
 import React from "react";
 import AppBar from "../../AppBarArea/AppBar";
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { Outlet } from "react-router-dom";
 
 const AuthedHeader: React.FC = () => {
   return (
-    <Stack height={"100vh"}>
+    <Stack p={0} m={0} height={"100vh"}>
       <AppBar />
-      <Outlet />
+      <Box height={"calc(100vh - 60px)"}>
+        <Outlet />
+      </Box>
     </Stack>
   );
 };

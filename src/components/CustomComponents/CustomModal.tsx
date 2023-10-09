@@ -22,16 +22,19 @@ const CustomModal: React.FC<CustomModalProps> = ({ openBtn, sx, children }) => {
     ...innerModalStyle,
     alignItems: "left",
     position: "absolute",
-    top: "10%",
+    top: "5vh",
     left: "50%",
     transform: "translateX(-50%)",
-    width: 400,
+    minWidth: 250,
+    maxWidth: 400,
+    width: "100%",
     bgcolor: "background.paper",
     borderRadius: 2,
     boxShadow: 24,
     p: 4,
     pt: 1,
   };
+
   return (
     <>
       <span onClick={handleOpen}>{openBtn}</span>

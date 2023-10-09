@@ -4,7 +4,7 @@ import { authenticatedAxios } from "../utils/axiosInterceptors";
 
 const chatEndpoint = "chat";
 const createGroupEndpoint = "chat/group";
-const deleteGroupEndpoint = (groupId: string) => `chat/group/${groupId}`;
+const deleteAccessGroupEndpoint = (groupId: string) => `chat/group/${groupId}`;
 const renameGroupEndpoint = (groupId: string) => `chat/group/${groupId}/rename`;
 const addtoGroupEndpoint = (groupId: string) => `chat/group/${groupId}/members`;
 const removeFromGroupEndpoint = (groupId: string, userId: string) =>
@@ -27,22 +27,34 @@ class ChatService {
   }: {
     users: UserModel[];
     chatName: string;
-  }) {
+  }): Promise<ChatModel> {
     const usersIds = users.map((user) => user._id);
     const stringifyIds = JSON.stringify(usersIds);
     const { data } = await authenticatedAxios.post(createGroupEndpoint, {
-      stringifyIds,
+      users: stringifyIds,
       chatName,
     });
     return data;
   }
 
+  async accessGroupChat(groupId: string): Promise<ChatModel> {
+    const endpoint = deleteAccessGroupEndpoint(groupId);
+    const { data } = await authenticatedAxios.get(endpoint);
+    return data;
+  }
+
   async deleteGroupChat(groupId: string) {
-    const endpoint = deleteGroupEndpoint(groupId);
+    const endpoint = deleteAccessGroupEndpoint(groupId);
     await authenticatedAxios.delete(endpoint);
   }
 
-  async renameGroup(chatName: string, groupId: string) {
+  async renameGroup({
+    chatName,
+    groupId,
+  }: {
+    chatName: string;
+    groupId: string;
+  }): Promise<ChatModel> {
     const endpoint = renameGroupEndpoint(groupId);
     const { data } = await authenticatedAxios.put(endpoint, { chatName });
     return data;

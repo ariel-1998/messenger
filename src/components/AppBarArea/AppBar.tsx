@@ -30,15 +30,35 @@ const AppBar: React.FC = () => {
   const avatarIcon = <Avatar sx={iconSize} src={user?.image as string} />;
 
   return (
-    <Box>
-      <MuiAppBar position="static" sx={{ maxHeight: "60px" }}>
+    <Box
+      boxSizing={"border-box"}
+      sx={{
+        height: "60px",
+      }}
+    >
+      <MuiAppBar
+        sx={{
+          width: "100%",
+          position: "relative",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Box>
             <Drawer>
               <DrawerSearch />
             </Drawer>
           </Box>
-          <Typography variant={isSmallScreen ? "body1" : "h4"}>
+          <Typography
+            sx={{
+              position: "absolute",
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+            variant={isSmallScreen ? "h6" : "h4"}
+          >
             Messenger
           </Typography>
           <Box sx={{ display: "flex" }}>
@@ -46,9 +66,9 @@ const AppBar: React.FC = () => {
               <Typography sx={menuItemPadding}>Messages</Typography>
             </CustomMenu>
             <CustomMenu icon={avatarIcon}>
-              <ProfileModal user={user}>
+              <ProfileModal.User profile={user}>
                 <Typography sx={menuItemPadding}>My profile</Typography>
-              </ProfileModal>
+              </ProfileModal.User>
               <Logout sx={menuItemPadding} />
             </CustomMenu>
           </Box>

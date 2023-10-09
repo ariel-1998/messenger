@@ -5,7 +5,6 @@ import {
   Button,
   Stack,
   Typography,
-  colors,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -18,7 +17,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../utils/reduxStore";
 import { findUserInChat } from "../../utils/userMethods";
 import { Add } from "@mui/icons-material";
-import GroupForm from "./GroupForm";
+import GroupForm from "./GroupForms/Forms/GroupForm";
+
 const ChatList: React.FC = () => {
   const theme = useTheme();
   const screanSize = useMediaQuery(theme.breakpoints.up("md"));
@@ -55,7 +55,11 @@ const ChatList: React.FC = () => {
   });
 
   const chatListItems = filteredChats?.map((chat) => (
-    <Link to={`/chat/${chat._id}`} key={chat._id} style={{ color: "#333" }}>
+    <Link
+      to={`/chat/${chat._id}?isGroupChat=${chat.isGroupChat}`}
+      key={chat._id}
+      style={{ color: "#333" }}
+    >
       <CustomListItem sx={{ height: "80px" }}>
         <Stack flexDirection={"row"} width={"100%"} alignItems={"center"}>
           <Stack spacing={1} p={2} width={"100%"} justifyContent={"flex-end"}>
@@ -85,7 +89,6 @@ const ChatList: React.FC = () => {
     <Stack
       sx={{
         p: 2,
-        // maxWidth: "100%",
         width: "100%",
         height: "100%",
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
@@ -125,12 +128,16 @@ const ChatList: React.FC = () => {
           onInput={onInput}
         />
       </Stack>
-      {debounceLoad && <div>loading...</div>}
+      {debounceLoad && (
+        <Typography textAlign={"center"} variant="body2">
+          Loading...
+        </Typography>
+      )}
       <Stack p={2} spacing={0.1}>
-        {chatListItems && chatListItems.length > 0 ? (
-          chatListItems
-        ) : (
-          <div>empty</div>
+        {chatListItems && !!chatListItems.length && chatListItems}
+
+        {chatListItems && !chatListItems.length && (
+          <Typography textAlign={"center"}>Empty!</Typography>
         )}
       </Stack>
     </Stack>

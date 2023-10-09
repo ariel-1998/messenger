@@ -5,7 +5,7 @@ type ErrorResponse = {
 };
 
 type ErrorMessage = {
-  message?: string;
+  message?: string | string[];
 };
 
 export type ErrorModels = ErrorMessage & ErrorResponse;
@@ -13,6 +13,10 @@ export type ErrorModels = ErrorMessage & ErrorResponse;
 class ToastifyService {
   error(err: ErrorModels) {
     const message = this.errorMessageExtractor(err);
+    if (Array.isArray(message)) {
+      message.forEach((msg) => toast.error(`Error: ${msg}`));
+      return;
+    }
     toast.error(message);
   }
 
@@ -25,15 +29,9 @@ class ToastifyService {
   }
 
   private errorMessageExtractor(err: ErrorModels) {
+    if (err.response?.data?.message) return err.response?.data?.message;
     if (err.message) return err.message;
 
-    if (err.response?.data?.message) {
-      const message = err.response?.data?.message;
-      if (Array.isArray(message)) {
-        //do something late for displaying an array
-      }
-      return message;
-    }
     return "Unknown Error has accured!";
   }
 }
