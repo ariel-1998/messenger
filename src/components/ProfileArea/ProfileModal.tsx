@@ -4,13 +4,14 @@ import { UserModel } from "../../models/UserModel";
 import CustomModal from "../CustomComponents/CustomModal";
 import { ChatModel } from "../../models/ChatModel";
 import RenameGroupChat from "../ChatArea/GroupForms/Forms/RenameGroupChat";
+import GroupForm from "../ChatArea/GroupForms/Forms/GroupForm";
 
 type UserProfileModalProps<T> = {
-  profile: T | undefined;
+  profile: T;
   children: ReactNode;
 };
 
-const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
+const UserProfileModal: React.FC<UserProfileModalProps<UserModel>> = ({
   profile,
   children,
 }) => {
@@ -50,12 +51,12 @@ const GroupProfileModal: React.FC<UserProfileModalProps<ChatModel>> = ({
           {profile?.chatName}
         </Typography>
         {/* <Avatar sx={{ width: 150, height: 150 }} src={group?.image as string} /> */}
-        <RenameGroupChat
-          groupName={profile?.chatName || ""}
-          groupId={profile?._id || ""}
+        <GroupForm.Rename
+          groupName={profile?.chatName}
+          groupId={profile?._id}
         />
+        <GroupForm.AddMembers />
         <Button>remove users from group</Button>
-        <Button>add users to group</Button>
       </Stack>
     </CustomModal>
   );

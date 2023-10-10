@@ -60,10 +60,19 @@ class ChatService {
     return data;
   }
 
-  async addMembersToGroup(groupId: string, usersIds: string[]) {
-    const users = JSON.stringify(usersIds);
+  async addMembersToGroup({
+    groupId,
+    users,
+  }: {
+    groupId: string;
+    users: UserModel[];
+  }): Promise<ChatModel> {
+    const usersIds = users.map((user) => user._id);
+    const stringifyIds = JSON.stringify(usersIds);
     const endpoint = addtoGroupEndpoint(groupId);
-    const { data } = await authenticatedAxios.put(endpoint, { users });
+    const { data } = await authenticatedAxios.put(endpoint, {
+      users: stringifyIds,
+    });
     return data;
   }
 

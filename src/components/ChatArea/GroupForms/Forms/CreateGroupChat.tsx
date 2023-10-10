@@ -43,18 +43,28 @@ const CreateGroupChat: React.FC<CreateGroupChatProps> = ({ children }) => {
 
   const groupMutation = useMutation({
     mutationFn: chatService.createGroupChat,
-    onSuccess: (group) => {
-      toastifyService.success(`Successfuly created group`);
-      setSelectedUsers([]);
-      setGroupName("");
-      const oldChatList =
-        queryClient.getQueryData<ChatModel[]>(["chatList"]) || [];
-      const newChatList = [group, ...oldChatList];
-      queryClient.setQueryData(["chatList"], newChatList);
-      navigate(group._id);
-    },
+    onSuccess: onCreateSuccess,
     onError: (err: ErrorModels) => toastifyService.error(err),
   });
+  //////////////////////
+  function onCreateSuccess(groupChat: ChatModel) {
+    toastifyService.success(`Successfuly created group`);
+    setSelectedUsers([]);
+    setGroupName("");
+    setUserSearch("");
+    queryClient.setQueryData<ChatModel[] | undefined>(
+      ["chatList"],
+      (oldData) => {
+        if (!oldData) return [groupChat];
+        return [groupChat, ...oldData];
+      }
+    );
+    queryClient.setQueryData<ChatModel>(
+      ["chatList", `{chat: ${groupChat._id}}`],
+      groupChat
+    );
+    navigate(`/chat/${groupChat._id}?isGroupChat=${groupChat.isGroupChat}`);
+  }
 
   const createGroup = () => {
     try {
@@ -101,7 +111,7 @@ const CreateGroupChat: React.FC<CreateGroupChatProps> = ({ children }) => {
         alignItems={"center"}
       >
         <GroupFormInput
-          value={groupName}
+          defaultValue={groupName}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setGroupName(e.currentTarget.value)
           }
@@ -117,6 +127,7 @@ const CreateGroupChat: React.FC<CreateGroupChatProps> = ({ children }) => {
           users={selectedUsers}
           setSelectedUsers={onDeleteUser}
         />
+
         {usersData && (
           <UserList
             users={usersData}

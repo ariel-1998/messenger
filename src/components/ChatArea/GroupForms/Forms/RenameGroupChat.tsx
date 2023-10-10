@@ -30,13 +30,14 @@ const RenameGroupChat: React.FC<RenameGroupChatProps> = ({
   });
 
   function onRenameSuccess(renamedGroup: ChatModel) {
-    const oldChatList =
-      queryClient.getQueryData<ChatModel[]>(["chatList"]) || [];
-    const filteredData = oldChatList.filter(
-      (chat) => chat.isGroupChat && chat._id !== renamedGroup._id
-    );
-    const newChatList = [renamedGroup, ...filteredData];
-    queryClient.setQueryData(["chatList"], newChatList);
+    queryClient.setQueryData<ChatModel[]>(["chatList"], (oldData) => {
+      if (!oldData) return [renamedGroup];
+      const newChatList = oldData.map((chat) => {
+        if (chat._id !== renamedGroup._id) return chat;
+        return renamedGroup;
+      });
+      return newChatList;
+    });
 
     queryClient.setQueryData(
       ["chatList", `{chat: ${renamedGroup._id}}`],

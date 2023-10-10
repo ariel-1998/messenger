@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 const ChatPage: React.FC = () => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("md"));
-  const { chatId } = useParams();
+  const { id } = useParams();
   return (
     <>
       {matches ? (
@@ -27,7 +27,7 @@ const ChatPage: React.FC = () => {
           </Grid>
         </Grid>
       ) : (
-        <>{chatId ? <ChatBox /> : <ChatList />}</>
+        <>{id ? <ChatBox /> : <ChatList />}</>
       )}
     </>
   );

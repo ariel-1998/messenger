@@ -18,8 +18,8 @@ const UserList: React.FC<UserListProps> = ({
     <List
       sx={{
         width: "100%",
-        zIndex: 1,
-        overflow: "auto",
+        overflowY: "auto",
+        overflowX: "hidden",
         maxHeight: "48vh",
         margin: "auto",
       }}

@@ -18,6 +18,7 @@ import { RootState } from "../../utils/reduxStore";
 import { findUserInChat } from "../../utils/userMethods";
 import { Add } from "@mui/icons-material";
 import GroupForm from "./GroupForms/Forms/GroupForm";
+import { ChatModel } from "../../models/ChatModel";
 
 const ChatList: React.FC = () => {
   const theme = useTheme();
@@ -54,12 +55,16 @@ const ChatList: React.FC = () => {
     return false;
   });
 
+  const generateChatLink = (chat: ChatModel) => {
+    const id = chat.isGroupChat
+      ? chat._id
+      : findUserInChat(chat, loggedUser)?._id;
+    const url = `/chat/${id}?isGroupChat=${chat.isGroupChat}`;
+    return url;
+  };
+
   const chatListItems = filteredChats?.map((chat) => (
-    <Link
-      to={`/chat/${chat._id}?isGroupChat=${chat.isGroupChat}`}
-      key={chat._id}
-      style={{ color: "#333" }}
-    >
+    <Link to={generateChatLink(chat)} key={chat._id} style={{ color: "#333" }}>
       <CustomListItem sx={{ height: "80px" }}>
         <Stack flexDirection={"row"} width={"100%"} alignItems={"center"}>
           <Stack spacing={1} p={2} width={"100%"} justifyContent={"flex-end"}>

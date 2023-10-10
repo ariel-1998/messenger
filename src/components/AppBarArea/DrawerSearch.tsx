@@ -6,7 +6,7 @@ import { ErrorModels, toastifyService } from "../../services/toastifyService";
 import { userService } from "../../services/userService";
 import CustomListItem from "../CustomComponents/CustomListItem";
 import LoadingSkeletons from "../CustomComponents/LoadingSkeletons";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { chatService } from "../../services/chatService";
 
 type DrawerSearchProps = {
@@ -16,10 +16,7 @@ type DrawerSearchProps = {
 const DrawerSearch: React.FC<DrawerSearchProps> = ({ toggleDrawer }) => {
   const searchRef = useRef<HTMLInputElement>(null);
   const [userSearch, setUserSearch] = useState("");
-  const [userId, setUserId] = useState("");
-  const navigate = useNavigate();
   const toggleDrowerFn = toggleDrawer || (() => undefined);
-  const queryClient = useQueryClient();
 
   const {
     data: users,
@@ -31,38 +28,10 @@ const DrawerSearch: React.FC<DrawerSearchProps> = ({ toggleDrawer }) => {
     enabled: !!userSearch,
   });
 
-  const { data: chat, isLoading } = useQuery({
-    queryKey: ["chatList", `{chat: ${userId}}`],
-    queryFn: () => chatService.accessChat(userId || ""),
-    onSuccess: (data) => {
-      if (data.isGroupChat) {
-        queryClient.setQueryData(["chatList", `{chat: ${data._id}}`], data);
-      }
-      navigate(`/chat/${data?._id}?isGroupChat=${data.isGroupChat}`);
-      toggleDrowerFn();
-    },
-    onError: (err: ErrorModels) => toastifyService.error(err),
-    enabled: !!userId,
-  });
-
-  useEffect(() => {
-    if (userId && !isLoading) {
-      if (chat?.isGroupChat) {
-        queryClient.setQueryData(["chatList", `{chat: ${chat?._id}}`], chat);
-      }
-      navigate(`/chat/${chat?._id}?isGroupChat=${chat?.isGroupChat}`);
-      toggleDrowerFn();
-    }
-  }, [userId]);
-
   const fetchUsers = () => {
     if (!searchRef.current?.value)
       return toastifyService.info("Fill Search bar!");
     setUserSearch(searchRef.current?.value);
-  };
-
-  const onUserClick = (userId: string) => {
-    setUserId(userId);
   };
 
   return (
@@ -87,23 +56,26 @@ const DrawerSearch: React.FC<DrawerSearchProps> = ({ toggleDrawer }) => {
       {users && (
         <Stack spacing={1} pb={2}>
           {users.map((user) => (
-            <CustomListItem
-              onClick={() => onUserClick(user._id)}
+            <Link
+              style={{ color: "#333" }}
+              to={`/chat/${user._id}?isGroupChat=false`}
+              onClick={toggleDrowerFn}
               key={user._id}
-              sx={{ height: "80px" }}
             >
-              <Stack flexDirection={"row"} width={"100%"} alignItems={"center"}>
-                <Stack spacing={1} p={2} width={"100%"}>
-                  <Typography variant="h6">{user.name}</Typography>
-                  <Typography>Email: {user.email}</Typography>
+              <CustomListItem sx={{ height: "80px" }}>
+                <Stack
+                  flexDirection={"row"}
+                  width={"100%"}
+                  alignItems={"center"}
+                >
+                  <Stack spacing={1} p={2} width={"100%"}>
+                    <Typography variant="h6">{user.name}</Typography>
+                    <Typography>Email: {user.email}</Typography>
+                  </Stack>
+                  <Avatar src={user.image as string} />
                 </Stack>
-                <Avatar src={user.image as string} />
-              </Stack>
-              {/* change to loading gif */}
-              {isLoading && userId === user._id && (
-                <Typography>loading...</Typography>
-              )}
-            </CustomListItem>
+              </CustomListItem>
+            </Link>
           ))}
         </Stack>
       )}
