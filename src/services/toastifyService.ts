@@ -11,8 +11,8 @@ type ErrorMessage = {
 export type ErrorModels = ErrorMessage & ErrorResponse;
 
 class ToastifyService {
-  error(err: ErrorModels) {
-    const message = this.errorMessageExtractor(err);
+  error(err: ErrorModels | unknown) {
+    const message = this.errorMessageExtractor(err as ErrorModels);
     if (Array.isArray(message)) {
       message.forEach((msg) => toast.error(`Error: ${msg}`));
       return;

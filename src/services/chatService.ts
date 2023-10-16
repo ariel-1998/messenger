@@ -1,24 +1,40 @@
 import { ChatModel } from "../models/ChatModel";
 import { UserModel } from "../models/UserModel";
 import { authenticatedAxios } from "../utils/axiosInterceptors";
+import {
+  createGroup,
+  getAllChats,
+  renameGroup,
+  setSelectedChat,
+} from "../utils/chatSlice";
+import { store } from "../utils/reduxStore";
 
 const chatEndpoint = "chat";
 const createGroupEndpoint = "chat/group";
-const deleteAccessGroupEndpoint = (groupId: string) => `chat/group/${groupId}`;
+const deleteGroupEndpoint = (groupId: string) => `chat/group/${groupId}`;
 const renameGroupEndpoint = (groupId: string) => `chat/group/${groupId}/rename`;
 const addtoGroupEndpoint = (groupId: string) => `chat/group/${groupId}/members`;
 const removeFromGroupEndpoint = (groupId: string, userId: string) =>
   `chat/group/${groupId}/members/${userId}`;
 
 class ChatService {
-  async accessChat(userId: string): Promise<ChatModel> {
-    const { data } = await authenticatedAxios.post(chatEndpoint, { userId });
-    return data;
+  async accessChat(userId: string) {
+    const { chats } = store.getState().chat;
+    const chat = chats?.find(
+      (chat) =>
+        !chat.isGroupChat && chat.users.some((user) => user._id === userId)
+    );
+    if (chat) return store.dispatch(setSelectedChat({ chat, isExist: true }));
+
+    const { data } = await authenticatedAxios.post<ChatModel>(chatEndpoint, {
+      userId,
+    });
+    store.dispatch(setSelectedChat({ chat: data, isExist: false }));
   }
 
-  async getAllChats(): Promise<ChatModel[]> {
-    const { data } = await authenticatedAxios.get(chatEndpoint);
-    return data;
+  async getAllChats() {
+    const { data } = await authenticatedAxios.get<ChatModel[]>(chatEndpoint);
+    store.dispatch(getAllChats(data));
   }
 
   async createGroupChat({
@@ -27,25 +43,14 @@ class ChatService {
   }: {
     users: UserModel[];
     chatName: string;
-  }): Promise<ChatModel> {
+  }) {
     const usersIds = users.map((user) => user._id);
     const stringifyIds = JSON.stringify(usersIds);
     const { data } = await authenticatedAxios.post(createGroupEndpoint, {
       users: stringifyIds,
       chatName,
     });
-    return data;
-  }
-
-  async accessGroupChat(groupId: string): Promise<ChatModel> {
-    const endpoint = deleteAccessGroupEndpoint(groupId);
-    const { data } = await authenticatedAxios.get(endpoint);
-    return data;
-  }
-
-  async deleteGroupChat(groupId: string) {
-    const endpoint = deleteAccessGroupEndpoint(groupId);
-    await authenticatedAxios.delete(endpoint);
+    store.dispatch(createGroup(data));
   }
 
   async renameGroup({
@@ -54,10 +59,15 @@ class ChatService {
   }: {
     chatName: string;
     groupId: string;
-  }): Promise<ChatModel> {
+  }) {
     const endpoint = renameGroupEndpoint(groupId);
     const { data } = await authenticatedAxios.put(endpoint, { chatName });
-    return data;
+    store.dispatch(renameGroup(data));
+  }
+
+  async deleteGroupChat(groupId: string) {
+    const endpoint = deleteGroupEndpoint(groupId);
+    await authenticatedAxios.delete(endpoint);
   }
 
   async addMembersToGroup({

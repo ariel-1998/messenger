@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import AppBar from "../../AppBarArea/AppBar";
 import ChatList from "../../ChatArea/ChatList";
 import ChatBox from "../../ChatArea/ChatBox";
 import { Grid, useMediaQuery, useTheme } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../utils/reduxStore";
 
 const ChatPage: React.FC = () => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("md"));
-  const { id } = useParams();
+  const { selectedChat } = useSelector((state: RootState) => state.chat);
   return (
     <>
       {matches ? (
@@ -27,7 +26,7 @@ const ChatPage: React.FC = () => {
           </Grid>
         </Grid>
       ) : (
-        <>{id ? <ChatBox /> : <ChatList />}</>
+        <>{selectedChat ? <ChatBox /> : <ChatList />}</>
       )}
     </>
   );

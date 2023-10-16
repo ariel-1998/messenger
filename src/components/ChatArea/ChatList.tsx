@@ -9,30 +9,23 @@ import {
   useTheme,
 } from "@mui/material";
 import useDebounce from "../../hooks/useDebounce";
-import { useQuery } from "@tanstack/react-query";
-import { chatService } from "../../services/chatService";
-import { Link } from "react-router-dom";
 import CustomListItem from "../CustomComponents/CustomListItem";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../utils/reduxStore";
 import { findUserInChat } from "../../utils/userMethods";
 import { Add } from "@mui/icons-material";
 import GroupForm from "./GroupForms/Forms/GroupForm";
 import { ChatModel } from "../../models/ChatModel";
+import { setSelectedChat } from "../../utils/chatSlice";
 
 const ChatList: React.FC = () => {
   const theme = useTheme();
   const screanSize = useMediaQuery(theme.breakpoints.up("md"));
   const [search, setSearch] = useState("");
-  const loggedUser = useSelector((state: RootState) => state.auth);
+
   const { debounce, isLoading: debounceLoad } = useDebounce({
     fn: searchChat,
     wait: 500,
-  });
-
-  const { data: chats } = useQuery({
-    queryKey: ["chatList"],
-    queryFn: chatService.getAllChats,
   });
 
   function searchChat(search: string) {
@@ -42,53 +35,6 @@ const ChatList: React.FC = () => {
   const onInput = (e: ChangeEvent<HTMLInputElement>) => {
     debounce(e.target.value);
   };
-
-  const filteredChats = chats?.filter((chat) => {
-    if (search === "") return true;
-    if (chat.isGroupChat) return chat.chatName.includes(search);
-    const user = findUserInChat(chat, loggedUser);
-    if (user) {
-      const includesName = user.name.includes(search);
-      const includesEmail = user.email.includes(search);
-      return includesName || includesEmail;
-    }
-    return false;
-  });
-
-  const generateChatLink = (chat: ChatModel) => {
-    const id = chat.isGroupChat
-      ? chat._id
-      : findUserInChat(chat, loggedUser)?._id;
-    const url = `/chat/${id}?isGroupChat=${chat.isGroupChat}`;
-    return url;
-  };
-
-  const chatListItems = filteredChats?.map((chat) => (
-    <Link to={generateChatLink(chat)} key={chat._id} style={{ color: "#333" }}>
-      <CustomListItem sx={{ height: "80px" }}>
-        <Stack flexDirection={"row"} width={"100%"} alignItems={"center"}>
-          <Stack spacing={1} p={2} width={"100%"} justifyContent={"flex-end"}>
-            <Typography variant="h6">
-              {chat.isGroupChat
-                ? chat.chatName
-                : findUserInChat(chat, loggedUser)?.name || ""}
-            </Typography>
-            <Typography>
-              {/* {chat.latestMessage.sender.name}: {chat.latestMessage.content} */}
-              ""
-            </Typography>
-          </Stack>
-          <Avatar
-            src={
-              chat.isGroupChat
-                ? ""
-                : (findUserInChat(chat, loggedUser)?.image as string)
-            }
-          />
-        </Stack>
-      </CustomListItem>
-    </Link>
-  ));
 
   return (
     <Stack
@@ -139,14 +85,73 @@ const ChatList: React.FC = () => {
         </Typography>
       )}
       <Stack p={2} spacing={0.1}>
-        {chatListItems && !!chatListItems.length && chatListItems}
-
-        {chatListItems && !chatListItems.length && (
-          <Typography textAlign={"center"}>Empty!</Typography>
-        )}
+        <ChatListItems search={search} />
       </Stack>
     </Stack>
   );
 };
 
 export default ChatList;
+
+//filtered chatList
+type ChatListItemsProps = {
+  search: string;
+};
+
+function ChatListItems({ search }: ChatListItemsProps): JSX.Element {
+  const loggedUser = useSelector((state: RootState) => state.auth);
+  const { chats } = useSelector((state: RootState) => state.chat);
+  const dispatch = useDispatch();
+
+  const onUserClick = (chat: ChatModel) => {
+    dispatch(setSelectedChat({ chat, isExist: true }));
+  };
+
+  const filteredChats = chats?.filter((chat) => {
+    if (search === "") return true;
+    if (chat.isGroupChat) return chat.chatName.includes(search);
+    const user = findUserInChat(chat, loggedUser);
+    if (user) {
+      const includesName = user.name.includes(search);
+      const includesEmail = user.email.includes(search);
+      return includesName || includesEmail;
+    }
+    return false;
+  });
+
+  const content = filteredChats ? (
+    <>
+      {filteredChats.map((chat) => (
+        <CustomListItem
+          onClick={() => onUserClick(chat)}
+          sx={{ height: "80px" }}
+          key={chat._id}
+        >
+          <Stack flexDirection={"row"} width={"100%"} alignItems={"center"}>
+            <Stack spacing={1} p={2} width={"100%"} justifyContent={"flex-end"}>
+              <Typography variant="h6">
+                {chat.isGroupChat
+                  ? chat.chatName
+                  : findUserInChat(chat, loggedUser)?.name || ""}
+              </Typography>
+              <Typography>
+                {/* {chat.latestMessage.sender.name}: {chat.latestMessage.content} */}
+                ""
+              </Typography>
+            </Stack>
+            <Avatar
+              src={
+                chat.isGroupChat
+                  ? ""
+                  : (findUserInChat(chat, loggedUser)?.image as string)
+              }
+            />
+          </Stack>
+        </CustomListItem>
+      ))}
+    </>
+  ) : (
+    <Typography textAlign={"center"}>Empty!</Typography>
+  );
+  return content;
+}

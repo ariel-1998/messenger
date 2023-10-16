@@ -27,7 +27,7 @@ const AppBar: React.FC = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const avatarIcon = <Avatar sx={iconSize} src={user?.image as string} />;
+  const AvatarIcon = <Avatar sx={iconSize} src={user?.image as string} />;
 
   return (
     <Box
@@ -65,10 +65,12 @@ const AppBar: React.FC = () => {
             <CustomMenu icon={<Notifications />}>
               <Typography sx={menuItemPadding}>Messages</Typography>
             </CustomMenu>
-            <CustomMenu icon={avatarIcon}>
-              <ProfileModal.User profile={user}>
-                <Typography sx={menuItemPadding}>My profile</Typography>
-              </ProfileModal.User>
+            <CustomMenu icon={AvatarIcon}>
+              <ProfileModal.User
+                btnText="My profile"
+                sx={menuItemPadding}
+                profile={user}
+              />
               <Logout sx={menuItemPadding} />
             </CustomMenu>
           </Box>

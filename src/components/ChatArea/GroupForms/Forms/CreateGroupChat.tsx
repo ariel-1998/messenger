@@ -17,23 +17,23 @@ import {
 import GroupFormInput from "../GroupFormInput";
 import { extractZodErrors } from "../../../../utils/zodMetods";
 import { ZodError } from "zod";
-import { useNavigate } from "react-router-dom";
+import { LoadingButton } from "@mui/lab";
 
-interface CreateGroupChatProps {
-  children: ReactNode;
+interface CreateGroupChatContentProps {
+  handleClose?: () => void;
 }
 
-const CreateGroupChat: React.FC<CreateGroupChatProps> = ({ children }) => {
+const CreateGroupChatContent: React.FC<CreateGroupChatContentProps> = ({
+  handleClose,
+}) => {
   const [selectedUsers, setSelectedUsers] = useState<UserModel[]>([]);
   const [userSearch, setUserSearch] = useState("");
   const [groupName, setGroupName] = useState("");
-  const queryClient = useQueryClient();
-
-  const navigate = useNavigate();
   const { debounce: debouncedOnInput, isLoading } = useDebounce({
     fn: onInput,
     wait: 1500,
   });
+  const handleModalClose = handleClose || (() => undefined);
 
   const { data: usersData, isError } = useQuery({
     queryKey: ["search", userSearch],
@@ -43,28 +43,9 @@ const CreateGroupChat: React.FC<CreateGroupChatProps> = ({ children }) => {
 
   const groupMutation = useMutation({
     mutationFn: chatService.createGroupChat,
-    onSuccess: onCreateSuccess,
     onError: (err: ErrorModels) => toastifyService.error(err),
+    onSuccess: handleModalClose,
   });
-  //////////////////////
-  function onCreateSuccess(groupChat: ChatModel) {
-    toastifyService.success(`Successfuly created group`);
-    setSelectedUsers([]);
-    setGroupName("");
-    setUserSearch("");
-    queryClient.setQueryData<ChatModel[] | undefined>(
-      ["chatList"],
-      (oldData) => {
-        if (!oldData) return [groupChat];
-        return [groupChat, ...oldData];
-      }
-    );
-    queryClient.setQueryData<ChatModel>(
-      ["chatList", `{chat: ${groupChat._id}}`],
-      groupChat
-    );
-    navigate(`/chat/${groupChat._id}?isGroupChat=${groupChat.isGroupChat}`);
-  }
 
   const createGroup = () => {
     try {
@@ -96,7 +77,7 @@ const CreateGroupChat: React.FC<CreateGroupChatProps> = ({ children }) => {
   };
 
   return (
-    <CustomModal openBtn={children} sx={{ top: "5vh", pb: 3 }}>
+    <>
       <Typography align="center" variant="h6" p={0} m={0}>
         CREATE NEW GROUP
       </Typography>
@@ -121,7 +102,7 @@ const CreateGroupChat: React.FC<CreateGroupChatProps> = ({ children }) => {
           sx={{ boxSizing: "border-box" }}
           label={"Search Users..."}
           onInput={debouncedOnInput}
-          endAdornment={<>{isLoading && <Box width={"10px"}>loading</Box>}</>}
+          endAdornment={isLoading && <Box width={"10px"}>loading</Box>}
         />
         <SelectedUsersList
           users={selectedUsers}
@@ -138,14 +119,28 @@ const CreateGroupChat: React.FC<CreateGroupChatProps> = ({ children }) => {
         {isError && (
           <Typography textAlign={"center"}>Nothing Found!</Typography>
         )}
-        <Button
+        <LoadingButton
           sx={{ alignSelf: "end" }}
           variant="contained"
+          loading={groupMutation.isLoading}
+          disabled={groupMutation.isLoading}
           onClick={createGroup}
         >
           Create
-        </Button>
+        </LoadingButton>
       </Stack>
+    </>
+  );
+};
+
+type CreateGroupChatProps = {
+  children: ReactNode;
+};
+
+const CreateGroupChat: React.FC<CreateGroupChatProps> = ({ children }) => {
+  return (
+    <CustomModal openBtn={children} sx={{ top: "5vh", pb: 3 }}>
+      <CreateGroupChatContent />
     </CustomModal>
   );
 };

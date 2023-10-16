@@ -1,22 +1,36 @@
 import React, { ReactNode } from "react";
-import { Typography, Avatar, Button, Divider, Stack } from "@mui/material";
+import {
+  Typography,
+  Avatar,
+  Button,
+  Divider,
+  Stack,
+  Theme,
+  SxProps,
+} from "@mui/material";
 import { UserModel } from "../../models/UserModel";
 import CustomModal from "../CustomComponents/CustomModal";
 import { ChatModel } from "../../models/ChatModel";
 import RenameGroupChat from "../ChatArea/GroupForms/Forms/RenameGroupChat";
 import GroupForm from "../ChatArea/GroupForms/Forms/GroupForm";
+import { useModal } from "../Context/ModalProvider";
 
 type UserProfileModalProps<T> = {
   profile: T;
-  children: ReactNode;
+  btnText: string;
+  sx?: SxProps<Theme>;
+  isBtn?: boolean;
 };
 
-const UserProfileModal: React.FC<UserProfileModalProps<UserModel>> = ({
+const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
   profile,
-  children,
+  btnText,
+  isBtn = false,
+  sx,
 }) => {
-  return (
-    <CustomModal sx={{ alignItems: "center" }} openBtn={children}>
+  const { openModal } = useModal();
+  const modalContent = (
+    <>
       <Typography variant="h4" component="h2">
         {profile?.name}
       </Typography>
@@ -24,16 +38,31 @@ const UserProfileModal: React.FC<UserProfileModalProps<UserModel>> = ({
       <Typography variant="h5" sx={{ mt: 2 }}>
         Email: {profile?.email}
       </Typography>
-    </CustomModal>
+    </>
+  );
+  return (
+    <>
+      {isBtn ? (
+        <Button onClick={() => openModal(modalContent)} sx={{ p: 1, ...sx }}>
+          {btnText}
+        </Button>
+      ) : (
+        <Typography onClick={() => openModal(modalContent)} sx={sx}>
+          {btnText}
+        </Typography>
+      )}
+    </>
   );
 };
 
 const GroupProfileModal: React.FC<UserProfileModalProps<ChatModel>> = ({
   profile,
-  children,
+  btnText,
+  sx,
 }) => {
-  return (
-    <CustomModal sx={{ alignItems: "center" }} openBtn={children}>
+  const { openModal } = useModal();
+  const modalContent = (
+    <>
       <Typography align="center" variant="h6" p={0} m={0}>
         Profile
       </Typography>
@@ -58,7 +87,12 @@ const GroupProfileModal: React.FC<UserProfileModalProps<ChatModel>> = ({
         <GroupForm.AddMembers />
         <Button>remove users from group</Button>
       </Stack>
-    </CustomModal>
+    </>
+  );
+  return (
+    <Button sx={{ p: 1, ...sx }} onClick={() => openModal(modalContent)}>
+      {btnText}
+    </Button>
   );
 };
 

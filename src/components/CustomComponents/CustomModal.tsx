@@ -1,5 +1,12 @@
-import React, { ReactNode } from "react";
-import { Modal, Box, Typography, SxProps, Theme, Avatar } from "@mui/material";
+import React, {
+  Children,
+  ReactElement,
+  ReactNode,
+  cloneElement,
+  isValidElement,
+} from "react";
+import { Modal, Box, SxProps, Theme } from "@mui/material";
+import { useModal } from "../Context/ModalProvider";
 
 interface CustomModalProps {
   openBtn: ReactNode;
@@ -7,10 +14,8 @@ interface CustomModalProps {
   sx?: SxProps<Theme>;
 }
 
-const CustomModal: React.FC<CustomModalProps> = ({ openBtn, sx, children }) => {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+const CustomModal: React.FC<CustomModalProps> = ({ sx }) => {
+  const { isOpen, closeModal, modalContent } = useModal();
 
   const innerModalStyle: SxProps<Theme> = {
     display: "flex",
@@ -35,18 +40,25 @@ const CustomModal: React.FC<CustomModalProps> = ({ openBtn, sx, children }) => {
     pt: 1,
   };
 
+  // const ChildrenWithProps = Children.map(children, (child) => {
+  //   if (!isValidElement(child)) return child;
+  //   return cloneElement<ModalChildProps>(
+  //     child as ReactElement<ModalChildProps>,
+  //     { handleClose }
+  //   );
+  // });
+
   return (
     <>
-      <span onClick={handleOpen}>{openBtn}</span>
       <Modal
-        open={open}
-        onClose={handleClose}
+        open={isOpen}
+        onClose={closeModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={{ ...modalStyle, ...sx }}>
           <Box sx={{ ...innerModalStyle }}></Box>
-          {children}
+          {modalContent}
         </Box>
       </Modal>
     </>

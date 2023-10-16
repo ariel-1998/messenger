@@ -85,7 +85,6 @@ const AddMemberToGroup: React.FC = () => {
   const [selectedUsers, setSelectedUsers] = useState<UserModel[]>([]);
   const [userSearch, setUserSearch] = useState("");
   const { id } = useParams();
-  const queryClient = useQueryClient();
 
   const { debounce: debouncedOnInput, isLoading } = useDebounce({
     fn: onInput,

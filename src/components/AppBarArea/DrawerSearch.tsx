@@ -1,13 +1,13 @@
 import { List, Avatar, Stack, Typography } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import CustomSearchInput from "../CustomComponents/CustomSearchInput";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ErrorModels, toastifyService } from "../../services/toastifyService";
+import { useQuery } from "@tanstack/react-query";
+import { toastifyService } from "../../services/toastifyService";
 import { userService } from "../../services/userService";
 import CustomListItem from "../CustomComponents/CustomListItem";
 import LoadingSkeletons from "../CustomComponents/LoadingSkeletons";
-import { Link, useNavigate } from "react-router-dom";
 import { chatService } from "../../services/chatService";
+import useFetchState from "../../hooks/useFetchState";
 
 type DrawerSearchProps = {
   toggleDrawer?: () => void;
@@ -17,6 +17,19 @@ const DrawerSearch: React.FC<DrawerSearchProps> = ({ toggleDrawer }) => {
   const searchRef = useRef<HTMLInputElement>(null);
   const [userSearch, setUserSearch] = useState("");
   const toggleDrowerFn = toggleDrawer || (() => undefined);
+  const [userId, setUserId] = useState("");
+
+  const accessChatFn = useCallback(
+    () => chatService.accessChat(userId),
+    [userId]
+  );
+
+  useFetchState({
+    fn: accessChatFn,
+    onSucess: toggleDrowerFn,
+    onError: (error) => toastifyService.error(error),
+    enabled: !!userId,
+  });
 
   const {
     data: users,
@@ -56,26 +69,19 @@ const DrawerSearch: React.FC<DrawerSearchProps> = ({ toggleDrawer }) => {
       {users && (
         <Stack spacing={1} pb={2}>
           {users.map((user) => (
-            <Link
-              style={{ color: "#333" }}
-              to={`/chat/${user._id}?isGroupChat=false`}
-              onClick={toggleDrowerFn}
+            <CustomListItem
+              onClick={() => setUserId(user._id)}
               key={user._id}
+              sx={{ height: "80px" }}
             >
-              <CustomListItem sx={{ height: "80px" }}>
-                <Stack
-                  flexDirection={"row"}
-                  width={"100%"}
-                  alignItems={"center"}
-                >
-                  <Stack spacing={1} p={2} width={"100%"}>
-                    <Typography variant="h6">{user.name}</Typography>
-                    <Typography>Email: {user.email}</Typography>
-                  </Stack>
-                  <Avatar src={user.image as string} />
+              <Stack flexDirection={"row"} width={"100%"} alignItems={"center"}>
+                <Stack spacing={1} p={2} width={"100%"}>
+                  <Typography variant="h6">{user.name}</Typography>
+                  <Typography>Email: {user.email}</Typography>
                 </Stack>
-              </CustomListItem>
-            </Link>
+                <Avatar src={user.image as string} />
+              </Stack>
+            </CustomListItem>
           ))}
         </Stack>
       )}

@@ -14,40 +14,35 @@ const ChatBox: React.FC = () => {
   const theme = useTheme();
   const screanSize = useMediaQuery(theme.breakpoints.up("md"));
   const user = useSelector((state: RootState) => state.auth);
-  const { id } = useParams();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const isGroupChat = queryParams.get("isGroupChat") === "true";
-  const queryClient = useQueryClient();
+  const { selectedChat } = useSelector((state: RootState) => state.chat);
+  // const { data: chat } = useQuery({
+  //   queryKey: ["chatList", `{chat: ${id}}`],
+  //   queryFn: () => {
+  //     if (!isGroupChat) return chatService.accessChat(id as string);
+  //     return chatService.accessGroupChat(id as string);
+  //   },
+  //   onSuccess: onChatQuerySuccess,
+  //   enabled: !!id,
+  // });
 
-  const { data: chat } = useQuery({
-    queryKey: ["chatList", `{chat: ${id}}`],
-    queryFn: () => {
-      if (!isGroupChat) return chatService.accessChat(id as string);
-      return chatService.accessGroupChat(id as string);
-    },
-    onSuccess: onChatQuerySuccess,
-    enabled: !!id,
-  });
+  // function onChatQuerySuccess(data: ChatModel) {
+  //   queryClient.setQueryData<ChatModel[] | undefined>(
+  //     ["chatList"],
+  //     (oldData) => {
+  //       if (!oldData) return [data];
+  //       const index = oldData.findIndex((item) => item._id === data._id);
+  //       if (index !== -1) return oldData;
+  //       const filteredData = oldData.filter((chat) => chat._id !== data._id);
+  //       return [data, ...filteredData];
+  //     }
+  //   );
+  // }
 
-  function onChatQuerySuccess(data: ChatModel) {
-    queryClient.setQueryData<ChatModel[] | undefined>(
-      ["chatList"],
-      (oldData) => {
-        if (!oldData) return [data];
-        const index = oldData.findIndex((item) => item._id === data._id);
-        if (index !== -1) return oldData;
-        const filteredData = oldData.filter((chat) => chat._id !== data._id);
-        return [data, ...filteredData];
-      }
-    );
-  }
-
-  const chatTitle = !chat
+  const chatTitle = !selectedChat
     ? "Chat"
-    : chat.isGroupChat
-    ? chat.chatName
-    : findUserInChat(chat, user)?.name;
+    : selectedChat.isGroupChat
+    ? selectedChat.chatName
+    : findUserInChat(selectedChat, user)?.name;
 
   return (
     <Box
@@ -68,20 +63,17 @@ const ChatBox: React.FC = () => {
             <Button sx={{ p: 1 }}>Back</Button>
           </Link>
         )}
-        {chat ? (
-          (isGroupChat && (
-            <ProfileModal.Group profile={chat}>
-              <Button sx={{ p: 1 }}>View profile</Button>
-            </ProfileModal.Group>
+        {selectedChat &&
+          ((selectedChat.isGroupChat && (
+            <ProfileModal.Group profile={selectedChat} btnText="View profile" />
           )) ||
-          (!isGroupChat && (
-            <ProfileModal.User profile={findUserInChat(chat, user)!}>
-              <Button sx={{ p: 1 }}>View profile</Button>
-            </ProfileModal.User>
-          ))
-        ) : (
-          <Button sx={{ p: 1 }}>View profile</Button>
-        )}
+            (!selectedChat.isGroupChat && (
+              <ProfileModal.User
+                btnText="View profile"
+                profile={findUserInChat(selectedChat, user)!}
+                isBtn={true}
+              />
+            )))}
       </Box>
       <Divider textAlign="center">{chatTitle}</Divider>
       <Box></Box>

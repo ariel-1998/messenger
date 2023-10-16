@@ -1,49 +1,51 @@
 import { Button, Stack } from "@mui/material";
 import React, { useRef } from "react";
 import GroupFormInput from "../GroupFormInput";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { chatService } from "../../../../services/chatService";
 import {
   ErrorModels,
   toastifyService,
 } from "../../../../services/toastifyService";
-import { ChatModel, groupNameSchema } from "../../../../models/ChatModel";
+import { groupNameSchema } from "../../../../models/ChatModel";
 import { extractZodErrors } from "../../../../utils/zodMetods";
 import { ZodError } from "zod";
 
 interface RenameGroupChatProps {
   groupName: string;
   groupId: string;
+  handleClose?: () => void;
 }
 
 const RenameGroupChat: React.FC<RenameGroupChatProps> = ({
   groupName,
   groupId,
+  handleClose,
 }) => {
   const renameRef = useRef<HTMLDivElement>();
-  const queryClient = useQueryClient();
 
+  const handleModalClose = handleClose || (() => undefined);
   const renameMutation = useMutation({
     mutationFn: chatService.renameGroup,
     onError: (error: ErrorModels) => toastifyService.error(error),
-    onSuccess: onRenameSuccess,
+    onSuccess: handleModalClose,
   });
 
-  function onRenameSuccess(renamedGroup: ChatModel) {
-    queryClient.setQueryData<ChatModel[]>(["chatList"], (oldData) => {
-      if (!oldData) return [renamedGroup];
-      const newChatList = oldData.map((chat) => {
-        if (chat._id !== renamedGroup._id) return chat;
-        return renamedGroup;
-      });
-      return newChatList;
-    });
+  // function onRenameSuccess(renamedGroup: ChatModel) {
+  //   queryClient.setQueryData<ChatModel[]>(["chatList"], (oldData) => {
+  //     if (!oldData) return [renamedGroup];
+  //     const newChatList = oldData.map((chat) => {
+  //       if (chat._id !== renamedGroup._id) return chat;
+  //       return renamedGroup;
+  //     });
+  //     return newChatList;
+  //   });
 
-    queryClient.setQueryData(
-      ["chatList", `{chat: ${renamedGroup._id}}`],
-      renamedGroup
-    );
-  }
+  //   queryClient.setQueryData(
+  //     ["chatList", `{chat: ${renamedGroup._id}}`],
+  //     renamedGroup
+  //   );
+  // }
 
   const onClick = () => {
     const input = renameRef.current?.firstChild as HTMLInputElement;
