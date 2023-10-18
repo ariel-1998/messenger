@@ -17,7 +17,10 @@ class UserService {
     formData.append("file", image[0]);
     formData.append("upload_preset", "messenger"); // put it in .env
     formData.append("cloud_name", "dnlv6fy3z");
-    const { data } = await axios.post(postImgEndpoint, formData);
+    const { data } = await axios.post<cloudinaryImgRes>(
+      postImgEndpoint,
+      formData
+    );
     return data;
   }
 

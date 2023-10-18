@@ -58,11 +58,12 @@ const ChatBox: React.FC = () => {
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        {!screanSize && (
+        {/**change it to a button the set selectedChat to null */}
+        {/* {!screanSize && (
           <Link to={"/chat"}>
             <Button sx={{ p: 1 }}>Back</Button>
           </Link>
-        )}
+        )} */}
         {selectedChat &&
           ((selectedChat.isGroupChat && (
             <ProfileModal.Group profile={selectedChat} btnText="View profile" />

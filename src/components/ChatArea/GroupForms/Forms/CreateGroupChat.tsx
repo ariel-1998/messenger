@@ -9,7 +9,7 @@ import { isUserInArr } from "../../../../utils/userMethods";
 import SelectedUsersList from "../SelectedUsersList";
 import UserList from "../UserList";
 import { chatService } from "../../../../services/chatService";
-import { ChatModel, createGroupSchema } from "../../../../models/ChatModel";
+import { createGroupSchema } from "../../../../models/ChatModel";
 import {
   ErrorModels,
   toastifyService,

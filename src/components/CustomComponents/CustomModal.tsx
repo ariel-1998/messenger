@@ -1,3 +1,4 @@
+import { SxProps, Modal, Box, Theme } from "@mui/material";
 import React, {
   Children,
   ReactElement,
@@ -5,17 +6,31 @@ import React, {
   cloneElement,
   isValidElement,
 } from "react";
-import { Modal, Box, SxProps, Theme } from "@mui/material";
-import { useModal } from "../Context/ModalProvider";
 
 interface CustomModalProps {
   openBtn: ReactNode;
   children: ReactNode;
   sx?: SxProps<Theme>;
+  innerModalSx?: SxProps<Theme>;
 }
 
-const CustomModal: React.FC<CustomModalProps> = ({ sx }) => {
-  const { isOpen, closeModal, modalContent } = useModal();
+type ModalChildProps = {
+  handleClose?: () => void;
+};
+
+const CustomModal: React.FC<CustomModalProps> = ({
+  sx,
+  openBtn,
+  children,
+  innerModalSx,
+}) => {
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const innerModalStyle: SxProps<Theme> = {
     display: "flex",
@@ -40,25 +55,26 @@ const CustomModal: React.FC<CustomModalProps> = ({ sx }) => {
     pt: 1,
   };
 
-  // const ChildrenWithProps = Children.map(children, (child) => {
-  //   if (!isValidElement(child)) return child;
-  //   return cloneElement<ModalChildProps>(
-  //     child as ReactElement<ModalChildProps>,
-  //     { handleClose }
-  //   );
-  // });
+  const ChildrenWithProps = Children.map(children, (child) => {
+    if (!isValidElement(child)) return child;
+    return cloneElement<ModalChildProps>(
+      child as ReactElement<ModalChildProps>,
+      { handleClose }
+    );
+  });
 
   return (
     <>
+      <span onClick={handleOpen}>{openBtn}</span>
       <Modal
-        open={isOpen}
-        onClose={closeModal}
+        open={open}
+        onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={{ ...modalStyle, ...sx }}>
           <Box sx={{ ...innerModalStyle }}></Box>
-          {modalContent}
+          <Box sx={innerModalSx}>{ChildrenWithProps}</Box>
         </Box>
       </Modal>
     </>

@@ -15,6 +15,7 @@ import { authService } from "../../services/authServices";
 import { useMutation } from "@tanstack/react-query";
 import { LoadingButton } from "@mui/lab";
 import { userService } from "../../services/userService";
+import { ErrorModels, toastifyService } from "../../services/toastifyService";
 
 const Register: React.FC = () => {
   const {
@@ -32,12 +33,15 @@ const Register: React.FC = () => {
 
   const formMutation = useMutation({
     mutationFn: authService.register,
-    onError: (err) => console.log(err),
+    onError: (err: ErrorModels) => toastifyService.error(err),
   });
 
   const imageMutation = useMutation({
     mutationFn: userService.uploadImage,
-    onError: (err) => console.log(err), // maybe delete image from db if an error accured
+    onError: () =>
+      toastifyService.error({
+        message: "There was an error, please try again later.",
+      }),
   });
 
   const onSubmit = (data: UserModel) => {

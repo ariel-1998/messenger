@@ -9,7 +9,6 @@ import { ToastContainer } from "react-toastify";
 import AppRouter from "./components/AppRouter.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "react-toastify/dist/ReactToastify.css";
-import ModalProvider from "./components/Context/ModalProvider.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,9 +25,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
-          <ModalProvider>
-            <AppRouter />
-          </ModalProvider>
+          <AppRouter />
           <ToastContainer
             position="top-center"
             hideProgressBar={true}

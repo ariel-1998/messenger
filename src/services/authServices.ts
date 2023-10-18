@@ -8,7 +8,6 @@ const loginEndpoint = "auth/login";
 
 class AuthService {
   async register(user: UserModel) {
-    console.log(registerEndpoint);
     const { data } = await defaultAxios.post<string>(registerEndpoint, user);
     store.dispatch(login(data));
   }

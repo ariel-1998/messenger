@@ -5,8 +5,8 @@ import UserListItem from "./UserListItem";
 
 type UserListProps = {
   users: UserModel[];
-  selectedUsers: UserModel[];
-  onUserClick: (user: UserModel) => void;
+  selectedUsers?: UserModel[];
+  onUserClick?: (user: UserModel) => void;
 } & ListItemProps;
 
 const UserList: React.FC<UserListProps> = ({
@@ -29,10 +29,15 @@ const UserList: React.FC<UserListProps> = ({
           key={user._id}
           sx={{
             bgcolor:
-              isUserInArr(selectedUsers, user) === -1 ? "#ddd" : "#bbdefb",
+              selectedUsers && isUserInArr(selectedUsers, user) === -1
+                ? "#ddd"
+                : "#bbdefb" || "#ddd",
             transition: "background-color 900ms ease",
           }}
-          onClick={() => onUserClick(user)}
+          onClick={() => {
+            if (!onUserClick) return;
+            onUserClick(user);
+          }}
           user={user}
         />
       ))}

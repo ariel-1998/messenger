@@ -100,9 +100,10 @@ type ChatListItemsProps = {
 
 function ChatListItems({ search }: ChatListItemsProps): JSX.Element {
   const loggedUser = useSelector((state: RootState) => state.auth);
-  const { chats } = useSelector((state: RootState) => state.chat);
+  const { chats: chatList } = useSelector((state: RootState) => state.chat);
   const dispatch = useDispatch();
 
+  const chats = chatList || [];
   const onUserClick = (chat: ChatModel) => {
     dispatch(setSelectedChat({ chat, isExist: true }));
   };

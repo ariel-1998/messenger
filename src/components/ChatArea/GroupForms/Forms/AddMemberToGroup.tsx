@@ -1,22 +1,7 @@
-import {
-  Typography,
-  Divider,
-  Stack,
-  Box,
-  Button,
-  Modal,
-  useTheme,
-  useMediaQuery,
-} from "@mui/material";
-import {
-  isError,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import React, { ChangeEvent, ReactNode, useState } from "react";
+import { Typography, Divider, Stack, Box, Button } from "@mui/material";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import useDebounce from "../../../../hooks/useDebounce";
-import CustomModal from "../../../CustomComponents/CustomModal";
 import GroupFormInput from "../GroupFormInput";
 import SelectedUsersList from "../SelectedUsersList";
 import UserList from "../UserList";
@@ -28,67 +13,47 @@ import {
   ErrorModels,
   toastifyService,
 } from "../../../../services/toastifyService";
-import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../utils/reduxStore";
+import ChildModal from "../../../CustomComponents/ChildModal";
 
-function ChildModal({
-  children,
-  openBtn,
-  closeBtn,
-}: {
-  children: ReactNode;
-  openBtn: ReactNode;
-  closeBtn: ReactNode;
-}) {
-  const theme = useTheme();
-  const size = useMediaQuery(theme.breakpoints.down("xs"));
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
+type AddMemberToGroupProps = {
+  handleModalClose: () => void;
+  handleChildModalClose?: () => void;
+};
 
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: size ? "90vw" : 300,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    pt: 2,
-    px: 4,
-    pb: 3,
-  };
+const AddMemberToGroup: React.FC<AddMemberToGroupProps> = ({
+  handleModalClose,
+  handleChildModalClose,
+}) => {
+  const childModalClose = handleChildModalClose || (() => undefined);
+
+  function closeModals() {
+    childModalClose();
+    handleModalClose();
+  }
+  const OpenBtn = <Button>Add Members</Button>;
+
   return (
-    <>
-      <span onClick={handleOpen}>{openBtn}</span>
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={{ ...style }}>
-          <Stack width={"100%"}>
-            {children}
-            <Stack width={"98%"}>
-              <span style={{ alignSelf: "end" }} onClick={handleClose}>
-                {closeBtn}
-              </span>
-            </Stack>
-          </Stack>
-        </Box>
-      </Modal>
-    </>
+    <ChildModal openBtn={OpenBtn}>
+      <ChildModalContent modalsClose={closeModals} />
+    </ChildModal>
   );
-}
+};
 
-const AddMemberToGroup: React.FC = () => {
+export default AddMemberToGroup;
+
+type ChildModalContentProps = {
+  modalsClose(): void;
+};
+
+function ChildModalContent({ modalsClose }: ChildModalContentProps) {
   const [selectedUsers, setSelectedUsers] = useState<UserModel[]>([]);
   const [userSearch, setUserSearch] = useState("");
-  const { id } = useParams();
-
+  const { selectedChat } = useSelector((state: RootState) => state.chat);
   const { debounce: debouncedOnInput, isLoading } = useDebounce({
     fn: onInput,
-    wait: 1500,
+    wait: 700,
   });
 
   const { data: usersData, isError } = useQuery({
@@ -100,6 +65,7 @@ const AddMemberToGroup: React.FC = () => {
   const addMembersMutation = useMutation({
     mutationFn: chatService.addMembersToGroup,
     onError: (error: ErrorModels) => toastifyService.error(error),
+    onSuccess: modalsClose,
   });
 
   function onInput(e: ChangeEvent<HTMLInputElement>) {
@@ -120,26 +86,15 @@ const AddMemberToGroup: React.FC = () => {
   };
 
   const addMembers = () => {
-    if (!id) return toastifyService.error({ message: "group chat not found!" });
+    if (!selectedChat) return;
     addMembersMutation.mutate({
-      groupId: id,
+      groupId: selectedChat._id,
       users: selectedUsers,
     });
   };
 
   return (
-    <ChildModal
-      openBtn={<Button>Add Members</Button>}
-      closeBtn={
-        <Button
-          sx={{ alignSelf: "end" }}
-          variant="contained"
-          onClick={addMembers}
-        >
-          Add
-        </Button>
-      }
-    >
+    <Box>
       <Typography align="center" variant="h6" p={0} m={0}>
         ADD MEMBERS
       </Typography>
@@ -174,9 +129,14 @@ const AddMemberToGroup: React.FC = () => {
         {isError && (
           <Typography textAlign={"center"}>Nothing Found!</Typography>
         )}
+        <Button
+          sx={{ alignSelf: "end" }}
+          variant="contained"
+          onClick={addMembers}
+        >
+          Add
+        </Button>
       </Stack>
-    </ChildModal>
+    </Box>
   );
-};
-
-export default AddMemberToGroup;
+}

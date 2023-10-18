@@ -35,16 +35,28 @@ const chatSlice = createSlice({
       state.chats.unshift(chat);
       return state;
     },
-    renameGroup(state, action: PayloadAction<ChatModel>) {
-      const renamedChat = action.payload;
-      state.chats = state.chats.filter((chat) => chat._id !== renamedChat._id);
-      state.chats.unshift(renamedChat);
+    updateGroup(state, action: PayloadAction<ChatModel>) {
+      const updatedGroup = action.payload;
+      state.chats = state.chats.filter((chat) => chat._id !== updatedGroup._id);
+      state.chats.unshift(updatedGroup);
+      state.selectedChat = updatedGroup;
+      return state;
+    },
+    deleteGroup(state, action: PayloadAction<string>) {
+      const groupId = action.payload;
+      state.chats = state.chats.filter((chat) => chat._id !== groupId);
+      state.selectedChat = null;
       return state;
     },
   },
 });
 
-export const { getAllChats, setSelectedChat, createGroup, renameGroup } =
-  chatSlice.actions;
+export const {
+  getAllChats,
+  setSelectedChat,
+  createGroup,
+  updateGroup,
+  deleteGroup,
+} = chatSlice.actions;
 
 export default chatSlice.reducer;

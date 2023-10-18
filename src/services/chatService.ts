@@ -4,8 +4,9 @@ import { authenticatedAxios } from "../utils/axiosInterceptors";
 import {
   createGroup,
   getAllChats,
-  renameGroup,
+  updateGroup,
   setSelectedChat,
+  deleteGroup,
 } from "../utils/chatSlice";
 import { store } from "../utils/reduxStore";
 
@@ -46,10 +47,13 @@ class ChatService {
   }) {
     const usersIds = users.map((user) => user._id);
     const stringifyIds = JSON.stringify(usersIds);
-    const { data } = await authenticatedAxios.post(createGroupEndpoint, {
-      users: stringifyIds,
-      chatName,
-    });
+    const { data } = await authenticatedAxios.post<ChatModel>(
+      createGroupEndpoint,
+      {
+        users: stringifyIds,
+        chatName,
+      }
+    );
     store.dispatch(createGroup(data));
   }
 
@@ -61,13 +65,10 @@ class ChatService {
     groupId: string;
   }) {
     const endpoint = renameGroupEndpoint(groupId);
-    const { data } = await authenticatedAxios.put(endpoint, { chatName });
-    store.dispatch(renameGroup(data));
-  }
-
-  async deleteGroupChat(groupId: string) {
-    const endpoint = deleteGroupEndpoint(groupId);
-    await authenticatedAxios.delete(endpoint);
+    const { data } = await authenticatedAxios.put<ChatModel>(endpoint, {
+      chatName,
+    });
+    store.dispatch(updateGroup(data));
   }
 
   async addMembersToGroup({
@@ -76,19 +77,32 @@ class ChatService {
   }: {
     groupId: string;
     users: UserModel[];
-  }): Promise<ChatModel> {
+  }) {
     const usersIds = users.map((user) => user._id);
     const stringifyIds = JSON.stringify(usersIds);
     const endpoint = addtoGroupEndpoint(groupId);
-    const { data } = await authenticatedAxios.put(endpoint, {
+    const { data } = await authenticatedAxios.put<ChatModel>(endpoint, {
       users: stringifyIds,
     });
-    return data;
+    store.dispatch(updateGroup(data));
   }
 
-  async removeMembersFromGroup(groupId: string, userId: string) {
+  async removeMembersFromGroup({
+    groupId,
+    userId,
+  }: {
+    groupId: string;
+    userId: string;
+  }) {
     const endpoint = removeFromGroupEndpoint(groupId, userId);
+    const { data } = await authenticatedAxios.put<ChatModel>(endpoint);
+    store.dispatch(updateGroup(data));
+  }
+
+  async deleteGroupChat(groupId: string) {
+    const endpoint = deleteGroupEndpoint(groupId);
     await authenticatedAxios.delete(endpoint);
+    store.dispatch(deleteGroup(groupId));
   }
 }
 
