@@ -1,8 +1,7 @@
-import React, { ChangeEvent, ReactNode, useState } from "react";
-import CustomModal from "../../../CustomComponents/Modals/CustomModal";
+import React, { ChangeEvent, useState } from "react";
 import { Divider, Stack, Typography, Box, Button } from "@mui/material";
 import { userService } from "../../../../services/userService";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import useDebounce from "../../../../hooks/useDebounce";
 import { UserModel } from "../../../../models/UserModel";
 import { isUserInArr } from "../../../../utils/userMethods";
@@ -18,14 +17,48 @@ import GroupFormInput from "../GroupFormInput";
 import { extractZodErrors } from "../../../../utils/zodMetods";
 import { ZodError } from "zod";
 import { LoadingButton } from "@mui/lab";
+import { Add } from "@mui/icons-material";
+import CustomModal from "../../../CustomComponents/Modals/CustomModal";
+
+const CreateGroupChat: React.FC = () => {
+  const [open, setOpen] = useState(false);
+  const handleClose = () => setOpen(false);
+  const handleOpen = () => setOpen(false);
+  return (
+    <>
+      <Button
+        onClick={handleOpen}
+        sx={{
+          p: 0,
+          fontSize: "1.1rem",
+          fontWeight: 400,
+          lineHeight: 1.5,
+          color: "#f50057",
+        }}
+        endIcon={<Add />}
+      >
+        new group
+      </Button>
+      <CustomModal
+        open={open}
+        handleClose={handleClose}
+        sx={{ top: "5vh", pb: 3 }}
+      >
+        <CreateGroupChatContent handleClose={handleClose} />
+      </CustomModal>
+    </>
+  );
+};
+
+export default CreateGroupChat;
 
 interface CreateGroupChatContentProps {
-  handleClose?: () => void;
+  handleClose: () => void;
 }
 
-const CreateGroupChatContent: React.FC<CreateGroupChatContentProps> = ({
+function CreateGroupChatContent({
   handleClose,
-}) => {
+}: CreateGroupChatContentProps): JSX.Element {
   const [selectedUsers, setSelectedUsers] = useState<UserModel[]>([]);
   const [userSearch, setUserSearch] = useState("");
   const [groupName, setGroupName] = useState("");
@@ -131,18 +164,4 @@ const CreateGroupChatContent: React.FC<CreateGroupChatContentProps> = ({
       </Stack>
     </>
   );
-};
-
-type CreateGroupChatProps = {
-  children: ReactNode;
-};
-
-const CreateGroupChat: React.FC<CreateGroupChatProps> = ({ children }) => {
-  return (
-    <CustomModal openBtn={children} sx={{ top: "5vh", pb: 3 }}>
-      <CreateGroupChatContent />
-    </CustomModal>
-  );
-};
-
-export default CreateGroupChat;
+}

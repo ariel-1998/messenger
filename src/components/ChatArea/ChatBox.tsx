@@ -66,7 +66,7 @@ const ChatBox: React.FC = () => {
         )} */}
         {selectedChat &&
           ((selectedChat.isGroupChat && (
-            <ProfileModal.Group profile={selectedChat} btnText="View profile" />
+            <ProfileModal.Group btnText="View profile" />
           )) ||
             (!selectedChat.isGroupChat && (
               <ProfileModal.User

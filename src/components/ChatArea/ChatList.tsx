@@ -56,20 +56,7 @@ const ChatList: React.FC = () => {
         justifyContent={"space-around"}
       >
         <Typography variant="h6">Chats</Typography>
-        <GroupForm.Create>
-          <Button
-            sx={{
-              p: 0,
-              fontSize: "1.1rem",
-              fontWeight: 400,
-              lineHeight: 1.5,
-              color: "#f50057",
-            }}
-            endIcon={<Add />}
-          >
-            new group
-          </Button>
-        </GroupForm.Create>
+        <GroupForm.Create />
       </Stack>
       <Stack alignItems={"center"}>
         <CustomSearchInput

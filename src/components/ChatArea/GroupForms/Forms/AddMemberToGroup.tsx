@@ -19,36 +19,40 @@ import ChildModal from "../../../CustomComponents/Modals/ChildModal";
 import { LoadingButton } from "@mui/lab";
 
 type AddMemberToGroupProps = {
-  handleModalClose: () => void;
-  handleChildModalClose?: () => void;
+  handleParentModalClose: () => void;
 };
 
 const AddMemberToGroup: React.FC<AddMemberToGroupProps> = ({
-  handleModalClose,
-  handleChildModalClose,
+  handleParentModalClose,
 }) => {
-  const childModalClose = handleChildModalClose || (() => undefined);
-
-  function closeModals() {
-    childModalClose();
-    handleModalClose();
-  }
-  const OpenBtn = <Button>Add Members</Button>;
+  const [open, setOpen] = useState(false);
+  const closeModal = () => setOpen(false);
+  const openModal = () => setOpen(true);
 
   return (
-    <ChildModal openBtn={OpenBtn}>
-      <ChildModalContent modalsClose={closeModals} />
-    </ChildModal>
+    <>
+      <Button onClick={openModal}>Add Members</Button>
+      <ChildModal open={open} handleClose={closeModal}>
+        <ChildModalContent
+          closeModalChild={closeModal}
+          closeRootModal={handleParentModalClose}
+        />
+      </ChildModal>
+    </>
   );
 };
 
 export default AddMemberToGroup;
 
 type ChildModalContentProps = {
-  modalsClose(): void;
+  closeModalChild(): void;
+  closeRootModal(): void;
 };
 
-function ChildModalContent({ modalsClose }: ChildModalContentProps) {
+function ChildModalContent({
+  closeRootModal,
+  closeModalChild,
+}: ChildModalContentProps) {
   const [selectedUsers, setSelectedUsers] = useState<UserModel[]>([]);
   const [userSearch, setUserSearch] = useState("");
   const { selectedChat } = useSelector((state: RootState) => state.chat);
@@ -66,7 +70,10 @@ function ChildModalContent({ modalsClose }: ChildModalContentProps) {
   const addMembersMutation = useMutation({
     mutationFn: chatService.addMembersToGroup,
     onError: (error: ErrorModels) => toastifyService.error(error),
-    onSuccess: modalsClose,
+    onSuccess: () => {
+      closeModalChild();
+      closeRootModal();
+    },
   });
 
   function onInput(e: ChangeEvent<HTMLInputElement>) {
@@ -130,15 +137,20 @@ function ChildModalContent({ modalsClose }: ChildModalContentProps) {
         {isError && (
           <Typography textAlign={"center"}>Nothing Found!</Typography>
         )}
-        <LoadingButton
-          loading={addMembersMutation.isLoading}
-          disabled={addMembersMutation.isLoading}
-          sx={{ alignSelf: "end" }}
-          variant="contained"
-          onClick={addMembers}
-        >
-          Add
-        </LoadingButton>
+        <Stack direction={"row"} spacing={1}>
+          <LoadingButton
+            loading={addMembersMutation.isLoading}
+            disabled={addMembersMutation.isLoading}
+            variant="contained"
+            sx={{ bgcolor: "#4CAF50", color: "black" }}
+            onClick={addMembers}
+          >
+            Submit
+          </LoadingButton>
+          <Button color="error" variant="contained" onClick={closeModalChild}>
+            Cancel
+          </Button>
+        </Stack>
       </Stack>
     </Box>
   );

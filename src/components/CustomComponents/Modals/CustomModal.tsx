@@ -1,46 +1,21 @@
 import { SxProps, Modal, Box, Theme } from "@mui/material";
-import React, {
-  Children,
-  ReactElement,
-  ReactNode,
-  cloneElement,
-  isValidElement,
-} from "react";
+import React, { ReactNode } from "react";
 
 interface CustomModalProps {
-  openBtn: ReactNode;
+  // openBtn: ReactNode;
+  open: boolean;
   children: ReactNode;
   sx?: SxProps<Theme>;
-  innerModalSx?: SxProps<Theme>;
+  handleClose(): void;
 }
-
-type ModalChildProps = {
-  handleClose?: () => void;
-};
 
 const CustomModal: React.FC<CustomModalProps> = ({
   sx,
-  openBtn,
+  open,
   children,
-  innerModalSx,
+  handleClose,
 }) => {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const innerModalStyle: SxProps<Theme> = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 1,
-  };
   const modalStyle: SxProps<Theme> = {
-    ...innerModalStyle,
-    alignItems: "left",
     position: "absolute",
     top: "5vh",
     left: "50%",
@@ -55,29 +30,10 @@ const CustomModal: React.FC<CustomModalProps> = ({
     pt: 1,
   };
 
-  const ChildrenWithProps = Children.map(children, (child) => {
-    if (!isValidElement(child)) return child;
-    return cloneElement<ModalChildProps>(
-      child as ReactElement<ModalChildProps>,
-      { handleClose }
-    );
-  });
-
   return (
-    <>
-      <span onClick={handleOpen}>{openBtn}</span>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={{ ...modalStyle, ...sx }}>
-          <Box sx={{ ...innerModalStyle }}></Box>
-          <Box sx={innerModalSx}>{ChildrenWithProps}</Box>
-        </Box>
-      </Modal>
-    </>
+    <Modal open={open} onClose={handleClose}>
+      <Box sx={{ ...modalStyle, ...sx }}>{children}</Box>
+    </Modal>
   );
 };
 

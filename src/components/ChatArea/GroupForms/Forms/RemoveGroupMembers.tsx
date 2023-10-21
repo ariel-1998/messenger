@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../utils/reduxStore";
 import {
@@ -24,49 +24,40 @@ import { LoadingButton } from "@mui/lab";
 import { UserModel } from "../../../../models/UserModel";
 import { ChatModel } from "../../../../models/ChatModel";
 
-const GroupMembersWHandleClose: React.FC = () => {
-  const OpenBtn = <Button>Members</Button>;
+const RemoveGroupMembers: React.FC = () => {
+  const [open, setOpen] = useState(false);
+  const closeModal = () => setOpen(false);
+  const openModal = () => setOpen(true);
   return (
-    <ChildModal sx={{ pb: 2 }} openBtn={OpenBtn}>
-      <ModalContent />
-    </ChildModal>
+    <>
+      <Button onClick={openModal}>Members</Button>
+      <ChildModal sx={{ pb: 2 }} open={open} handleClose={closeModal}>
+        <Stack spacing={1}>
+          <List
+            sx={{
+              width: "100%",
+              overflowY: "auto",
+              overflowX: "hidden",
+              maxHeight: "48vh",
+              margin: "auto",
+            }}
+          >
+            <UserPopperList />
+          </List>
+          <Button
+            variant="contained"
+            sx={{ alignSelf: "end" }}
+            onClick={closeModal}
+          >
+            Close
+          </Button>
+        </Stack>
+      </ChildModal>
+    </>
   );
 };
 
-export default GroupMembersWHandleClose;
-
-type ModalContentProps = {
-  handleChildModalClose?: () => void;
-};
-
-function ModalContent({
-  handleChildModalClose,
-}: ModalContentProps): JSX.Element {
-  const handleModalClose = handleChildModalClose || (() => undefined);
-
-  return (
-    <Stack spacing={1}>
-      <List
-        sx={{
-          width: "100%",
-          overflowY: "auto",
-          overflowX: "hidden",
-          maxHeight: "48vh",
-          margin: "auto",
-        }}
-      >
-        <UserPopperList />
-      </List>
-      <Button
-        variant="contained"
-        sx={{ alignSelf: "end" }}
-        onClick={handleModalClose}
-      >
-        Close
-      </Button>
-    </Stack>
-  );
-}
+export default RemoveGroupMembers;
 
 type UserPopperProps = {
   user: UserModel;
@@ -108,7 +99,6 @@ function UserPopper({ user, chat }: UserPopperProps): JSX.Element {
           left: 1,
           height: 28,
           width: 28,
-          zIndex: 100000,
         }}
         onClick={handlePopper}
       >
@@ -119,7 +109,7 @@ function UserPopper({ user, chat }: UserPopperProps): JSX.Element {
         id={id}
         open={open}
         anchorEl={elRef.current}
-        placement={"bottom-end"}
+        placement={"bottom-start"}
         transition
       >
         {({ TransitionProps }) => (

@@ -59,7 +59,7 @@ function DeleteGroup({ handleModalClose }: DeleteGroupProps) {
         id={id}
         open={open}
         anchorEl={elRef.current}
-        placement={"bottom-end"}
+        placement={"bottom-start"}
         transition
       >
         {({ TransitionProps }) => (

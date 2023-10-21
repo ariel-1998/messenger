@@ -2,46 +2,27 @@ import {
   useMediaQuery,
   Modal,
   Box,
-  Stack,
   useTheme,
   SxProps,
   Theme,
 } from "@mui/material";
-import React, {
-  Children,
-  ReactElement,
-  ReactNode,
-  cloneElement,
-  isValidElement,
-} from "react";
+import React, { ReactNode } from "react";
 
 interface ChildModalProps {
   children: ReactNode;
-  openBtn: ReactNode;
+  open: boolean;
+  handleClose(): void;
   sx?: SxProps<Theme>;
 }
 
-type ChildrenProps = {
-  handleChildModalClose?(): void;
-};
-
-const ChildModal: React.FC<ChildModalProps> = ({ children, openBtn, sx }) => {
+const ChildModal: React.FC<ChildModalProps> = ({
+  children,
+  open,
+  sx,
+  handleClose,
+}) => {
   const theme = useTheme();
   const size = useMediaQuery(theme.breakpoints.down("xs"));
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const ChildrenWithProps = Children.map(children, (child) => {
-    if (!isValidElement(child)) return child;
-    return cloneElement<ChildrenProps>(child as ReactElement<ChildrenProps>, {
-      handleChildModalClose: handleClose,
-    });
-  });
 
   const style: SxProps<Theme> = {
     position: "absolute",
@@ -57,14 +38,9 @@ const ChildModal: React.FC<ChildModalProps> = ({ children, openBtn, sx }) => {
     pb: 3,
   };
   return (
-    <>
-      <span onClick={handleOpen}>{openBtn}</span>
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={{ ...style, ...sx }}>
-          <Stack width={"100%"}>{ChildrenWithProps}</Stack>
-        </Box>
-      </Modal>
-    </>
+    <Modal open={open} onClose={handleClose}>
+      <Box sx={{ ...style, ...sx }}>{children}</Box>
+    </Modal>
   );
 };
 
