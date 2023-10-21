@@ -5,6 +5,7 @@ import {
   Typography,
   Avatar,
   Theme,
+  ListItemButtonProps,
 } from "@mui/material";
 import CustomListItem from "../../CustomComponents/CustomListItem";
 import { UserModel } from "../../../models/UserModel";
@@ -14,11 +15,13 @@ type UserListItemProps = {
   user: UserModel;
   sx?: SxProps<Theme>;
   children?: ReactNode;
+  listBtnProps?: ListItemButtonProps;
 } & ListItemProps;
 
 const UserListItem: React.FC<UserListItemProps> = ({
   user,
   sx,
+  listBtnProps,
   children,
   ...rest
 }) => (

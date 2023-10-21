@@ -15,7 +15,8 @@ import {
 } from "../../../../services/toastifyService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../utils/reduxStore";
-import ChildModal from "../../../CustomComponents/ChildModal";
+import ChildModal from "../../../CustomComponents/Modals/ChildModal";
+import { LoadingButton } from "@mui/lab";
 
 type AddMemberToGroupProps = {
   handleModalClose: () => void;
@@ -129,13 +130,15 @@ function ChildModalContent({ modalsClose }: ChildModalContentProps) {
         {isError && (
           <Typography textAlign={"center"}>Nothing Found!</Typography>
         )}
-        <Button
+        <LoadingButton
+          loading={addMembersMutation.isLoading}
+          disabled={addMembersMutation.isLoading}
           sx={{ alignSelf: "end" }}
           variant="contained"
           onClick={addMembers}
         >
           Add
-        </Button>
+        </LoadingButton>
       </Stack>
     </Box>
   );

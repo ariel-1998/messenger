@@ -1,7 +1,7 @@
 import React from "react";
 import { Typography, Avatar, Button, Theme, SxProps } from "@mui/material";
 import { UserModel } from "../../models/UserModel";
-import CustomModal from "../CustomComponents/CustomModal";
+import CustomModal from "../CustomComponents/Modals/CustomModal";
 import { ChatModel } from "../../models/ChatModel";
 import ModalChildWithHandleClose from "./ModalChildWithHandleClose";
 

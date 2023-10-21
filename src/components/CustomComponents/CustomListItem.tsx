@@ -28,7 +28,12 @@ const CustomListItem: React.FC<CustomListItemProps> = ({
       }}
       {...rest}
     >
-      <ListItemButton sx={{ height: "100%", borderRadius: "10px" }}>
+      <ListItemButton
+        sx={{
+          height: "100%",
+          borderRadius: "10px",
+        }}
+      >
         {children}
       </ListItemButton>
     </ListItem>

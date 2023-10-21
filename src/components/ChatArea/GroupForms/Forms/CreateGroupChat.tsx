@@ -1,5 +1,5 @@
 import React, { ChangeEvent, ReactNode, useState } from "react";
-import CustomModal from "../../../CustomComponents/CustomModal";
+import CustomModal from "../../../CustomComponents/Modals/CustomModal";
 import { Divider, Stack, Typography, Box, Button } from "@mui/material";
 import { userService } from "../../../../services/userService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

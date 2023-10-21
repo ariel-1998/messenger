@@ -1,18 +1,17 @@
-import React, { ReactNode } from "react";
+import React, { useRef } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../utils/reduxStore";
-import UserList from "../UserList";
 import {
   Box,
   Button,
+  IconButton,
+  Fade,
   List,
-  Modal,
+  Popper,
   Stack,
-  SxProps,
-  Theme,
   Typography,
 } from "@mui/material";
-import ChildModal from "../../../CustomComponents/ChildModal";
+import ChildModal from "../../../CustomComponents/Modals/ChildModal";
 import { useMutation } from "@tanstack/react-query";
 import { chatService } from "../../../../services/chatService";
 import {
@@ -21,7 +20,9 @@ import {
 } from "../../../../services/toastifyService";
 import Delete from "@mui/icons-material/HighlightOffRounded";
 import UserListItem from "../UserListItem";
+import { LoadingButton } from "@mui/lab";
 import { UserModel } from "../../../../models/UserModel";
+import { ChatModel } from "../../../../models/ChatModel";
 
 const GroupMembersWHandleClose: React.FC = () => {
   const OpenBtn = <Button>Members</Button>;
@@ -41,38 +42,8 @@ type ModalContentProps = {
 function ModalContent({
   handleChildModalClose,
 }: ModalContentProps): JSX.Element {
-  const { selectedChat } = useSelector((state: RootState) => state.chat);
-  const users = selectedChat?.users || [];
   const handleModalClose = handleChildModalClose || (() => undefined);
 
-  const removeMembersMutation = useMutation({
-    mutationFn: chatService.removeMembersFromGroup,
-    onError: (error: ErrorModels) => toastifyService.error(error),
-    onSuccess: () => toastifyService.success("Member was successfuly removed!"),
-  });
-
-  const onIconClick = (userId: string) => {
-    if (!selectedChat) return;
-    removeMembersMutation.mutate({
-      groupId: selectedChat._id,
-      userId,
-    });
-  };
-
-  const ModalOpenBtn = (
-    <Delete
-      sx={{
-        position: "absolute",
-        top: 0,
-        right: 0,
-        fill: "white",
-      }}
-    />
-  );
-  const RemoveUserBtn = ({ userId }: { userId: string }) => (
-    <Button onClick={() => onIconClick(userId)}>Remove</Button>
-  );
-  const ModalCloseBtn = <Button>Cancel</Button>;
   return (
     <Stack spacing={1}>
       <List
@@ -84,19 +55,7 @@ function ModalContent({
           margin: "auto",
         }}
       >
-        {users.map((user) => (
-          <UserListItem user={user} key={user._id}>
-            <MiniModal
-              customBtn={<RemoveUserBtn userId={user._id} />}
-              openBtn={ModalOpenBtn}
-              closeBtn={ModalCloseBtn}
-            >
-              <Typography>
-                Are you sure you wanr to Remove {user.name}?
-              </Typography>
-            </MiniModal>
-          </UserListItem>
-        ))}
+        <UserPopperList />
       </List>
       <Button
         variant="contained"
@@ -109,54 +68,112 @@ function ModalContent({
   );
 }
 
-type MiniModalProps = {
-  children: ReactNode;
-  openBtn: ReactNode;
-  closeBtn: ReactNode;
-  customBtn: ReactNode;
+type UserPopperProps = {
+  user: UserModel;
+  chat: ChatModel;
 };
 
-function MiniModal({
-  children,
-  openBtn,
-  closeBtn,
-  customBtn,
-}: MiniModalProps): JSX.Element {
+function UserPopper({ user, chat }: UserPopperProps): JSX.Element {
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
+  const elRef = useRef<HTMLButtonElement | null>(null);
+
+  const handlePopper = () => {
+    setOpen((previousOpen) => !previousOpen);
   };
 
-  const style: SxProps<Theme> = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "fit-content",
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 1,
+  const canBeOpen = open && Boolean(elRef);
+  const id = canBeOpen ? "spring-popper" : undefined;
+
+  const removeMembersMutation = useMutation({
+    mutationFn: chatService.removeMembersFromGroup,
+    onError: (error: ErrorModels) => toastifyService.error(error),
+    onSuccess: () => toastifyService.success("Member was successfuly removed!"),
+  });
+
+  const onDelete = () => {
+    removeMembersMutation.mutate({
+      groupId: chat._id,
+      userId: user._id,
+    });
   };
 
   return (
-    <>
-      <span onClick={handleOpen}>{openBtn}</span>
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
-          <Stack width={"100%"}>
-            {children}
+    <div>
+      <IconButton
+        ref={elRef}
+        size="small"
+        sx={{
+          position: "absolute",
+          top: 1,
+          left: 1,
+          height: 28,
+          width: 28,
+          zIndex: 100000,
+        }}
+        onClick={handlePopper}
+      >
+        <Delete sx={{ fill: "#E3735E" }} />
+      </IconButton>
+      <Popper
+        sx={{ zIndex: 2000, maxWidth: 250, minWidth: 250 }}
+        id={id}
+        open={open}
+        anchorEl={elRef.current}
+        placement={"bottom-end"}
+        transition
+      >
+        {({ TransitionProps }) => (
+          <Fade {...TransitionProps} timeout={350}>
+            <Box sx={{ border: 1, p: 2, pb: 1, bgcolor: "#999" }}>
+              <Typography>Remove {user.name} from group?</Typography>
+              <Stack
+                direction={"row"}
+                columnGap={1}
+                pt={1}
+                width={"100%"}
+                justifyContent={"center"}
+                px={1}
+              >
+                <LoadingButton
+                  variant="contained"
+                  size="small"
+                  sx={{ bgcolor: "#ffff32", color: "black" }}
+                  onClick={onDelete}
+                  loading={removeMembersMutation.isLoading}
+                  disabled={removeMembersMutation.isLoading}
+                >
+                  Delete
+                </LoadingButton>
+                <Button
+                  disabled={removeMembersMutation.isLoading}
+                  color="error"
+                  variant="contained"
+                  size="small"
+                  onClick={handlePopper}
+                >
+                  Cancel
+                </Button>
+              </Stack>
+            </Box>
+          </Fade>
+        )}
+      </Popper>
+    </div>
+  );
+}
 
-            <span onClick={handleClose}>
-              {closeBtn}
-              {customBtn}
-            </span>
-          </Stack>
-        </Box>
-      </Modal>
+function UserPopperList(): JSX.Element {
+  const { selectedChat } = useSelector((state: RootState) => state.chat);
+  const users = selectedChat?.users || [];
+
+  return (
+    <>
+      {selectedChat &&
+        users.map((user) => (
+          <UserListItem user={user} key={user._id}>
+            <UserPopper user={user} chat={selectedChat} />
+          </UserListItem>
+        ))}
     </>
   );
 }

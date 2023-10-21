@@ -32,7 +32,7 @@ const ModalChildWithHandleClose: React.FC<ModalChildWithHandleCloseProps> = ({
           {chat?.chatName}
         </Typography>
         {/* <Avatar sx={{ width: 150, height: 150 }} src={group?.image as string} /> */}
-        <GroupMembersWHandleClose />
+        <GroupForm.RemoveMember />
         <GroupForm.Rename
           handleModalClose={modalClose}
           groupName={chat.chatName}
@@ -41,7 +41,7 @@ const ModalChildWithHandleClose: React.FC<ModalChildWithHandleCloseProps> = ({
         {isUserAdmin && (
           <>
             <GroupForm.AddMembers handleModalClose={modalClose} />
-            <Button>remove users from group</Button>
+            <GroupForm.Remove handleModalClose={modalClose} />
           </>
         )}
       </Box>
