@@ -1,43 +1,44 @@
-import React from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
-import { Box, Button, Divider, useMediaQuery, useTheme } from "@mui/material";
+import React, {
+  ChangeEvent,
+  KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  Box,
+  Button,
+  Divider,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  Stack,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import ProfileModal from "../ProfileArea/ProfileModal";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { chatService } from "../../services/chatService";
 import { findUserInChat } from "../../utils/userMethods";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../utils/reduxStore";
+import { MessageModel } from "../../models/MessageModel";
+import { setSelectedChat } from "../../utils/chatSlice";
 import { ChatModel } from "../../models/ChatModel";
-import { findChatIndexById } from "../../utils/chatMetods";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { messageService } from "../../services/messageService";
+import MessagesContainer from "./MessagesArea/MessagesContainer";
 
 const ChatBox: React.FC = () => {
   const theme = useTheme();
   const screanSize = useMediaQuery(theme.breakpoints.up("md"));
   const user = useSelector((state: RootState) => state.auth);
   const { selectedChat } = useSelector((state: RootState) => state.chat);
-  // const { data: chat } = useQuery({
-  //   queryKey: ["chatList", `{chat: ${id}}`],
-  //   queryFn: () => {
-  //     if (!isGroupChat) return chatService.accessChat(id as string);
-  //     return chatService.accessGroupChat(id as string);
-  //   },
-  //   onSuccess: onChatQuerySuccess,
-  //   enabled: !!id,
-  // });
+  const dispatch = useDispatch();
 
-  // function onChatQuerySuccess(data: ChatModel) {
-  //   queryClient.setQueryData<ChatModel[] | undefined>(
-  //     ["chatList"],
-  //     (oldData) => {
-  //       if (!oldData) return [data];
-  //       const index = oldData.findIndex((item) => item._id === data._id);
-  //       if (index !== -1) return oldData;
-  //       const filteredData = oldData.filter((chat) => chat._id !== data._id);
-  //       return [data, ...filteredData];
-  //     }
-  //   );
-  // }
-
+  const onBackClick = () => {
+    dispatch(setSelectedChat({ chat: null, isExist: true }));
+  };
   const chatTitle = !selectedChat
     ? "Chat"
     : selectedChat.isGroupChat
@@ -45,9 +46,10 @@ const ChatBox: React.FC = () => {
     : findUserInChat(selectedChat, user)?.name;
 
   return (
-    <Box
-      p={3}
+    <Stack
       sx={{
+        pt: 2,
+        px: 1,
         width: "100%",
         height: "100%",
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
@@ -57,13 +59,20 @@ const ChatBox: React.FC = () => {
         overflow: "auto",
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          boxSizing: "border-box",
+          px: 1,
+        }}
+      >
         {/**change it to a button the set selectedChat to null */}
-        {/* {!screanSize && (
-          <Link to={"/chat"}>
-            <Button sx={{ p: 1 }}>Back</Button>
-          </Link>
-        )} */}
+        {!screanSize && (
+          <Button onClick={onBackClick} sx={{ p: 1 }}>
+            Back
+          </Button>
+        )}
         {selectedChat &&
           ((selectedChat.isGroupChat && (
             <ProfileModal.Group btnText="View profile" />
@@ -77,8 +86,8 @@ const ChatBox: React.FC = () => {
             )))}
       </Box>
       <Divider textAlign="center">{chatTitle}</Divider>
-      <Box></Box>
-    </Box>
+      <MessagesContainer />
+    </Stack>
   );
 };
 

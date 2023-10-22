@@ -7,7 +7,6 @@ import ChatPage from "./Pages/AuthedPages/ChatPage";
 import ErrorPage from "./Pages/ErrorPage";
 import AuthedHeader from "./Pages/AuthedPages/AuthedHeader";
 import { chatService } from "../services/chatService";
-import { getAllChats } from "../utils/chatSlice";
 import { toastifyService } from "../services/toastifyService";
 
 const AppRouter: React.FC = () => {

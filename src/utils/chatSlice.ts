@@ -21,11 +21,11 @@ const chatSlice = createSlice({
     },
     setSelectedChat(
       state,
-      action: PayloadAction<{ chat: ChatModel; isExist: boolean }>
+      action: PayloadAction<{ chat: ChatModel | null; isExist: boolean }>
     ) {
       const { chat, isExist } = action.payload;
       state.selectedChat = chat;
-      if (isExist) return state;
+      if (isExist || !chat) return state;
       state.chats.unshift(chat);
       return state;
     },

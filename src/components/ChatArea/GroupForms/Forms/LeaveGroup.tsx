@@ -1,3 +1,4 @@
+import { LoadingButton } from "@mui/lab";
 import { Box, Button, Fade, Popper, Stack, Typography } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import React, { useRef } from "react";
@@ -8,16 +9,8 @@ import {
 } from "../../../../services/toastifyService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../utils/reduxStore";
-import { LoadingButton } from "@mui/lab";
-import DeleteIcon from "@mui/icons-material/Delete";
-type DeleteGroupChatProps = {
-  handleModalClose(): void;
-};
 
-const DeleteGroupChat: React.FC<DeleteGroupChatProps> = ({
-  handleModalClose,
-}) => {
-  const { selectedChat } = useSelector((state: RootState) => state.chat);
+const LeaveGroup: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const elRef = useRef<HTMLButtonElement | null>(null);
 
@@ -27,36 +20,41 @@ const DeleteGroupChat: React.FC<DeleteGroupChatProps> = ({
 
   const canBeOpen = open && Boolean(elRef);
   const id = canBeOpen ? "spring-popper" : undefined;
+  const { selectedChat } = useSelector((state: RootState) => state.chat);
+  const user = useSelector((state: RootState) => state.auth);
 
-  const deleteMutation = useMutation({
-    mutationFn: chatService.deleteGroupChat,
-    onError: (err: ErrorModels) => toastifyService.error(err),
-    onSuccess: handleModalClose,
+  const LeaveGroupMutation = useMutation({
+    mutationFn: chatService.removeMembersFromGroup,
+    onError: (err) => toastifyService.error(err),
+    onSuccess: () => toastifyService.success("successfuly removed!"),
   });
 
   const onDelete = () => {
-    if (!selectedChat?._id) return;
-    deleteMutation.mutate(selectedChat._id);
+    if (!user?._id || !selectedChat) return;
+    LeaveGroupMutation.mutate({
+      groupId: selectedChat._id,
+      userId: user._id,
+    });
   };
 
   return (
-    <div>
-      <Button onClick={handlePopper} ref={elRef}>
-        Delete group <DeleteIcon />
-      </Button>
+    <>
+      <LoadingButton onClick={handlePopper} ref={elRef}>
+        Leave Group
+      </LoadingButton>
       <Popper
         sx={{ zIndex: 2000, maxWidth: 250, minWidth: 250 }}
         id={id}
         open={open}
         anchorEl={elRef.current}
-        placement={"bottom-start"}
+        placement={"top"}
         transition
       >
         {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={350}>
             <Box sx={{ border: 1, p: 2, pb: 1, bgcolor: "#999" }}>
               <Typography>
-                Are you sure you want to delete {selectedChat?.chatName} group?
+                Are you sure you want to leave this group??
               </Typography>
               <Stack
                 direction={"row"}
@@ -68,20 +66,20 @@ const DeleteGroupChat: React.FC<DeleteGroupChatProps> = ({
               >
                 <LoadingButton
                   variant="contained"
+                  color="error"
                   size="small"
-                  sx={{ bgcolor: "#ffff32", color: "black" }}
-                  loading={deleteMutation.isLoading}
-                  disabled={deleteMutation.isLoading}
                   onClick={onDelete}
+                  loading={LeaveGroupMutation.isLoading}
+                  disabled={LeaveGroupMutation.isLoading}
                 >
-                  Delete
+                  Leave
                 </LoadingButton>
                 <Button
-                  color="error"
+                  disabled={LeaveGroupMutation.isLoading}
+                  sx={{ bgcolor: "#ffff32", color: "black" }}
                   variant="contained"
                   size="small"
                   onClick={handlePopper}
-                  disabled={deleteMutation.isLoading}
                 >
                   Cancel
                 </Button>
@@ -90,8 +88,8 @@ const DeleteGroupChat: React.FC<DeleteGroupChatProps> = ({
           </Fade>
         )}
       </Popper>
-    </div>
+    </>
   );
 };
 
-export default DeleteGroupChat;
+export default LeaveGroup;

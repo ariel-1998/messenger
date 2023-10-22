@@ -10,13 +10,6 @@ export const authenticatedAxios = axios.create({
   baseURL: apiConfig.BASE_URL,
 });
 
-export function unAuthAxios() {
-  authenticatedAxios.interceptors.request.use((config) => {
-    delete config.headers.Authorization;
-    return config;
-  });
-}
-
 export function authAxios(token: string) {
   authenticatedAxios.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;

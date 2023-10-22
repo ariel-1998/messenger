@@ -1,6 +1,12 @@
-import { Button, Stack } from "@mui/material";
+import {
+  FormControl,
+  IconButton,
+  Input,
+  InputAdornment,
+  FormHelperText,
+  Stack,
+} from "@mui/material";
 import React, { useRef } from "react";
-import GroupFormInput from "../GroupFormInput";
 import { useMutation } from "@tanstack/react-query";
 import { chatService } from "../../../../services/chatService";
 import {
@@ -10,7 +16,7 @@ import {
 import { groupNameSchema } from "../../../../models/ChatModel";
 import { extractZodErrors } from "../../../../utils/zodMetods";
 import { ZodError } from "zod";
-
+import RenameIcon from "@mui/icons-material/DriveFileRenameOutline";
 interface RenameGroupChatProps {
   groupName: string;
   groupId: string;
@@ -26,7 +32,7 @@ const RenameGroupChat: React.FC<RenameGroupChatProps> = ({
 
   const renameMutation = useMutation({
     mutationFn: chatService.renameGroup,
-    onError: (error: ErrorModels) => toastifyService.error(error),
+    onError: (error) => toastifyService.error(error),
     onSuccess: handleModalClose,
   });
 
@@ -43,12 +49,30 @@ const RenameGroupChat: React.FC<RenameGroupChatProps> = ({
   };
 
   return (
-    <Stack direction={"row"}>
-      <GroupFormInput label="Reanme" ref={renameRef} defaultValue={groupName} />
-      <Button variant="outlined" onClick={onClick}>
-        rename
-      </Button>
-    </Stack>
+    <>
+      <Stack direction={"row"} alignItems={"center"} spacing={0}>
+        <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
+          <Input
+            disabled={renameMutation.isLoading}
+            ref={renameRef}
+            defaultValue={groupName}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={onClick}
+                  disabled={renameMutation.isLoading}
+                >
+                  <RenameIcon />
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+          <FormHelperText id="outlined-weight-helper-text">
+            Rename
+          </FormHelperText>
+        </FormControl>
+      </Stack>
+    </>
   );
 };
 

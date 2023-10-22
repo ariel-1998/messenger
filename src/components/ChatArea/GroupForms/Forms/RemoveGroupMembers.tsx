@@ -23,6 +23,7 @@ import UserListItem from "../UserListItem";
 import { LoadingButton } from "@mui/lab";
 import { UserModel } from "../../../../models/UserModel";
 import { ChatModel } from "../../../../models/ChatModel";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const RemoveGroupMembers: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -30,7 +31,9 @@ const RemoveGroupMembers: React.FC = () => {
   const openModal = () => setOpen(true);
   return (
     <>
-      <Button onClick={openModal}>Members</Button>
+      <IconButton onClick={openModal} sx={{ p: 0 }}>
+        <VisibilityIcon />
+      </IconButton>
       <ChildModal sx={{ pb: 2 }} open={open} handleClose={closeModal}>
         <Stack spacing={1}>
           <List
@@ -77,8 +80,8 @@ function UserPopper({ user, chat }: UserPopperProps): JSX.Element {
 
   const removeMembersMutation = useMutation({
     mutationFn: chatService.removeMembersFromGroup,
-    onError: (error: ErrorModels) => toastifyService.error(error),
-    onSuccess: () => toastifyService.success("Member was successfuly removed!"),
+    onError: (error) => toastifyService.error(error),
+    onSuccess: () => toastifyService.success("successfuly removed!"),
   });
 
   const onDelete = () => {
@@ -155,13 +158,15 @@ function UserPopper({ user, chat }: UserPopperProps): JSX.Element {
 function UserPopperList(): JSX.Element {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const users = selectedChat?.users || [];
+  const loggedUser = useSelector((state: RootState) => state.auth);
+  const isAdmin = loggedUser?._id === selectedChat?.groupAdmin._id;
 
   return (
     <>
       {selectedChat &&
         users.map((user) => (
           <UserListItem user={user} key={user._id}>
-            <UserPopper user={user} chat={selectedChat} />
+            {isAdmin && <UserPopper user={user} chat={selectedChat} />}
           </UserListItem>
         ))}
     </>

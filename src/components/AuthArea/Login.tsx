@@ -14,7 +14,7 @@ import { CredentialsModel, loginSchema } from "../../models/UserModel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { authService } from "../../services/authServices";
-import { ErrorModels, toastifyService } from "../../services/toastifyService";
+import { toastifyService } from "../../services/toastifyService";
 
 const Login: React.FC = () => {
   const {
@@ -27,7 +27,7 @@ const Login: React.FC = () => {
 
   const loginMutation = useMutation({
     mutationFn: authService.login,
-    onError: (err: ErrorModels) => toastifyService.error(err),
+    onError: (err) => toastifyService.error(err),
   });
 
   const onSubmit = async (data: CredentialsModel) => {

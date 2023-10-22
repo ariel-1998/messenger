@@ -26,8 +26,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
     bgcolor: "background.paper",
     borderRadius: 2,
     boxShadow: 24,
-    p: 4,
-    pt: 1,
+    p: 3,
   };
 
   return (

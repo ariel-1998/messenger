@@ -1,7 +1,7 @@
 import jwtDecode from "jwt-decode";
 import { UserModel } from "../models/UserModel";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { authAxios, unAuthAxios } from "./axiosInterceptors";
+import { authAxios } from "./axiosInterceptors";
 
 type UserToken = Omit<UserModel, "confirmPassword" | "password">;
 
@@ -29,7 +29,6 @@ const authSlice = createSlice({
     logout(state) {
       state = null;
       window.localStorage.removeItem("token");
-      unAuthAxios();
       return state;
     },
   },

@@ -95,8 +95,9 @@ class ChatService {
     userId: string;
   }) {
     const endpoint = removeFromGroupEndpoint(groupId, userId);
-    const { data } = await authenticatedAxios.put<ChatModel>(endpoint);
-    store.dispatch(updateGroup(data));
+    const { data, status } = await authenticatedAxios.put<ChatModel>(endpoint);
+    if (status === 200) store.dispatch(updateGroup(data));
+    else store.dispatch(deleteGroup(groupId));
   }
 
   async deleteGroupChat(groupId: string) {

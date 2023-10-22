@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../utils/reduxStore";
 import ChildModal from "../../../CustomComponents/Modals/ChildModal";
 import { LoadingButton } from "@mui/lab";
+import { Add } from "@mui/icons-material";
 
 type AddMemberToGroupProps = {
   handleParentModalClose: () => void;
@@ -31,7 +32,9 @@ const AddMemberToGroup: React.FC<AddMemberToGroupProps> = ({
 
   return (
     <>
-      <Button onClick={openModal}>Add Members</Button>
+      <Button onClick={openModal}>
+        Add Members <Add />
+      </Button>
       <ChildModal open={open} handleClose={closeModal}>
         <ChildModalContent
           closeModalChild={closeModal}

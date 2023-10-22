@@ -16,8 +16,8 @@ interface useFetchStateProps<T> {
 const useFetchState = <T,>({
   fn,
   enabled = true,
-  onSucess = () => undefined,
-  onError = () => undefined,
+  onSucess,
+  onError,
 }: useFetchStateProps<T>): FetchState<T> => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -30,10 +30,10 @@ const useFetchState = <T,>({
         setIsLoading(true);
         const fnData = await fn();
         setData(fnData);
-        onSucess();
+        if (onSucess) onSucess();
       } catch (error) {
         setIsError(true);
-        onError();
+        if (onError) onError();
       } finally {
         setIsLoading(false);
       }

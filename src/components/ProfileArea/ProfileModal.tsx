@@ -7,6 +7,8 @@ import {
   SxProps,
   Stack,
   Divider,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { UserModel } from "../../models/UserModel";
 import CustomModal from "../CustomComponents/Modals/CustomModal";
@@ -14,6 +16,8 @@ import { ChatModel } from "../../models/ChatModel";
 import GroupForm from "../ChatArea/GroupForms/Forms/GroupForm";
 import { RootState } from "../../utils/reduxStore";
 import { useSelector } from "react-redux";
+import CustomMenu from "../CustomComponents/CustomMenu";
+import { Add } from "@mui/icons-material";
 
 type UserProfileModalProps<T> = {
   profile?: T;
@@ -31,6 +35,8 @@ const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
+  const theme = useTheme();
+  const smallScreen = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
     <>
@@ -44,16 +50,28 @@ const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
         </Typography>
       )}
       <CustomModal open={open} handleClose={handleClose}>
-        <Typography variant="h4" component="h2">
-          {profile?.name}
-        </Typography>
-        <Avatar
-          sx={{ width: 150, height: 150 }}
-          src={profile?.image as string}
-        />
-        <Typography variant="h5" sx={{ mt: 2 }}>
-          Email: {profile?.email}
-        </Typography>
+        <Stack
+          direction={smallScreen ? "row" : "column-reverse"}
+          justifyContent={smallScreen ? "space-between" : "center"}
+          alignItems={"center"}
+        >
+          <Stack
+            direction={"column"}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
+            <Typography variant="h4" component="h2">
+              {profile?.name}
+            </Typography>
+            <Typography variant="h5" textAlign={"center"} sx={{ mt: 2 }}>
+              {profile?.email}
+            </Typography>
+          </Stack>
+          <Avatar
+            sx={{ width: 150, height: 150 }}
+            src={profile?.image as string}
+          />
+        </Stack>
       </CustomModal>
     </>
   );
@@ -91,27 +109,40 @@ const GroupProfileModal: React.FC<UserProfileModalProps<null>> = ({
             }}
           >
             <Typography align="center" variant="h6" p={0} m={0}>
-              Profile
+              {selectedChat.chatName} <GroupForm.RemoveMember />
+              {userId}
             </Typography>
-            <Divider />
+            <Divider flexItem />
 
-            <Typography variant="h4" component="h2">
-              {selectedChat?.chatName}
-            </Typography>
             {/* <Avatar sx={{ width: 150, height: 150 }} src={group?.image as string} /> */}
-            <GroupForm.RemoveMember />
             <GroupForm.Rename
               handleModalClose={handleClose}
-              groupName={selectedChat?.chatName}
-              groupId={selectedChat?._id}
+              groupName={selectedChat.chatName}
+              groupId={selectedChat._id}
             />
+            {isUserAdmin ? (
+              <>
+                <GroupForm.AddMembers handleParentModalClose={handleClose} />
+                <GroupForm.Remove handleModalClose={handleClose} />
+              </>
+            ) : (
+              <GroupForm.Leave />
+            )}
+          </Stack>
+          {/* <CustomMenu icon={<Add />}>
             {isUserAdmin && (
               <>
                 <GroupForm.AddMembers handleParentModalClose={handleClose} />
                 <GroupForm.Remove handleModalClose={handleClose} />
               </>
             )}
-          </Stack>
+            <GroupForm.Rename
+              handleModalClose={handleClose}
+              groupName={selectedChat.chatName}
+              groupId={selectedChat._id}
+            />
+            <GroupForm.RemoveMember />
+          </CustomMenu> */}
         </CustomModal>
       )}
     </>

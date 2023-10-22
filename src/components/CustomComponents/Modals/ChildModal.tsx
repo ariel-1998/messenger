@@ -7,6 +7,7 @@ import {
   Theme,
 } from "@mui/material";
 import React, { ReactNode } from "react";
+import CustomModal from "./CustomModal";
 
 interface ChildModalProps {
   children: ReactNode;
@@ -38,9 +39,9 @@ const ChildModal: React.FC<ChildModalProps> = ({
     pb: 3,
   };
   return (
-    <Modal open={open} onClose={handleClose}>
-      <Box sx={{ ...style, ...sx }}>{children}</Box>
-    </Modal>
+    <CustomModal open={open} sx={{ ...style, ...sx }} handleClose={handleClose}>
+      {children}
+    </CustomModal>
   );
 };
 
