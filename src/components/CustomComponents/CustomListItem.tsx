@@ -10,10 +10,12 @@ import React, { ReactNode } from "react";
 type CustomListItemProps = {
   children?: ReactNode;
   sx?: SxProps<Theme>;
+  disableRipple?: boolean;
 } & ListItemProps;
 
 const CustomListItem: React.FC<CustomListItemProps> = ({
   children,
+  disableRipple = false,
   sx,
   ...rest
 }) => {
@@ -29,6 +31,7 @@ const CustomListItem: React.FC<CustomListItemProps> = ({
       {...rest}
     >
       <ListItemButton
+        disableRipple={disableRipple}
         sx={{
           height: "100%",
           borderRadius: "10px",

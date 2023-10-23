@@ -4,10 +4,10 @@ import { useSelector } from "react-redux";
 import { messageService } from "../../../services/messageService";
 import { RootState } from "../../../utils/reduxStore";
 import MessageInput from "./MessageInput";
+import MessageBubble from "./MessageBubble";
 
 function MessagesContainer(): JSX.Element {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
-
   const { data: messages } = useQuery({
     queryKey: ["messages", `{chatId: ${selectedChat?._id}}`],
     queryFn: () => messageService.getMessagesByChatId(selectedChat?._id!),
@@ -23,9 +23,14 @@ function MessagesContainer(): JSX.Element {
       px={1}
       boxSizing={"border-box"}
     >
-      <Stack flexGrow={1} width={"100%"}>
+      <Stack
+        flexGrow={1}
+        width={"100%"}
+        spacing={2}
+        sx={{ overflowY: "auto", overflowX: "hidden", whiteSpace: "normal" }}
+      >
         {messages?.map((msg) => (
-          <div key={msg._id}>{JSON.stringify(msg)}</div>
+          <MessageBubble message={msg} key={msg._id} />
         ))}
       </Stack>
       <Box flexShrink={0} py={1} flexBasis={"30px"} width={"100%"}>

@@ -1,22 +1,14 @@
 import React, { ChangeEvent, useState } from "react";
 import CustomSearchInput from "../CustomComponents/CustomSearchInput";
-import {
-  Avatar,
-  Button,
-  Stack,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import useDebounce from "../../hooks/useDebounce";
-import CustomListItem from "../CustomComponents/CustomListItem";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../utils/reduxStore";
 import { findUserInChat } from "../../utils/userMethods";
-import { Add } from "@mui/icons-material";
 import GroupForm from "./GroupForms/Forms/GroupForm";
 import { ChatModel } from "../../models/ChatModel";
 import { setSelectedChat } from "../../utils/chatSlice";
+import ListItems from "./GroupForms/UserListItem";
 
 const ChatList: React.FC = () => {
   const theme = useTheme();
@@ -110,32 +102,11 @@ function ChatListItems({ search }: ChatListItemsProps): JSX.Element {
   const content = filteredChats ? (
     <>
       {filteredChats.map((chat) => (
-        <CustomListItem
-          onClick={() => onUserClick(chat)}
-          sx={{ height: "80px" }}
+        <ListItems.Chat
+          chat={chat}
           key={chat._id}
-        >
-          <Stack flexDirection={"row"} width={"100%"} alignItems={"center"}>
-            <Stack spacing={1} p={2} width={"100%"} justifyContent={"flex-end"}>
-              <Typography variant="h6">
-                {chat.isGroupChat
-                  ? chat.chatName
-                  : findUserInChat(chat, loggedUser)?.name || ""}
-              </Typography>
-              <Typography>
-                {/* {chat.latestMessage.sender.name}: {chat.latestMessage.content} */}
-                ""
-              </Typography>
-            </Stack>
-            <Avatar
-              src={
-                chat.isGroupChat
-                  ? ""
-                  : (findUserInChat(chat, loggedUser)?.image as string)
-              }
-            />
-          </Stack>
-        </CustomListItem>
+          onClick={() => onUserClick(chat)}
+        />
       ))}
     </>
   ) : (

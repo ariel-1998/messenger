@@ -87,7 +87,7 @@ const GroupProfileModal: React.FC<UserProfileModalProps<null>> = ({
   const user = useSelector((state: RootState) => state.auth);
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const userId = user?._id;
-  const adminId = selectedChat?.groupAdmin._id;
+  const adminId = selectedChat?.groupAdmin?._id;
   const isUserAdmin = adminId === userId;
 
   return (
@@ -110,7 +110,6 @@ const GroupProfileModal: React.FC<UserProfileModalProps<null>> = ({
           >
             <Typography align="center" variant="h6" p={0} m={0}>
               {selectedChat.chatName} <GroupForm.RemoveMember />
-              {userId}
             </Typography>
             <Divider flexItem />
 

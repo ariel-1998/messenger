@@ -1,7 +1,7 @@
 import { ListItemProps, List } from "@mui/material";
 import { UserModel } from "../../../models/UserModel";
 import { isUserInArr } from "../../../utils/userMethods";
-import UserListItem from "./UserListItem";
+import ListItems from "./UserListItem";
 
 type UserListProps = {
   users: UserModel[];
@@ -25,7 +25,7 @@ const UserList: React.FC<UserListProps> = ({
       }}
     >
       {users?.map((user) => (
-        <UserListItem
+        <ListItems.User
           key={user._id}
           sx={{
             bgcolor:

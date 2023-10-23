@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/reduxStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,9 +13,13 @@ import {
   OutlinedInput,
 } from "@mui/material";
 
+type inputRef = {
+  firstChild: HTMLInputElement;
+} & HTMLDivElement;
 function MessageInput(): JSX.Element {
   const [message, setMessage] = useState("");
   const btnRef = useRef<HTMLButtonElement>(null);
+  const inputRef = useRef<inputRef>(null);
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const queryClient = useQueryClient();
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -35,6 +39,11 @@ function MessageInput(): JSX.Element {
     },
   });
 
+  useEffect(() => {
+    if (!selectedChat) return;
+    inputRef.current?.firstChild?.focus();
+  }, [selectedChat]);
+
   const onPressEnter = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" && message) {
       btnRef.current?.click();
@@ -47,6 +56,7 @@ function MessageInput(): JSX.Element {
       chatId: selectedChat?._id,
       content: message,
     });
+    setMessage("");
   };
 
   return (
@@ -57,8 +67,9 @@ function MessageInput(): JSX.Element {
       size="small"
       variant="outlined"
     >
-      <InputLabel>Message...</InputLabel>
       <OutlinedInput
+        disabled={!selectedChat}
+        ref={inputRef}
         value={message}
         onChange={onInputChange}
         type="text"
@@ -74,7 +85,7 @@ function MessageInput(): JSX.Element {
             </IconButton>
           </InputAdornment>
         }
-        label="Message..."
+        placeholder="Message..."
       />
     </FormControl>
   );

@@ -14,16 +14,14 @@ import {
 import ChildModal from "../../../CustomComponents/Modals/ChildModal";
 import { useMutation } from "@tanstack/react-query";
 import { chatService } from "../../../../services/chatService";
-import {
-  ErrorModels,
-  toastifyService,
-} from "../../../../services/toastifyService";
+import { toastifyService } from "../../../../services/toastifyService";
 import Delete from "@mui/icons-material/HighlightOffRounded";
-import UserListItem from "../UserListItem";
 import { LoadingButton } from "@mui/lab";
 import { UserModel } from "../../../../models/UserModel";
 import { ChatModel } from "../../../../models/ChatModel";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import ListItems from "../UserListItem";
+import ProfileModal from "../../../ProfileArea/ProfileModal";
 
 const RemoveGroupMembers: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -159,15 +157,16 @@ function UserPopperList(): JSX.Element {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const users = selectedChat?.users || [];
   const loggedUser = useSelector((state: RootState) => state.auth);
-  const isAdmin = loggedUser?._id === selectedChat?.groupAdmin._id;
+  const isAdmin = loggedUser?._id === selectedChat?.groupAdmin?._id;
 
   return (
     <>
       {selectedChat &&
         users.map((user) => (
-          <UserListItem user={user} key={user._id}>
+          <ListItems.User disableRipple user={user} key={user._id}>
             {isAdmin && <UserPopper user={user} chat={selectedChat} />}
-          </UserListItem>
+            <ProfileModal.User btnText="viewProfile" isBtn profile={user} />
+          </ListItems.User>
         ))}
     </>
   );

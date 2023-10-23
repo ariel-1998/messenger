@@ -7,8 +7,8 @@ export type ChatModel = {
   chatName: string;
   isGroupChat: boolean;
   users: UserModel[];
-  latestMessage: MessageModel;
-  groupAdmin: UserModel;
+  latestMessage?: MessageModel;
+  groupAdmin?: UserModel;
 };
 
 export const groupNameSchema = z

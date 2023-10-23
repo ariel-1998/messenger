@@ -23,7 +23,7 @@ import CustomModal from "../../../CustomComponents/Modals/CustomModal";
 const CreateGroupChat: React.FC = () => {
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
-  const handleOpen = () => setOpen(false);
+  const handleOpen = () => setOpen(true);
   return (
     <>
       <Button
