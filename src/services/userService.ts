@@ -1,7 +1,6 @@
 import axios from "axios";
 import { authenticatedAxios } from "../utils/axiosInterceptors";
 import { UserModel } from "../models/UserModel";
-import { toastifyService } from "./toastifyService";
 
 type cloudinaryImgRes = {
   url: string;
@@ -15,7 +14,7 @@ class UserService {
   async uploadImage(image: FileList): Promise<cloudinaryImgRes> {
     const formData = new FormData();
     formData.append("file", image[0]);
-    formData.append("upload_preset", "messenger"); // put it in .env
+    formData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
     formData.append("cloud_name", "dnlv6fy3z");
     const { data } = await axios.post<cloudinaryImgRes>(
       postImgEndpoint,

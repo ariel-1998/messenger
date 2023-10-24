@@ -1,3 +1,7 @@
+body ::-webkit-scrollbar {
+  display: none !important;
+}
+
 html,
 body {
   margin: 0;
@@ -34,12 +38,12 @@ a {
 .start {
   background-color: #0099cc;
   color: white;
-  text-align: left;
+  /* text-align: left; */
 }
 
 /* Right bubble style */
 .end {
   background-color: #00cc66;
   color: white;
-  text-align: right;
+  /* text-align: right; */
 }

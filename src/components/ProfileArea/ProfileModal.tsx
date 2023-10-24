@@ -49,11 +49,12 @@ const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
           {btnText}
         </Typography>
       )}
-      <CustomModal open={open} handleClose={handleClose}>
+      <CustomModal open={open} handleClose={handleClose} sx={{ pr: 2 }}>
         <Stack
           direction={smallScreen ? "row" : "column-reverse"}
           justifyContent={smallScreen ? "space-between" : "center"}
           alignItems={"center"}
+          width={"100%"}
         >
           <Stack
             direction={"column"}
@@ -68,7 +69,7 @@ const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
             </Typography>
           </Stack>
           <Avatar
-            sx={{ width: 150, height: 150 }}
+            sx={{ flexBasis: 150, width: 150, height: 150 }}
             src={profile?.image as string}
           />
         </Stack>

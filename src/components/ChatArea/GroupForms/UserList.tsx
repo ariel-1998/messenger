@@ -1,7 +1,7 @@
 import { ListItemProps, List } from "@mui/material";
 import { UserModel } from "../../../models/UserModel";
 import { isUserInArr } from "../../../utils/userMethods";
-import ListItems from "./UserListItem";
+import ListItems from "./ListItems";
 
 type UserListProps = {
   users: UserModel[];

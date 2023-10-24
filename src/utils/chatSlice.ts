@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { ChatModel } from "../models/ChatModel";
+import { MessageModel } from "../models/MessageModel";
 
 type ChatState = {
   chats: ChatModel[];
@@ -48,6 +49,18 @@ const chatSlice = createSlice({
       state.selectedChat = null;
       return state;
     },
+    setChatLatestMessage(state, action: PayloadAction<MessageModel>) {
+      const message = action.payload;
+      const chatId = message.chat._id;
+      state.chats = state.chats.map((chat) => {
+        if (chat._id !== chatId) return chat;
+        chat._id = chatId;
+        chat.latestMessage = message;
+        return chat;
+      });
+      console.log(message);
+      return state;
+    },
   },
 });
 
@@ -57,6 +70,7 @@ export const {
   createGroup,
   updateGroup,
   deleteGroup,
+  setChatLatestMessage,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

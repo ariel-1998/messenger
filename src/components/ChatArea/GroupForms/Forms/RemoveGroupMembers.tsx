@@ -20,7 +20,7 @@ import { LoadingButton } from "@mui/lab";
 import { UserModel } from "../../../../models/UserModel";
 import { ChatModel } from "../../../../models/ChatModel";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import ListItems from "../UserListItem";
+import ListItems from "../ListItems";
 import ProfileModal from "../../../ProfileArea/ProfileModal";
 
 const RemoveGroupMembers: React.FC = () => {

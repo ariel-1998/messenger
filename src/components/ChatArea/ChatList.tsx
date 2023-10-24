@@ -8,7 +8,7 @@ import { findUserInChat } from "../../utils/userMethods";
 import GroupForm from "./GroupForms/Forms/GroupForm";
 import { ChatModel } from "../../models/ChatModel";
 import { setSelectedChat } from "../../utils/chatSlice";
-import ListItems from "./GroupForms/UserListItem";
+import ListItems from "./GroupForms/ListItems";
 
 const ChatList: React.FC = () => {
   const theme = useTheme();

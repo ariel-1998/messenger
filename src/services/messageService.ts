@@ -1,5 +1,7 @@
 import { MessageModel } from "../models/MessageModel";
 import { authenticatedAxios } from "../utils/axiosInterceptors";
+import { setChatLatestMessage } from "../utils/chatSlice";
+import { store } from "../utils/reduxStore";
 
 const sendMessageEndpoint = "message";
 const getMessagesByChatIDEndpoint = (chatId: string) => `message/${chatId}`;
@@ -18,6 +20,7 @@ class MessageService {
         content,
       }
     );
+    store.dispatch(setChatLatestMessage(data));
     return data;
   }
 

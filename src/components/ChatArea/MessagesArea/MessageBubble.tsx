@@ -1,38 +1,71 @@
-import { Avatar, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Stack, Typography } from "@mui/material";
 import React from "react";
 import { RootState } from "../../../utils/reduxStore";
 import { useSelector } from "react-redux";
 import { MessageModel } from "../../../models/MessageModel";
+import {
+  messageMarginTop,
+  shouldMakeMarginLeftToMsg,
+  showSenderDetails,
+} from "../../../utils/messageMethods";
 
-type MessageBubbleProps = {
+export type MessageBubbleProps = {
   message: MessageModel;
+  messages: MessageModel[];
+  index: number;
 };
 
-const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
-  const user = useSelector((state: RootState) => state.auth);
+const MessageBubble: React.FC<MessageBubbleProps> = ({
+  message,
+  messages,
+  index,
+}) => {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
-  const loggedIsSender = user?._id === message.sender._id;
-  const alignment = loggedIsSender ? "end" : "start";
+  const user = useSelector((state: RootState) => state.auth);
   const isGroupChat = selectedChat?.isGroupChat;
+  const senderIsMe = user?._id === message.sender._id;
+  const alignMessage = senderIsMe ? "end" : "start";
+
+  const marginTop = messageMarginTop(messages, message, index);
+  const senderDetails = showSenderDetails(
+    isGroupChat,
+    index,
+    messages,
+    message,
+    senderIsMe
+  );
+  const marginMessage = shouldMakeMarginLeftToMsg(
+    isGroupChat,
+    index,
+    messages,
+    message,
+    senderIsMe
+  );
+
   return (
     <Stack
-      width={"80%"}
-      spacing={1}
-      direction={alignment ? "row-reverse" : "row"}
-      alignSelf={alignment}
+      mt={marginTop}
+      spacing={0.5}
+      direction={"row"}
+      justifyContent={alignMessage}
+      boxSizing={"border-box"}
+      width={"100%"}
     >
-      {!loggedIsSender && isGroupChat && (
+      {senderDetails && !marginMessage && (
         <Avatar
-          src={(user?.image as string) || ""}
-          sx={{ alignSelf: "start", width: 35, height: 35 }}
+          src={(message.sender.image as string) || ""}
+          sx={{ width: 35, height: 35, flexBasis: 35 }}
         />
       )}
+
+      {marginMessage && <Box sx={{ width: 35, height: 35, flexBasis: 35 }} />}
       <Stack
+        maxWidth={"75%"}
         m={0}
-        pt={isGroupChat && !loggedIsSender ? 0 : 1}
-        className={`bubble ${alignment}`}
+        pt={senderDetails ? 0 : 1}
+        className={`bubble ${alignMessage}`}
       >
-        {isGroupChat && !loggedIsSender && (
+        {senderDetails && (
           <Typography color={"#333"} sx={{ opacity: 0.7 }}>
             {message.sender.name}
           </Typography>
@@ -44,3 +77,56 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 };
 
 export default MessageBubble;
+// type MessageBubbleProps = {
+//   message: MessageModel;
+//   showSenderInGroup: boolean;
+// };
+
+// const MessageBubble: React.FC<MessageBubbleProps> = ({
+//   message,
+//   showSenderInGroup,
+// }) => {
+//   const user = useSelector((state: RootState) => state.auth);
+//   const { selectedChat } = useSelector((state: RootState) => state.chat);
+//   const senderIsMe = user?._id === message.sender._id;
+//   const alignment = senderIsMe ? "end" : "start";
+//   const isGroupChat = selectedChat?.isGroupChat;
+
+//   const shouldShowImg = !senderIsMe && isGroupChat && showSenderInGroup;
+//   return (
+//     <Stack
+//       direction={"row"}
+//       spacing={0.5}
+//       justifyContent={alignment}
+//       boxSizing={"border-box"}
+//       width={"100%"}
+//     >
+//       {shouldShowImg && (
+//         <Avatar
+//           src={(user?.image as string) || ""}
+//           sx={{ alignSelf: "start", width: 35, height: 35, flexBasis: 35 }}
+//         />
+//       )}
+//       {isGroupChat && !senderIsMe && !showSenderInGroup && (
+//         <Box
+//           sx={{ alignSelf: "start", width: 35, height: 35, flexBasis: 35 }}
+//         />
+//       )}
+//       <Stack
+//         maxWidth={"80%"}
+//         m={0}
+//         pt={shouldShowImg ? 0 : 1}
+//         className={`bubble ${alignment}`}
+//       >
+//         {isGroupChat && !senderIsMe && showSenderInGroup && (
+//           <Typography color={"#333"} sx={{ opacity: 0.7 }}>
+//             {message.sender.name}
+//           </Typography>
+//         )}
+//         <Typography>{message.content}</Typography>
+//       </Stack>
+//     </Stack>
+//   );
+// };
+
+// export default MessageBubble;

@@ -5,7 +5,6 @@ import {
   Typography,
   Avatar,
   Theme,
-  ListItemButtonProps,
 } from "@mui/material";
 import CustomListItem from "../../CustomComponents/CustomListItem";
 import { UserModel } from "../../../models/UserModel";
@@ -103,7 +102,11 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat, sx, ...rest }) => {
           <Stack width={"30%"}>
             <Avatar
               sx={{ alignSelf: "end", justifySelf: "start" }}
-              // src={chat.image as string}
+              src={
+                chat.isGroupChat
+                  ? ""
+                  : (findUserInChat(chat, user)?.image as string)
+              }
             />
           </Stack>
         </Stack>
@@ -119,7 +122,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat, sx, ...rest }) => {
           {chat.latestMessage
             ? `${
                 !isLoggedUserIsSender ? chat.latestMessage.sender.name : "You"
-              }: ${chat.latestMessage.sender.name}`
+              }: ${chat.latestMessage.content}`
             : "New chat was opened"}
           {/**need to change the way chats open */}
         </Typography>
