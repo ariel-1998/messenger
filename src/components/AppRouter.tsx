@@ -8,6 +8,7 @@ import ErrorPage from "./Pages/ErrorPage";
 import AuthedHeader from "./Pages/AuthedPages/AuthedHeader";
 import { chatService } from "../services/chatService";
 import { toastifyService } from "../services/toastifyService";
+import SocketProvider from "../contexts/SocketProvider";
 
 const AppRouter: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth);
@@ -22,8 +23,10 @@ const AppRouter: React.FC = () => {
       <Route path="/" element={<HomePage />} />
 
       {user && (
-        <Route path="/chat" element={<AuthedHeader />}>
-          <Route path="" element={<ChatPage />} />
+        <Route path="/chat" element={<SocketProvider />}>
+          <Route path="" element={<AuthedHeader />}>
+            <Route path="" element={<ChatPage />} />
+          </Route>
         </Route>
       )}
 

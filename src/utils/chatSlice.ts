@@ -58,7 +58,6 @@ const chatSlice = createSlice({
         chat.latestMessage = message;
         return chat;
       });
-      console.log(message);
       return state;
     },
   },

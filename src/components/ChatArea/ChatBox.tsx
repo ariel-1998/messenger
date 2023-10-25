@@ -1,19 +1,8 @@
-import React, {
-  ChangeEvent,
-  KeyboardEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Button,
   Divider,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
   Stack,
   useMediaQuery,
   useTheme,
@@ -22,12 +11,9 @@ import ProfileModal from "../ProfileArea/ProfileModal";
 import { findUserInChat } from "../../utils/userMethods";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../utils/reduxStore";
-import { MessageModel } from "../../models/MessageModel";
 import { setSelectedChat } from "../../utils/chatSlice";
-import { ChatModel } from "../../models/ChatModel";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { messageService } from "../../services/messageService";
 import MessagesContainer from "./MessagesArea/MessagesContainer";
+import { useSocket } from "../../contexts/SocketProvider";
 
 const ChatBox: React.FC = () => {
   const theme = useTheme();
@@ -39,6 +25,20 @@ const ChatBox: React.FC = () => {
   const onBackClick = () => {
     dispatch(setSelectedChat({ chat: null, isExist: true }));
   };
+  // const { onSetup, emitSetup } = useSocket();
+
+  // // const socketSetup = () => {
+  // //   if (!user) return;
+  // //   emitSetup(user);
+  // //   onSetup((val) => {
+  // //     if (val) console.log(val);
+  // //     else console.log("error");
+  // //   });
+  // // };
+  // // useEffect(() => {
+  // //   socketSetup()
+  // // console.log()
+  // // }, []);
   const chatTitle = !selectedChat
     ? "Chat"
     : selectedChat.isGroupChat

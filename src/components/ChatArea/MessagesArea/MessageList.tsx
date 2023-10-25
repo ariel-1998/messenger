@@ -9,20 +9,12 @@ type MessageListProps = {
   messages: MessageModel[];
 };
 
-const SOCKET_ENDPOINT = "http://localhost:3001";
+// const SOCKET_ENDPOINT = "http://localhost:3001";
+// export let socket: Socket<DefaultEventsMap, DefaultEventsMap> | null;
 
 const MessageList: React.FC<MessageListProps> = ({ messages }) => {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
-  const user = useSelector((state: RootState) => state.auth);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  // const [socketConnection, setSocketConnection] = useState(false);
-  useEffect(() => {
-    // if (!user || !selectedChat) return;
-    const socket = io(SOCKET_ENDPOINT);
-    socket.on("connected", () => alert("hello"));
-    socket.emit("setup", user);
-    socket.emit("joinChat", selectedChat);
-  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({
