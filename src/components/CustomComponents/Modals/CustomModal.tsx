@@ -2,7 +2,6 @@ import { SxProps, Modal, Box, Theme } from "@mui/material";
 import React, { ReactNode } from "react";
 
 interface CustomModalProps {
-  // openBtn: ReactNode;
   open: boolean;
   children: ReactNode;
   sx?: SxProps<Theme>;

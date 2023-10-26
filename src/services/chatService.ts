@@ -20,6 +20,7 @@ const removeFromGroupEndpoint = (groupId: string, userId: string) =>
 
 class ChatService {
   async accessChat(userId: string) {
+    console.log("access", userId);
     const { chats } = store.getState().chat;
     const chat = chats?.find(
       (chat) =>

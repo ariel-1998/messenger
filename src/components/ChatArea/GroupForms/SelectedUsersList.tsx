@@ -1,6 +1,6 @@
 import React from "react";
 import { UserModel } from "../../../models/UserModel";
-import { Box, Stack, Typography, Zoom } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import SelectedUser from "./SelectedUser";
 
 interface SelectedUsersListProps {

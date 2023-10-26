@@ -1,5 +1,3 @@
-import React from "react";
-import { MessageBubbleProps } from "../components/ChatArea/MessagesArea/MessageBubble";
 import { useSelector } from "react-redux";
 import { RootState } from "../utils/reduxStore";
 import { MessageModel } from "../models/MessageModel";

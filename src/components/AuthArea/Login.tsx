@@ -15,8 +15,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { authService } from "../../services/authServices";
 import { toastifyService } from "../../services/toastifyService";
+import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -28,6 +31,7 @@ const Login: React.FC = () => {
   const loginMutation = useMutation({
     mutationFn: authService.login,
     onError: (err) => toastifyService.error(err),
+    onSuccess: () => navigate("/chat"),
   });
 
   const onSubmit = async (data: CredentialsModel) => {

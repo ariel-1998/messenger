@@ -1,9 +1,9 @@
 import { Container, Box, Typography } from "@mui/material";
 import React from "react";
-import AuthMenu from "../../AuthArea/AuthMenu";
+import AuthMenu from "../AuthArea/AuthMenu";
 
-const borderRadius = "10px";
-const UnauthedHome: React.FC = () => {
+const AuthPage: React.FC = () => {
+  const borderRadius = "10px";
   return (
     <Container maxWidth="sm">
       <Box
@@ -25,4 +25,4 @@ const UnauthedHome: React.FC = () => {
   );
 };
 
-export default UnauthedHome;
+export default AuthPage;

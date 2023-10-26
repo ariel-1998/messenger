@@ -4,10 +4,8 @@ import { Search as SearchIcon } from "@mui/icons-material";
 import React, { forwardRef } from "react";
 
 type CustomSearchInputProps = {
-  boxClick?: () => void;
-  iconClick?: () => void;
+  onClick?: () => void;
   inputCursor?: string;
-  iconCursor?: string;
   disableRipple?: boolean;
   disableFocusRipple?: boolean;
   isIcon?: boolean;
@@ -16,10 +14,8 @@ type CustomSearchInputProps = {
 const CustomSearchInput = forwardRef<HTMLInputElement, CustomSearchInputProps>(
   (
     {
-      boxClick,
-      iconClick,
+      onClick,
       isIcon = true,
-      iconCursor = "pointer",
       inputCursor = "pointer",
       disableFocusRipple = false,
       disableRipple = false,
@@ -29,7 +25,7 @@ const CustomSearchInput = forwardRef<HTMLInputElement, CustomSearchInputProps>(
   ) => {
     return (
       <Box
-        onClick={boxClick}
+        onClick={onClick}
         sx={{
           position: "relative",
           display: "flex",
@@ -39,10 +35,9 @@ const CustomSearchInput = forwardRef<HTMLInputElement, CustomSearchInputProps>(
       >
         {isIcon && (
           <IconButton
-            onClick={iconClick}
             disableFocusRipple={disableFocusRipple}
             disableRipple={disableRipple}
-            sx={{ position: "absolute", left: "6%", cursor: iconCursor }}
+            sx={{ position: "absolute", left: "6%", cursor: "pointer" }}
           >
             <SearchIcon />
           </IconButton>

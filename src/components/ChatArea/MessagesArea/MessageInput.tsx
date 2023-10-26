@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/reduxStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { messageService } from "../../../services/messageService";
-import { MessageModel } from "../../../models/MessageModel";
 import SendIcon from "@mui/icons-material/Send";
 import {
   FormControl,
@@ -11,6 +10,8 @@ import {
   InputAdornment,
   OutlinedInput,
 } from "@mui/material";
+import { useSocket } from "../../../contexts/SocketProvider";
+import { updateMessages } from "../../../utils/messageMethods";
 
 type inputRef = {
   firstChild: HTMLInputElement;
@@ -20,7 +21,9 @@ function MessageInput(): JSX.Element {
   const btnRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<inputRef>(null);
   const { selectedChat } = useSelector((state: RootState) => state.chat);
+  const { emitMessage } = useSocket();
   const queryClient = useQueryClient();
+
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
@@ -28,13 +31,8 @@ function MessageInput(): JSX.Element {
   const sendMessageMutation = useMutation({
     mutationFn: messageService.sendMessage,
     onSuccess: (data) => {
-      queryClient.setQueryData<MessageModel[]>(
-        ["messages", `{chatId: ${selectedChat?._id}}`],
-        (oldData) => {
-          if (!oldData) return [data];
-          return [...oldData, data];
-        }
-      );
+      emitMessage(data);
+      updateMessages(data, queryClient, false);
     },
   });
 

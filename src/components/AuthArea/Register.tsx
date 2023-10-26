@@ -16,8 +16,11 @@ import { useMutation } from "@tanstack/react-query";
 import { LoadingButton } from "@mui/lab";
 import { userService } from "../../services/userService";
 import { toastifyService } from "../../services/toastifyService";
+import { useNavigate } from "react-router-dom";
 
 const Register: React.FC = () => {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -34,6 +37,7 @@ const Register: React.FC = () => {
   const formMutation = useMutation({
     mutationFn: authService.register,
     onError: (err) => toastifyService.error(err),
+    onSuccess: () => navigate("/chat"),
   });
 
   const imageMutation = useMutation({

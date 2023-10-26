@@ -11,29 +11,17 @@ import React, {
 } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useMediaQuery, useTheme } from "@mui/material";
+import { useDrawer } from "../../contexts/DrawerProvider";
 
 type DrawerProps = {
   children: ReactNode;
 };
 
-type DrawerChildProps = {
-  toggleDrawer?: () => void;
-};
-
 const Drawer: React.FC<DrawerProps> = ({ children }) => {
-  const [anchor, setAnchor] = useState(false);
-  const toggleDrawer = () => setAnchor((prevAnchor) => !prevAnchor);
   const theme = useTheme();
   const medium = useMediaQuery(theme.breakpoints.up("md"));
   const small = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const ChildrenWithProps = Children.map(children, (child) => {
-    if (!isValidElement(child)) return child;
-    return cloneElement<DrawerChildProps>(
-      child as ReactElement<DrawerChildProps>,
-      { toggleDrawer }
-    );
-  });
+  const { closeDrawer, openDrawer, open } = useDrawer();
 
   return (
     <>
@@ -42,16 +30,16 @@ const Drawer: React.FC<DrawerProps> = ({ children }) => {
           disabled
           inputCursor="pointer"
           placeholder="Search..."
-          boxClick={toggleDrawer}
+          onClick={openDrawer}
           disableFocusRipple
           disableRipple
         />
       ) : (
         <div style={{ cursor: "pointer" }}>
-          <MenuIcon onClick={toggleDrawer} />
+          <MenuIcon onClick={openDrawer} />
         </div>
       )}
-      <MuiDrawer anchor={"left"} open={anchor} onClose={toggleDrawer}>
+      <MuiDrawer anchor={"left"} open={open} onClose={closeDrawer}>
         <Box
           sx={{
             width: small ? "70vw" : 400,
@@ -64,7 +52,7 @@ const Drawer: React.FC<DrawerProps> = ({ children }) => {
             px: 2,
           }}
         >
-          {ChildrenWithProps}
+          {children}
         </Box>
       </MuiDrawer>
     </>

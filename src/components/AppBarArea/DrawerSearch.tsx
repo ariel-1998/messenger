@@ -1,35 +1,30 @@
 import { List, Avatar, Stack, Typography } from "@mui/material";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import CustomSearchInput from "../CustomComponents/CustomSearchInput";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toastifyService } from "../../services/toastifyService";
 import { userService } from "../../services/userService";
 import CustomListItem from "../CustomComponents/CustomListItem";
 import LoadingSkeletons from "../CustomComponents/LoadingSkeletons";
 import { chatService } from "../../services/chatService";
-import useFetchState from "../../hooks/useFetchState";
+import { useDrawer } from "../../contexts/DrawerProvider";
+import useDebounce from "../../hooks/useDebounce";
 
-type DrawerSearchProps = {
-  toggleDrawer?: () => void;
-};
-
-const DrawerSearch: React.FC<DrawerSearchProps> = ({ toggleDrawer }) => {
+const DrawerSearch: React.FC = () => {
   const searchRef = useRef<HTMLInputElement>(null);
   const [userSearch, setUserSearch] = useState("");
-  const toggleDrowerFn = toggleDrawer || (() => undefined);
-  const [userId, setUserId] = useState("");
+  const { closeDrawer } = useDrawer();
+  const { debounce, isLoading } = useDebounce({ fn: fetchUsers, wait: 700 });
 
-  const accessChatFn = useCallback(
-    () => chatService.accessChat(userId),
-    [userId]
-  );
-
-  useFetchState({
-    fn: accessChatFn,
-    onSucess: toggleDrowerFn,
-    onError: (error) => toastifyService.error(error),
-    enabled: !!userId,
+  const chatAccessMutation = useMutation({
+    mutationFn: chatService.accessChat,
+    onSuccess: closeDrawer,
+    onError: (err) => toastifyService.error(err),
   });
+
+  const fetchChat = (userId: string) => {
+    chatAccessMutation.mutate(userId);
+  };
 
   const {
     data: users,
@@ -41,11 +36,11 @@ const DrawerSearch: React.FC<DrawerSearchProps> = ({ toggleDrawer }) => {
     enabled: !!userSearch,
   });
 
-  const fetchUsers = () => {
-    if (!searchRef.current?.value)
-      return toastifyService.info("Fill Search bar!");
+  function fetchUsers() {
+    if (!searchRef.current?.value) return;
+    console.log("changed");
     setUserSearch(searchRef.current?.value);
-  };
+  }
 
   return (
     <List sx={{ width: "100%" }}>
@@ -54,9 +49,10 @@ const DrawerSearch: React.FC<DrawerSearchProps> = ({ toggleDrawer }) => {
           ref={searchRef}
           inputCursor="auto"
           placeholder="Search..."
-          iconClick={fetchUsers}
-          disabled={isUserFetch}
+          isIcon={false}
+          onChange={debounce}
         />
+        <span>{isLoading && searchRef.current?.value ? "loading" : null}</span>
       </Stack>
 
       {isError && <Typography align="center">Users not found!</Typography>}
@@ -70,7 +66,7 @@ const DrawerSearch: React.FC<DrawerSearchProps> = ({ toggleDrawer }) => {
         <Stack spacing={1} pb={2}>
           {users.map((user) => (
             <CustomListItem
-              onClick={() => setUserId(user._id)}
+              onClick={() => fetchChat(user._id)}
               key={user._id}
               sx={{ height: "80px" }}
             >

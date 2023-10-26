@@ -12,12 +12,9 @@ import {
 } from "@mui/material";
 import { UserModel } from "../../models/UserModel";
 import CustomModal from "../CustomComponents/Modals/CustomModal";
-import { ChatModel } from "../../models/ChatModel";
 import GroupForm from "../ChatArea/GroupForms/Forms/GroupForm";
 import { RootState } from "../../utils/reduxStore";
 import { useSelector } from "react-redux";
-import CustomMenu from "../CustomComponents/CustomMenu";
-import { Add } from "@mui/icons-material";
 
 type UserProfileModalProps<T> = {
   profile?: T;

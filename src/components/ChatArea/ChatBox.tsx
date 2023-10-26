@@ -25,20 +25,17 @@ const ChatBox: React.FC = () => {
   const onBackClick = () => {
     dispatch(setSelectedChat({ chat: null, isExist: true }));
   };
-  // const { onSetup, emitSetup } = useSocket();
+  const { emitJoinChat, emitLeavingChat } = useSocket();
 
-  // // const socketSetup = () => {
-  // //   if (!user) return;
-  // //   emitSetup(user);
-  // //   onSetup((val) => {
-  // //     if (val) console.log(val);
-  // //     else console.log("error");
-  // //   });
-  // // };
-  // // useEffect(() => {
-  // //   socketSetup()
-  // // console.log()
-  // // }, []);
+  useEffect(() => {
+    if (!user || !selectedChat) return;
+    emitJoinChat(selectedChat._id);
+
+    return () => {
+      emitLeavingChat(selectedChat._id);
+    };
+  }, [selectedChat]);
+
   const chatTitle = !selectedChat
     ? "Chat"
     : selectedChat.isGroupChat

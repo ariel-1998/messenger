@@ -1,11 +1,4 @@
-import {
-  useMediaQuery,
-  Modal,
-  Box,
-  useTheme,
-  SxProps,
-  Theme,
-} from "@mui/material";
+import { useMediaQuery, useTheme, SxProps, Theme } from "@mui/material";
 import React, { ReactNode } from "react";
 import CustomModal from "./CustomModal";
 

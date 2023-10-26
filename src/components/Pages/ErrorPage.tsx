@@ -2,16 +2,14 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface ErrorPageProps {
-  path?: string;
+  navigatTo: string;
 }
 
-const ErrorPage: React.FC<ErrorPageProps> = ({
-  path = "/",
-}: ErrorPageProps) => {
+const ErrorPage: React.FC<ErrorPageProps> = ({ navigatTo }: ErrorPageProps) => {
   const navigate = useNavigate();
   useEffect(() => {
     setTimeout(() => {
-      navigate(path);
+      navigate(navigatTo);
     }, 2000);
   }, []);
 

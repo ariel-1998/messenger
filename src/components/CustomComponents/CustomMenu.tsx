@@ -1,37 +1,31 @@
-import { Menu, MenuItem } from "@mui/material";
+import { Menu } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import React, {
-  isValidElement,
-  ReactNode,
-  Children,
-  cloneElement,
-} from "react";
+import React, { ReactNode } from "react";
 
 type CustomMenuProps = {
   icon?: ReactNode;
   children: ReactNode;
+  open: boolean;
+  onOpen: () => void;
 };
 
-const CustomMenu: React.FC<CustomMenuProps> = ({ icon, children }) => {
+const CustomMenu: React.FC<CustomMenuProps> = ({
+  icon,
+  children,
+  open,
+  onOpen,
+}) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    if (!children) return;
     setAnchorEl(event.currentTarget);
+    onOpen();
+    console.log("clicked");
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const childrenWithProps = Children.map(children, (child) => {
-    if (!isValidElement(child)) return;
-    return cloneElement(
-      <MenuItem sx={{ padding: 0 }} onClick={handleClose}>
-        {child}
-      </MenuItem>
-    );
-  });
 
   return (
     <div>
@@ -56,10 +50,10 @@ const CustomMenu: React.FC<CustomMenuProps> = ({ icon, children }) => {
           vertical: "top",
           horizontal: "right",
         }}
-        open={Boolean(anchorEl)}
+        open={Boolean(anchorEl) && open}
         onClose={handleClose}
       >
-        {childrenWithProps}
+        {children}
       </Menu>
     </div>
   );

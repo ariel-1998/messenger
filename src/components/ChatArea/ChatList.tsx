@@ -87,16 +87,23 @@ function ChatListItems({ search }: ChatListItemsProps): JSX.Element {
     dispatch(setSelectedChat({ chat, isExist: true }));
   };
 
+  const stringToLowerCase = (string: string) => string.toLowerCase();
+
   const filteredChats = chats?.filter((chat) => {
-    if (search === "") return true;
-    if (chat.isGroupChat) return chat.chatName.includes(search);
-    const user = findUserInChat(chat, loggedUser);
-    if (user) {
-      const includesName = user.name.includes(search);
-      const includesEmail = user.email.includes(search);
-      return includesName || includesEmail;
+    const lowerCaseSeearch = stringToLowerCase(search);
+    if (lowerCaseSeearch === "") return true;
+    if (chat.isGroupChat) {
+      return stringToLowerCase(chat.chatName).includes(lowerCaseSeearch);
     }
-    return false;
+    const user = findUserInChat(chat, loggedUser);
+    if (!user) return false;
+    const includesName = stringToLowerCase(user.name).includes(
+      lowerCaseSeearch
+    );
+    const includesEmail = stringToLowerCase(user.email).includes(
+      lowerCaseSeearch
+    );
+    return includesName || includesEmail;
   });
 
   const content = filteredChats ? (

@@ -1,20 +1,19 @@
 import React, { useEffect, useRef } from "react";
-import { MessageModel } from "../../../models/MessageModel";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/reduxStore";
 import MessageBubble from "./MessageBubble";
-import { io } from "socket.io-client";
+import { useQuery } from "@tanstack/react-query";
+import { messageService } from "../../../services/messageService";
 
-type MessageListProps = {
-  messages: MessageModel[];
-};
-
-// const SOCKET_ENDPOINT = "http://localhost:3001";
-// export let socket: Socket<DefaultEventsMap, DefaultEventsMap> | null;
-
-const MessageList: React.FC<MessageListProps> = ({ messages }) => {
+const MessageList: React.FC = () => {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  const { data: messages } = useQuery({
+    queryKey: ["messages", `{chatId: ${selectedChat?._id}}`],
+    queryFn: () => messageService.getMessagesByChatId(selectedChat?._id!),
+    enabled: !!selectedChat?._id,
+  });
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({
@@ -28,7 +27,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
     });
   }, [selectedChat]);
 
-  return (
+  return messages ? (
     <>
       {messages.map((msg, i) => (
         <MessageBubble
@@ -40,6 +39,6 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
       ))}
       <div ref={bottomRef}></div>
     </>
-  );
+  ) : null;
 };
 export default MessageList;

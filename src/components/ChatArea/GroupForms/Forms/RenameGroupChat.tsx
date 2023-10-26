@@ -9,14 +9,12 @@ import {
 import React, { useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { chatService } from "../../../../services/chatService";
-import {
-  ErrorModels,
-  toastifyService,
-} from "../../../../services/toastifyService";
+import { toastifyService } from "../../../../services/toastifyService";
 import { groupNameSchema } from "../../../../models/ChatModel";
 import { extractZodErrors } from "../../../../utils/zodMetods";
 import { ZodError } from "zod";
 import RenameIcon from "@mui/icons-material/DriveFileRenameOutline";
+
 interface RenameGroupChatProps {
   groupName: string;
   groupId: string;
