@@ -3,7 +3,8 @@ import { authenticatedAxios } from "../utils/axiosInterceptors";
 import { setChatLatestMessage } from "../utils/chatSlice";
 import { store } from "../utils/reduxStore";
 
-const sendMessageEndpoint = "message";
+const messageEndpoint = "message";
+const unreadMessagesEndpoint = `${messageEndpoint}/unread`;
 const getMessagesByChatIDEndpoint = (chatId: string) => `message/${chatId}`;
 class MessageService {
   async sendMessage({
@@ -14,13 +15,36 @@ class MessageService {
     content: string;
   }): Promise<MessageModel> {
     const { data } = await authenticatedAxios.post<MessageModel>(
-      sendMessageEndpoint,
+      messageEndpoint,
       {
         chat: chatId,
         content,
       }
     );
     store.dispatch(setChatLatestMessage(data));
+    return data;
+  }
+
+  async updateReadBy({
+    messages,
+    chatId,
+  }: {
+    messages: string[];
+    chatId: string;
+  }) {
+    const stringifyIds = JSON.stringify(messages);
+    const { data } = await authenticatedAxios.put(messageEndpoint, {
+      messages: stringifyIds,
+      chatId,
+    });
+    return data;
+  }
+
+  async getAllUnreadMessages({ chats }: { chats: string[] }) {
+    const stringifyIds = JSON.stringify(chats);
+    const { data } = await authenticatedAxios.post(unreadMessagesEndpoint, {
+      chats: stringifyIds,
+    });
     return data;
   }
 

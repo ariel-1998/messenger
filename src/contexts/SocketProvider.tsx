@@ -10,8 +10,6 @@ import { updateMessages } from "../utils/messageMethods";
 
 type SocketContextProps = {
   socket: Socket<DefaultEventsMap, DefaultEventsMap>;
-  emitJoinChat: (chatId: string) => void;
-  emitLeavingChat: (chatId: string) => void;
   emitMessage: (msg: MessageModel) => void;
 };
 
@@ -32,6 +30,7 @@ type SocketProviderProps = {
 };
 const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const user = useSelector((state: RootState) => state.auth);
+  // const { selectedChat } = useSelector((state: RootState) => state.chat);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -65,14 +64,14 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   };
 
   //connecting to room with chatId
-  const emitJoinChat = (chatId: string) => {
-    socket.emit("joinChat", chatId);
-  };
+  // const emitJoinChat = (chatId: string) => {
+  //   socket.emit("joinChat", chatId);
+  // };
 
   //emit leaving chat
-  const emitLeavingChat = (chatId: string) => {
-    socket.emit("leaveChat", chatId);
-  };
+  // const emitLeavingChat = (chatId: string) => {
+  //   socket.emit("leaveChat", chatId);
+  // };
 
   //emiting msg
   const emitMessage = (msg: MessageModel) => {
@@ -84,13 +83,12 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     socket[event]("message", (data: MessageModel) => {
       updateMessages(data, queryClient, true);
       console.log("message", data);
+      // if (data.chat._id === selectedChat?._id) return;
     });
   }
 
   return (
-    <SocketContext.Provider
-      value={{ socket, emitJoinChat, emitLeavingChat, emitMessage }}
-    >
+    <SocketContext.Provider value={{ socket, emitMessage }}>
       {children}
     </SocketContext.Provider>
   );

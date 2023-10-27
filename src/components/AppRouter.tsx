@@ -11,10 +11,11 @@ import AuthPage from "./Pages/AuthPage";
 const AppRouter: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth);
 
-  useEffect(() => {
-    if (!user) return;
-    chatService.getAllChats().catch((e) => toastifyService.error(e));
-  }, []);
+  // useEffect(() => {
+  //   if (!user) return;
+  //   chatService.getAllChats().catch((e) => toastifyService.error(e));
+
+  // }, []);
 
   return (
     <Routes>

@@ -6,4 +6,5 @@ export type MessageModel = {
   sender: UserModel;
   content: string;
   chat: Omit<ChatModel, "users"> & { users: string[] };
+  readBy: string[];
 };

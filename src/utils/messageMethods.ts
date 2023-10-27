@@ -1,5 +1,4 @@
 import { QueryClient } from "@tanstack/react-query";
-import { ChatModel } from "../models/ChatModel";
 import { MessageModel } from "../models/MessageModel";
 
 export const showSenderDetails = (
@@ -9,7 +8,6 @@ export const showSenderDetails = (
   message: MessageModel,
   senderIsMe: boolean
 ) => {
-  //   if (!isGroupChat || senderIsMe) return false;
   if (!isGroupChat) return false;
   if (isGroupChat && senderIsMe) return false;
   if (!messages[index - 1]) return true;
@@ -24,7 +22,6 @@ export const shouldMakeMarginLeftToMsg = (
   message: MessageModel,
   senderIsMe: boolean
 ) => {
-  //   if (!isGroupChat || senderIsMe) return false;
   if (!isGroupChat) return false;
   if (isGroupChat && senderIsMe) return false;
   if (!messages[index - 1]) return false;
@@ -42,17 +39,12 @@ export const messageMarginTop = (
   return 2;
 };
 
-{
-  /*add messages to the query cache, 
-  if there is no cached data there is no that means still didnt enter that certain chat
-  so there is no need to update if havent retrived yet
-  **/
-}
 export const updateMessages = (
   message: MessageModel,
   queryClient: QueryClient,
   checkCached = true
 ) => {
+  //not updating message if its chat messages haven't been cached (fatched) yet,
   if (checkCached) {
     const isCached = queryClient.getQueryData<MessageModel[] | undefined>([
       "messages",
@@ -68,3 +60,13 @@ export const updateMessages = (
     }
   );
 };
+
+// export const filterUnreadMessages = (
+//   messages: MessageModel[],
+//   userId: string
+// ) => {
+//   const notReadMessages = messages
+//     .filter((msg) => msg.sender._id !== userId && !msg.readBy.includes(userId))
+//     .map((msg) => msg._id);
+//   return notReadMessages;
+// };

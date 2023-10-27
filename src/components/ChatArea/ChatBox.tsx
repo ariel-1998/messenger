@@ -25,16 +25,16 @@ const ChatBox: React.FC = () => {
   const onBackClick = () => {
     dispatch(setSelectedChat({ chat: null, isExist: true }));
   };
-  const { emitJoinChat, emitLeavingChat } = useSocket();
+  // const { emitJoinChat, emitLeavingChat } = useSocket();
 
-  useEffect(() => {
-    if (!user || !selectedChat) return;
-    emitJoinChat(selectedChat._id);
+  // useEffect(() => {
+  //   if (!user || !selectedChat) return;
+  //   emitJoinChat(selectedChat._id);
 
-    return () => {
-      emitLeavingChat(selectedChat._id);
-    };
-  }, [selectedChat]);
+  //   return () => {
+  //     emitLeavingChat(selectedChat._id);
+  //   };
+  // }, [selectedChat]);
 
   const chatTitle = !selectedChat
     ? "Chat"
