@@ -25,6 +25,12 @@ class MessageService {
     return data;
   }
 
+  async getMessagesByChatId(chatId: string): Promise<MessageModel[]> {
+    const endpoint = getMessagesByChatIDEndpoint(chatId);
+    const { data } = await authenticatedAxios.get<MessageModel[]>(endpoint);
+    return data;
+  }
+
   async updateReadBy({
     messages,
     chatId,
@@ -33,24 +39,24 @@ class MessageService {
     chatId: string;
   }) {
     const stringifyIds = JSON.stringify(messages);
-    const { data } = await authenticatedAxios.put(messageEndpoint, {
+    await authenticatedAxios.put(messageEndpoint, {
       messages: stringifyIds,
       chatId,
     });
-    return data;
   }
 
-  async getAllUnreadMessages({ chats }: { chats: string[] }) {
+  async getAllUnreadMessages({
+    chats,
+  }: {
+    chats: string[];
+  }): Promise<MessageModel[]> {
     const stringifyIds = JSON.stringify(chats);
-    const { data } = await authenticatedAxios.post(unreadMessagesEndpoint, {
-      chats: stringifyIds,
-    });
-    return data;
-  }
-
-  async getMessagesByChatId(chatId: string): Promise<MessageModel[]> {
-    const endpoint = getMessagesByChatIDEndpoint(chatId);
-    const { data } = await authenticatedAxios.get<MessageModel[]>(endpoint);
+    const { data } = await authenticatedAxios.post<MessageModel[]>(
+      unreadMessagesEndpoint,
+      {
+        chats: stringifyIds,
+      }
+    );
     return data;
   }
 }

@@ -3,11 +3,11 @@ import { ChatModel } from "../models/ChatModel";
 import { MessageModel } from "../models/MessageModel";
 
 type ChatState = {
-  chats: ChatModel[];
+  chats: ChatModel[] | null;
   selectedChat: ChatModel | null;
 };
 let initialState: ChatState = {
-  chats: [],
+  chats: null,
   selectedChat: null,
 };
 
@@ -27,32 +27,34 @@ const chatSlice = createSlice({
       const { chat, isExist } = action.payload;
       state.selectedChat = chat;
       if (isExist || !chat) return state;
-      state.chats.unshift(chat);
+      state.chats?.unshift(chat);
       return state;
     },
     createGroup(state, action: PayloadAction<ChatModel>) {
       const chat = action.payload;
       state.selectedChat = chat;
-      state.chats.unshift(chat);
+      state.chats?.unshift(chat);
       return state;
     },
     updateGroup(state, action: PayloadAction<ChatModel>) {
       const updatedGroup = action.payload;
-      state.chats = state.chats.filter((chat) => chat._id !== updatedGroup._id);
+      state.chats =
+        state.chats?.filter((chat) => chat._id !== updatedGroup._id) || [];
       state.chats.unshift(updatedGroup);
       state.selectedChat = updatedGroup;
       return state;
     },
     deleteGroup(state, action: PayloadAction<string>) {
       const groupId = action.payload;
-      state.chats = state.chats.filter((chat) => chat._id !== groupId);
+      state.chats = state.chats?.filter((chat) => chat._id !== groupId) || [];
       state.selectedChat = null;
       return state;
     },
     setChatLatestMessage(state, action: PayloadAction<MessageModel>) {
       const message = action.payload;
       const chatId = message.chat._id;
-      state.chats = state.chats.map((chat) => {
+      if (!state.chats) return;
+      state.chats = state.chats?.map((chat) => {
         if (chat._id !== chatId) return chat;
         chat._id = chatId;
         chat.latestMessage = message;

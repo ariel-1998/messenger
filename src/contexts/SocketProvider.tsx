@@ -1,4 +1,10 @@
-import React, { ReactNode, createContext, useContext, useEffect } from "react";
+import React, {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Socket, io } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { MessageModel } from "../models/MessageModel";
@@ -7,10 +13,13 @@ import { RootState } from "../utils/reduxStore";
 import { toastifyService } from "../services/toastifyService";
 import { useQueryClient } from "@tanstack/react-query";
 import { updateMessages } from "../utils/messageMethods";
+import { useUnreadMessages } from "./UnreadMessagesProvider";
 
 type SocketContextProps = {
   socket: Socket<DefaultEventsMap, DefaultEventsMap>;
   emitMessage: (msg: MessageModel) => void;
+  emitJoinChat: (chatId: string) => void;
+  emitLeavingChat: (chatId: string) => void;
 };
 
 const SocketContext = createContext<SocketContextProps | null>(null);
@@ -30,7 +39,8 @@ type SocketProviderProps = {
 };
 const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const user = useSelector((state: RootState) => state.auth);
-  // const { selectedChat } = useSelector((state: RootState) => state.chat);
+  const [chatRoom, setChatRoom] = useState<null | string>(null);
+  const { addUnreadMessage } = useUnreadMessages();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -38,9 +48,13 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     socket.connect();
     emitSetup(user._id);
     setupEvent("on");
+    leavingChat("on");
+    joinChat("on");
     onMessage("on");
     return () => {
       setupEvent("off");
+      leavingChat("off");
+      joinChat("off");
       onMessage("off");
       socket.disconnect();
     };
@@ -64,14 +78,23 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   };
 
   //connecting to room with chatId
-  // const emitJoinChat = (chatId: string) => {
-  //   socket.emit("joinChat", chatId);
-  // };
+  const emitJoinChat = (chatId: string) => {
+    socket.emit("joinChat", chatId);
+  };
+
+  const joinChat = (event: "on" | "off") => {
+    console.log(event);
+    socket[event]("joinChat", (chatId) => setChatRoom(chatId));
+  };
+
+  const leavingChat = (event: "on" | "off") => {
+    socket[event]("leaveChat", (chatId) => setChatRoom(chatId));
+  };
 
   //emit leaving chat
-  // const emitLeavingChat = (chatId: string) => {
-  //   socket.emit("leaveChat", chatId);
-  // };
+  const emitLeavingChat = (chatId: string) => {
+    socket.emit("leaveChat", chatId);
+  };
 
   //emiting msg
   const emitMessage = (msg: MessageModel) => {
@@ -81,14 +104,16 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   //listening to message event
   function onMessage(event: "on" | "off") {
     socket[event]("message", (data: MessageModel) => {
+      console.log(data.chat._id, chatRoom);
+      if (chatRoom != data.chat._id) addUnreadMessage(data);
       updateMessages(data, queryClient, true);
-      console.log("message", data);
-      // if (data.chat._id === selectedChat?._id) return;
     });
   }
 
   return (
-    <SocketContext.Provider value={{ socket, emitMessage }}>
+    <SocketContext.Provider
+      value={{ socket, emitMessage, emitLeavingChat, emitJoinChat }}
+    >
       {children}
     </SocketContext.Provider>
   );

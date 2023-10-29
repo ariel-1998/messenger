@@ -21,20 +21,20 @@ const ChatBox: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth);
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const dispatch = useDispatch();
-
   const onBackClick = () => {
     dispatch(setSelectedChat({ chat: null, isExist: true }));
   };
-  // const { emitJoinChat, emitLeavingChat } = useSocket();
 
-  // useEffect(() => {
-  //   if (!user || !selectedChat) return;
-  //   emitJoinChat(selectedChat._id);
+  const { emitJoinChat, emitLeavingChat } = useSocket();
 
-  //   return () => {
-  //     emitLeavingChat(selectedChat._id);
-  //   };
-  // }, [selectedChat]);
+  useEffect(() => {
+    if (!user || !selectedChat) return;
+    emitJoinChat(selectedChat._id);
+
+    return () => {
+      emitLeavingChat(selectedChat._id);
+    };
+  }, [selectedChat]);
 
   const chatTitle = !selectedChat
     ? "Chat"

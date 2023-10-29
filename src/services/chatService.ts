@@ -37,6 +37,7 @@ class ChatService {
   async getAllChats() {
     const { data } = await authenticatedAxios.get<ChatModel[]>(chatEndpoint);
     store.dispatch(getAllChats(data));
+    return data;
   }
 
   async createGroupChat({

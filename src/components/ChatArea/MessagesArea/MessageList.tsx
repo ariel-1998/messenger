@@ -5,26 +5,42 @@ import MessageBubble from "./MessageBubble";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { messageService } from "../../../services/messageService";
 import { toastifyService } from "../../../services/toastifyService";
-import { MessageModel } from "../../../models/MessageModel";
-// import { filterUnreadMessages } from "../../../utils/messageMethods";
+import { useUnreadMessages } from "../../../contexts/UnreadMessagesProvider";
 
 const MessageList: React.FC = () => {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
-  const user = useSelector((state: RootState) => state.auth);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const { removeUnreadMessages, unreadMessages } = useUnreadMessages();
 
-  // const readByMessagesMutatin = useMutation({
-  //   mutationFn: messageService.updateReadBy,
-  //   onSuccess: (data) => console.log("success", data),
-  //   onError: (err) => console.log("success", err),
-  // });
+  useEffect(() => {
+    if (!selectedChat) return;
+    if (!unreadMessages[selectedChat._id]) return;
+  }, [selectedChat]);
+
+  const readByMessagesMutatin = useMutation({
+    mutationFn: messageService.updateReadBy,
+    onSuccess: () => {
+      if (!selectedChat) return;
+      removeUnreadMessages(selectedChat._id);
+    },
+    onError: (err) => console.log("success", err),
+  });
 
   const { data: messages } = useQuery({
     queryKey: ["messages", `{chatId: ${selectedChat?._id}}`],
     queryFn: () => messageService.getMessagesByChatId(selectedChat?._id!),
     enabled: !!selectedChat?._id,
     onError: (err) => toastifyService.error(err),
-    // onSuccess: (data) => onMessagesQuerySuccess(data),
+    onSuccess: (data) => {
+      if (!selectedChat) return;
+      const readMessages = unreadMessages[selectedChat._id];
+      if (!readMessages) return;
+      const messageIds = readMessages.map((msg) => msg._id);
+      readByMessagesMutatin.mutate({
+        chatId: selectedChat._id,
+        messages: messageIds,
+      });
+    },
   });
 
   useEffect(() => {
