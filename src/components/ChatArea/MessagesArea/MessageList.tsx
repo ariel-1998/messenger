@@ -10,20 +10,14 @@ import { useUnreadMessages } from "../../../contexts/UnreadMessagesProvider";
 const MessageList: React.FC = () => {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const { removeUnreadMessages, unreadMessages } = useUnreadMessages();
-
-  useEffect(() => {
-    if (!selectedChat) return;
-    if (!unreadMessages[selectedChat._id]) return;
-  }, [selectedChat]);
+  const { removeUnreadMessages, unreadMessages, unreadAmount } =
+    useUnreadMessages();
 
   const readByMessagesMutatin = useMutation({
     mutationFn: messageService.updateReadBy,
     onSuccess: () => {
-      if (!selectedChat) return;
-      removeUnreadMessages(selectedChat._id);
+      if (selectedChat) removeUnreadMessages(selectedChat._id);
     },
-    onError: (err) => console.log("success", err),
   });
 
   const { data: messages } = useQuery({
@@ -31,17 +25,29 @@ const MessageList: React.FC = () => {
     queryFn: () => messageService.getMessagesByChatId(selectedChat?._id!),
     enabled: !!selectedChat?._id,
     onError: (err) => toastifyService.error(err),
-    onSuccess: (data) => {
-      if (!selectedChat) return;
-      const readMessages = unreadMessages[selectedChat._id];
-      if (!readMessages) return;
-      const messageIds = readMessages.map((msg) => msg._id);
-      readByMessagesMutatin.mutate({
-        chatId: selectedChat._id,
-        messages: messageIds,
-      });
-    },
+    // onSuccess: (data) => {
+    // if (!selectedChat) return;
+    // const readMessages = unreadMessages[selectedChat._id];
+    // if (!readMessages) return;
+    // const messageIds = readMessages.map((msg) => msg._id);
+    // readByMessagesMutatin.mutate({
+    //   chatId: selectedChat._id,
+    //   messages: messageIds,
+    // });
+    // },
   });
+
+  useEffect(() => {
+    console.log("first");
+    if (!selectedChat) return;
+    const readMessages = unreadMessages[selectedChat._id];
+    if (!readMessages) return;
+    const messageIds = readMessages.map((msg) => msg._id);
+    readByMessagesMutatin.mutate({
+      chatId: selectedChat._id,
+      messages: messageIds,
+    });
+  }, [unreadAmount]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({

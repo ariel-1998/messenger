@@ -14,6 +14,7 @@ const ChatList: React.FC = () => {
   const theme = useTheme();
   const screanSize = useMediaQuery(theme.breakpoints.up("md"));
   const [search, setSearch] = useState("");
+  const { selectedChat } = useSelector((state: RootState) => state.chat);
 
   const { debounce, isLoading: debounceLoad } = useDebounce({
     fn: searchChat,
@@ -79,10 +80,12 @@ type ChatListItemsProps = {
 
 function ChatListItems({ search }: ChatListItemsProps): JSX.Element {
   const loggedUser = useSelector((state: RootState) => state.auth);
-  const { chats: chatList } = useSelector((state: RootState) => state.chat);
+  const { chats: chatList, selectedChat } = useSelector(
+    (state: RootState) => state.chat
+  );
   const dispatch = useDispatch();
 
-  const chats = chatList || [];
+  const chats = chatList ? chatList : [];
   const onUserClick = (chat: ChatModel) => {
     dispatch(setSelectedChat({ chat, isExist: true }));
   };
@@ -108,13 +111,31 @@ function ChatListItems({ search }: ChatListItemsProps): JSX.Element {
 
   const content = filteredChats ? (
     <>
-      {filteredChats.map((chat) => (
-        <ListItems.Chat
-          chat={chat}
-          key={chat._id}
-          onClick={() => onUserClick(chat)}
-        />
-      ))}
+      {filteredChats.map((chat) => {
+        // if (chat._id === selectedChat?._id) {
+        //   return (
+        //     <ListItems.Chat
+        //       chat={chat}
+        //       disableRipple
+        //       disableBtnProps
+        //       sx={{ bgcolor: "#bbdefb" }}
+        //       key={chat._id}
+        //       onClick={() => onUserClick(chat)}
+        //     />
+        //   );
+        // }
+        return (
+          <ListItems.Chat
+            sx={{
+              bgcolor: selectedChat?._id !== chat._id ? "#ddd" : "#bbdefb",
+              transition: "background-color 900ms ease",
+            }}
+            chat={chat}
+            key={chat._id}
+            onClick={() => onUserClick(chat)}
+          />
+        );
+      })}
     </>
   ) : (
     <Typography textAlign={"center"}>Empty!</Typography>

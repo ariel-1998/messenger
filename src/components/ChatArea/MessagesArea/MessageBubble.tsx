@@ -66,11 +66,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         className={`bubble ${alignMessage}`}
       >
         {senderDetails && (
-          <Typography color={"#333"} sx={{ opacity: 0.7 }}>
+          <Typography fontSize={"0.9rem"} color={"#333"} sx={{ opacity: 0.7 }}>
             {message.sender.name}
           </Typography>
         )}
-        <Typography>{message.content}</Typography>
+        <Typography fontWeight={"bold"}>{message.content}</Typography>
       </Stack>
     </Stack>
   );

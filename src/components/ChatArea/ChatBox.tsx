@@ -29,10 +29,10 @@ const ChatBox: React.FC = () => {
 
   useEffect(() => {
     if (!selectedChat) return;
-    socket.emit("joinChat", selectedChat._id);
+    socket?.emit("joinChat", selectedChat._id);
 
     return () => {
-      socket.emit("leaveChat", selectedChat._id);
+      socket?.emit("leaveChat", selectedChat._id);
     };
   }, [selectedChat]);
 

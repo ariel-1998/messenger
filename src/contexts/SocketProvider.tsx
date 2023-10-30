@@ -1,15 +1,22 @@
-import React, { ReactNode, createContext, useContext, useEffect } from "react";
+import React, {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Socket, io } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { MessageModel } from "../models/MessageModel";
 import { useSelector } from "react-redux";
 import { RootState } from "../utils/reduxStore";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateMessages } from "../utils/messageMethods";
 import { useUnreadMessages } from "./UnreadMessagesProvider";
+import { messageService } from "../services/messageService";
 
 type SocketContextProps = {
-  socket: Socket<DefaultEventsMap, DefaultEventsMap>;
+  socket: Socket<DefaultEventsMap, DefaultEventsMap> | null;
 };
 
 const SocketContext = createContext<SocketContextProps | null>(null);
@@ -22,19 +29,28 @@ export const useSocket = () => {
   return context;
 };
 
-const socket = io("http://localhost:3001");
-
 type SocketProviderProps = {
   children: ReactNode;
 };
+
 const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const user = useSelector((state: RootState) => state.auth);
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const { addUnreadMessage } = useUnreadMessages();
   const queryClient = useQueryClient();
+  const [socketConnection, setSocketConnection] = useState<Socket<
+    DefaultEventsMap,
+    DefaultEventsMap
+  > | null>(null);
+
+  const readByMessagesMutatin = useMutation({
+    mutationFn: messageService.updateReadBy,
+  });
 
   useEffect(() => {
     if (!user) return;
+    let socket = io("http://localhost:3001");
+    setSocketConnection(socket);
     socket.connect();
     socket.emit("setup", user._id);
     return () => {
@@ -44,18 +60,25 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const event = (data: MessageModel) => {
-      if (selectedChat?._id !== data.chat._id) addUnreadMessage(data);
-      console.log("message", data.content, data.chat.users);
+      if (selectedChat?._id === data.chat._id) {
+        readByMessagesMutatin.mutate({
+          chatId: selectedChat._id,
+          messages: [data._id],
+        });
+      } else {
+        addUnreadMessage(data);
+      }
       updateMessages(data, queryClient, true);
     };
-    socket.on("message", event);
+
+    socketConnection?.on("message", event);
     return () => {
-      socket.off("message", event);
+      socketConnection?.off("message", event);
     };
-  }, [selectedChat]);
+  }, [selectedChat, socketConnection]);
 
   return (
-    <SocketContext.Provider value={{ socket }}>
+    <SocketContext.Provider value={{ socket: socketConnection }}>
       {children}
     </SocketContext.Provider>
   );

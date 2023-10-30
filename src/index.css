@@ -36,14 +36,12 @@ a {
 
 /* Left bubble style */
 .start {
-  background-color: #0099cc;
-  color: white;
-  /* text-align: left; */
+  background-color: #bbdefb;
+  color: #544f4f;
 }
 
 /* Right bubble style */
 .end {
-  background-color: #00cc66;
-  color: white;
-  /* text-align: right; */
+  background-color: #2dd983;
+  color: #544f4f;
 }

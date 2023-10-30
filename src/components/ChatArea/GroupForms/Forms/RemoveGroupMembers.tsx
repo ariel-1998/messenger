@@ -163,9 +163,14 @@ function UserPopperList(): JSX.Element {
     <>
       {selectedChat &&
         users.map((user) => (
-          <ListItems.User disableRipple user={user} key={user._id}>
+          <ListItems.User
+            disableBtnProps
+            disableRipple
+            user={user}
+            key={user._id}
+          >
             {isAdmin && <UserPopper user={user} chat={selectedChat} />}
-            <ProfileModal.User btnText="viewProfile" isBtn profile={user} />
+            <ProfileModal.User btnText="view profile" isBtn profile={user} />
           </ListItems.User>
         ))}
     </>

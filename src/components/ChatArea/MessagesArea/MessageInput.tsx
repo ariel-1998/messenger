@@ -36,7 +36,7 @@ function MessageInput(): JSX.Element {
   const sendMessageMutation = useMutation({
     mutationFn: messageService.sendMessage,
     onSuccess: (data) => {
-      socket.emit("message", data);
+      socket?.emit("message", data);
       updateMessages(data, queryClient, false);
     },
   });
@@ -51,7 +51,7 @@ function MessageInput(): JSX.Element {
       btnRef.current?.click();
     } else {
       if (!user || !selectedChat) return;
-      socket.emit("typing", user, selectedChat._id);
+      socket?.emit("typing", user, selectedChat._id);
     }
   };
 
@@ -65,9 +65,9 @@ function MessageInput(): JSX.Element {
       setUserTyping(userName);
       debounce();
     };
-    socket.on("typing", typingEvent);
+    socket?.on("typing", typingEvent);
     return () => {
-      socket.off("typing", typingEvent);
+      socket?.off("typing", typingEvent);
     };
   }, []);
 

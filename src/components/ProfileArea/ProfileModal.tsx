@@ -9,12 +9,17 @@ import {
   Divider,
   useTheme,
   useMediaQuery,
+  Box,
+  Grid,
+  MenuItem,
 } from "@mui/material";
 import { UserModel } from "../../models/UserModel";
 import CustomModal from "../CustomComponents/Modals/CustomModal";
 import GroupForm from "../ChatArea/GroupForms/Forms/GroupForm";
 import { RootState } from "../../utils/reduxStore";
 import { useSelector } from "react-redux";
+import CustomMenu from "../CustomComponents/CustomMenu";
+import { Settings } from "@mui/icons-material";
 
 type UserProfileModalProps<T> = {
   profile?: T;
@@ -33,7 +38,7 @@ const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
   const theme = useTheme();
-  const smallScreen = useMediaQuery(theme.breakpoints.up("md"));
+  const smallScreen = useMediaQuery(theme.breakpoints.up("sm"));
 
   return (
     <>
@@ -47,29 +52,34 @@ const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
         </Typography>
       )}
       <CustomModal open={open} handleClose={handleClose} sx={{ pr: 2 }}>
-        <Stack
-          direction={smallScreen ? "row" : "column-reverse"}
-          justifyContent={smallScreen ? "space-between" : "center"}
-          alignItems={"center"}
-          width={"100%"}
-        >
-          <Stack
-            direction={"column"}
-            alignItems={"center"}
-            justifyContent={"center"}
-          >
-            <Typography variant="h4" component="h2">
-              {profile?.name}
-            </Typography>
-            <Typography variant="h5" textAlign={"center"} sx={{ mt: 2 }}>
-              {profile?.email}
-            </Typography>
-          </Stack>
-          <Avatar
-            sx={{ flexBasis: 150, width: 150, height: 150 }}
-            src={profile?.image as string}
-          />
-        </Stack>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={7} margin={"auto"}>
+            <Stack direction="column" alignItems="center">
+              <Typography variant="h4" component="h2">
+                {profile?.name}
+              </Typography>
+              {!smallScreen && (
+                <Avatar
+                  sx={{ flexBasis: 150, width: 150, height: 150 }}
+                  src={profile?.image as string}
+                />
+              )}
+              <Box sx={{ mt: 2, width: "100%", overflowWrap: "break-word" }}>
+                <Typography variant="h5" textAlign="center">
+                  {profile?.email}
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+          {smallScreen && (
+            <Grid item xs={12} sm={5}>
+              <Avatar
+                sx={{ flexBasis: 150, width: 150, height: 150 }}
+                src={profile?.image as string}
+              />
+            </Grid>
+          )}
+        </Grid>
       </CustomModal>
     </>
   );
@@ -118,17 +128,22 @@ const GroupProfileModal: React.FC<UserProfileModalProps<null>> = ({
               groupId={selectedChat._id}
             />
             {isUserAdmin ? (
-              <>
-                <GroupForm.AddMembers handleParentModalClose={handleClose} />
-                <GroupForm.Remove handleModalClose={handleClose} />
-              </>
+              // <>
+              //   <GroupForm.AddMembers handleParentModalClose={handleClose} />
+              //   <GroupForm.Remove handleModalClose={handleClose} />
+              // </>
+              <GroupSettings modalParentClose={handleClose} />
             ) : (
               <GroupForm.Leave />
             )}
           </Stack>
+
           {/* <CustomMenu icon={<Add />}>
             {isUserAdmin && (
-              <>
+              <><MenuItem
+            key={i}
+            sx={{ padding: 0 }}
+            onClick={()
                 <GroupForm.AddMembers handleParentModalClose={handleClose} />
                 <GroupForm.Remove handleModalClose={handleClose} />
               </>
@@ -152,3 +167,33 @@ const ProfileModal = {
 };
 
 export default ProfileModal;
+
+type GroupSettingsProps = {
+  modalParentClose: () => void;
+};
+function GroupSettings({ modalParentClose }: GroupSettingsProps) {
+  const [open, setOpen] = useState(false);
+  const handleMenuOpen = () => setOpen(true);
+  const handleMenuClose = () => setOpen(false);
+
+  return (
+    <CustomMenu
+      icon={<Settings sx={{ fill: "#777" }} />}
+      open={open}
+      onOpen={handleMenuOpen}
+    >
+      <MenuItem sx={{ padding: 0 }}>
+        <GroupForm.AddMembers
+          menuClose={handleMenuClose}
+          handleParentModalClose={modalParentClose}
+        />
+      </MenuItem>
+      <MenuItem sx={{ padding: 0 }}>
+        <GroupForm.Remove
+          menuClose={handleMenuClose}
+          handleModalClose={modalParentClose}
+        />
+      </MenuItem>
+    </CustomMenu>
+  );
+}

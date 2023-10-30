@@ -7,7 +7,7 @@ export type ChatModel = {
   chatName: string;
   isGroupChat: boolean;
   users: UserModel[];
-  latestMessage?: MessageModel;
+  latestMessage?: Partial<MessageModel>;
   groupAdmin?: UserModel;
 };
 

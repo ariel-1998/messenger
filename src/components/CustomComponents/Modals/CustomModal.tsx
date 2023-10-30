@@ -24,6 +24,8 @@ const CustomModal: React.FC<CustomModalProps> = ({
     width: "100%",
     bgcolor: "background.paper",
     borderRadius: 2,
+    maxHeight: "83vh", // Add this line to set the maximum height
+    overflowY: "auto",
     boxShadow: 24,
     p: 3,
   };

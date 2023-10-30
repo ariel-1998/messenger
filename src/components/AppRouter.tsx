@@ -1,5 +1,5 @@
-import React from "react";
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Navigate, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../utils/reduxStore";
 import ErrorPage from "./Pages/ErrorPage";
@@ -33,6 +33,10 @@ const AppRouter: React.FC = () => {
 export default AppRouter;
 
 function AuthedProviders() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate("/chat");
+  }, []);
   return (
     <UnreadMessagesProvider>
       <SocketProvider>

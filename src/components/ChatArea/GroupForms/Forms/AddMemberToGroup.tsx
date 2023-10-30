@@ -18,13 +18,16 @@ import { RootState } from "../../../../utils/reduxStore";
 import ChildModal from "../../../CustomComponents/Modals/ChildModal";
 import { LoadingButton } from "@mui/lab";
 import { Add } from "@mui/icons-material";
+import { MENU_ITEM_PADDING } from "../../../AppBarArea/ProfileMenu";
 
 type AddMemberToGroupProps = {
   handleParentModalClose: () => void;
+  menuClose: () => void;
 };
 
 const AddMemberToGroup: React.FC<AddMemberToGroupProps> = ({
   handleParentModalClose,
+  menuClose,
 }) => {
   const [open, setOpen] = useState(false);
   const closeModal = () => setOpen(false);
@@ -32,9 +35,24 @@ const AddMemberToGroup: React.FC<AddMemberToGroupProps> = ({
 
   return (
     <>
-      <Button onClick={openModal}>
-        Add Members <Add />
-      </Button>
+      <Box
+        onClick={() => {
+          menuClose();
+          openModal();
+        }}
+        sx={MENU_ITEM_PADDING}
+      >
+        <Stack
+          direction={"row"}
+          height={"100%"}
+          width={"100%"}
+          alignItems={"center"}
+          justifyContent={"center"}
+        >
+          <Typography textAlign={"center"}>Add Members</Typography>
+          <Add />
+        </Stack>
+      </Box>
       <ChildModal open={open} handleClose={closeModal}>
         <ChildModalContent
           closeModalChild={closeModal}

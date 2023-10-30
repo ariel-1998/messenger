@@ -19,16 +19,19 @@ type UserListItemProps = {
   sx?: SxProps<Theme>;
   children?: ReactNode;
   disableRipple?: boolean;
+  disableBtnProps?: boolean;
 } & ListItemProps;
 
 const UserListItem: React.FC<UserListItemProps> = ({
   user,
+  disableBtnProps = false,
+  disableRipple = false,
   sx,
   children,
-  disableRipple = false,
   ...rest
 }) => (
   <CustomListItem
+    disableBtnProps={disableBtnProps}
     sx={{ position: "relative", ...sx }}
     {...rest}
     disableRipple={disableRipple}
@@ -77,13 +80,26 @@ const UserListItem: React.FC<UserListItemProps> = ({
 type ChatListItemProps = {
   chat: ChatModel;
   sx?: SxProps<Theme>;
+  disableRipple?: boolean;
+  disableBtnProps?: boolean;
 } & ListItemProps;
 
-const ChatListItem: React.FC<ChatListItemProps> = ({ chat, sx, ...rest }) => {
+const ChatListItem: React.FC<ChatListItemProps> = ({
+  chat,
+  sx,
+  disableBtnProps = false,
+  disableRipple = false,
+  ...rest
+}) => {
   const user = useSelector((state: RootState) => state.auth);
-  const isLoggedUserIsSender = chat.latestMessage?.sender._id === user?._id;
+  const isLoggedUserIsSender = chat.latestMessage?.sender?._id === user?._id;
   return (
-    <CustomListItem sx={{ position: "relative", ...sx }} {...rest}>
+    <CustomListItem
+      sx={{ position: "relative", ...sx }}
+      disableBtnProps={disableBtnProps}
+      disableRipple={disableRipple}
+      {...rest}
+    >
       <Stack width={"100%"} height={"100%"}>
         <Stack flexDirection={"row"} width={"100%"} pt={1} alignItems={"start"}>
           <Typography
@@ -121,7 +137,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat, sx, ...rest }) => {
         >
           {chat.latestMessage
             ? `${
-                !isLoggedUserIsSender ? chat.latestMessage.sender.name : "You"
+                !isLoggedUserIsSender ? chat.latestMessage.sender?.name : "You"
               }: ${chat.latestMessage.content}`
             : "New chat was opened"}
           {/**need to change the way chats open */}

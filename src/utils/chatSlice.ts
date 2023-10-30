@@ -26,8 +26,8 @@ const chatSlice = createSlice({
     ) {
       const { chat, isExist } = action.payload;
       state.selectedChat = chat;
-      // if (isExist || !chat) return state;
-      // state.chats?.unshift(chat);
+      if (isExist || !chat) return state;
+      state.chats?.unshift(chat);
       return state;
     },
     createGroup(state, action: PayloadAction<ChatModel>) {
@@ -38,10 +38,11 @@ const chatSlice = createSlice({
     },
     updateGroup(state, action: PayloadAction<ChatModel>) {
       const updatedGroup = action.payload;
+      console.log("update", updatedGroup);
       state.chats =
         state.chats?.filter((chat) => chat._id !== updatedGroup._id) || [];
       state.chats.unshift(updatedGroup);
-      state.selectedChat = updatedGroup;
+      state.selectedChat = { ...updatedGroup };
       return state;
     },
     deleteGroup(state, action: PayloadAction<string>) {

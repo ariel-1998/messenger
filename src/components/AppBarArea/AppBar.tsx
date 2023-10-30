@@ -1,6 +1,8 @@
 import {
   Box,
   AppBar as MuiAppBar,
+  SxProps,
+  Theme,
   Toolbar,
   Typography,
   useMediaQuery,
@@ -15,6 +17,14 @@ import NotificationMenu from "./NotificationMenu";
 const AppBar: React.FC = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const headerStyle: SxProps<Theme> = !isSmallScreen
+    ? {
+        position: "absolute",
+        left: "50%",
+        transform: "translateX(-50%)",
+      }
+    : {};
 
   return (
     <Box
@@ -38,14 +48,7 @@ const AppBar: React.FC = () => {
               <DrawerSearch />
             </Drawer>
           </Box>
-          <Typography
-            sx={{
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-            }}
-            variant={isSmallScreen ? "h6" : "h4"}
-          >
+          <Typography sx={headerStyle} variant={isSmallScreen ? "h6" : "h4"}>
             Messenger
           </Typography>
           <Box sx={{ display: "flex" }}>

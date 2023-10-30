@@ -11,14 +11,27 @@ type CustomListItemProps = {
   children?: ReactNode;
   sx?: SxProps<Theme>;
   disableRipple?: boolean;
+  disableBtnProps?: boolean;
 } & ListItemProps;
 
 const CustomListItem: React.FC<CustomListItemProps> = ({
   children,
   disableRipple = false,
+  disableBtnProps = false,
   sx,
   ...rest
 }) => {
+  const btnSx: SxProps<Theme> = {
+    height: "100%",
+    borderRadius: "10px",
+  };
+  const disabledBtnProps: SxProps<Theme> = {
+    ...btnSx,
+    cursor: "auto",
+    "&:hover": {
+      bgcolor: "#ddd", // Set the same background color on hover
+    },
+  };
   return (
     <ListItem
       disablePadding
@@ -32,10 +45,7 @@ const CustomListItem: React.FC<CustomListItemProps> = ({
     >
       <ListItemButton
         disableRipple={disableRipple}
-        sx={{
-          height: "100%",
-          borderRadius: "10px",
-        }}
+        sx={disableBtnProps ? disabledBtnProps : btnSx}
       >
         {children}
       </ListItemButton>
