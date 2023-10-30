@@ -25,14 +25,14 @@ const ChatBox: React.FC = () => {
     dispatch(setSelectedChat({ chat: null, isExist: true }));
   };
 
-  const { emitJoinChat, emitLeavingChat } = useSocket();
+  const { socket } = useSocket();
 
   useEffect(() => {
-    if (!user || !selectedChat) return;
-    emitJoinChat(selectedChat._id);
+    if (!selectedChat) return;
+    socket.emit("joinChat", selectedChat._id);
 
     return () => {
-      emitLeavingChat(selectedChat._id);
+      socket.emit("leaveChat", selectedChat._id);
     };
   }, [selectedChat]);
 

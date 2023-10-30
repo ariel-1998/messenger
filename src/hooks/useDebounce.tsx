@@ -9,12 +9,12 @@ const useDebounce = ({ fn, wait = 1000 }: useDebounceProps) => {
   const [isLoading, setIsLoading] = useState(false);
   let timeout: NodeJS.Timeout;
 
-  const debounce = useCallback((args: any) => {
+  const debounce = useCallback((...args: any) => {
     setIsLoading(true);
     clearTimeout(timeout);
     timeout = setTimeout(() => {
       setIsLoading(false);
-      fn(args);
+      fn(...args);
     }, wait);
   }, []);
 

@@ -20,7 +20,6 @@ const CustomMenu: React.FC<CustomMenuProps> = ({
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
     onOpen();
-    console.log("clicked");
   };
 
   const handleClose = () => {

@@ -1,10 +1,12 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../utils/reduxStore";
 import ErrorPage from "./Pages/ErrorPage";
 import ChatPage from "./Pages/AuthedPages/ChatPage";
 import AuthPage from "./Pages/AuthPage";
+import SocketProvider from "../contexts/SocketProvider";
+import UnreadMessagesProvider from "../contexts/UnreadMessagesProvider";
 
 const AppRouter: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth);
@@ -12,17 +14,30 @@ const AppRouter: React.FC = () => {
   return (
     <Routes>
       {!user ? (
-        <Route path="/auth" element={<AuthPage />} />
+        <>
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="*" element={<Navigate to={"/auth"} />} />
+        </>
       ) : (
-        <Route path="/chat" element={<ChatPage />} />
+        <>
+          <Route path="/" element={<AuthedProviders />}>
+            <Route path="chat" element={<ChatPage />} />
+            <Route path="*" element={<ErrorPage navigatTo={"/chat"} />} />
+          </Route>
+        </>
       )}
-
-      <Route
-        path="*"
-        element={<ErrorPage navigatTo={!user ? "/auth" : "/chat"} />}
-      />
     </Routes>
   );
 };
 
 export default AppRouter;
+
+function AuthedProviders() {
+  return (
+    <UnreadMessagesProvider>
+      <SocketProvider>
+        <Outlet />
+      </SocketProvider>
+    </UnreadMessagesProvider>
+  );
+}

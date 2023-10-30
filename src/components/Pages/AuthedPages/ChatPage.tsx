@@ -7,15 +7,11 @@ import UnreadMessagesProvider from "../../../contexts/UnreadMessagesProvider";
 
 const ChatPage: React.FC = () => {
   return (
-    <UnreadMessagesProvider>
-      <SocketProvider>
-        <DrawerProvider>
-          <ChatPageWrapper>
-            <ChatSection />
-          </ChatPageWrapper>
-        </DrawerProvider>
-      </SocketProvider>
-    </UnreadMessagesProvider>
+    <DrawerProvider>
+      <ChatPageWrapper>
+        <ChatSection />
+      </ChatPageWrapper>
+    </DrawerProvider>
   );
 };
 

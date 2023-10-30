@@ -26,8 +26,8 @@ const chatSlice = createSlice({
     ) {
       const { chat, isExist } = action.payload;
       state.selectedChat = chat;
-      if (isExist || !chat) return state;
-      state.chats?.unshift(chat);
+      // if (isExist || !chat) return state;
+      // state.chats?.unshift(chat);
       return state;
     },
     createGroup(state, action: PayloadAction<ChatModel>) {
