@@ -32,7 +32,7 @@ const UserList: React.FC<UserListProps> = ({
               selectedUsers && isUserInArr(selectedUsers, user) === -1
                 ? "#ddd"
                 : "#bbdefb" || "#ddd",
-            transition: "background-color 900ms ease",
+            transition: "background-color 500ms ease",
           }}
           onClick={() => {
             if (!onUserClick) return;

@@ -10,7 +10,8 @@ interface SelectedUserProps {
 const SelectedUser: React.FC<SelectedUserProps> = ({ user, onDelete }) => {
   return (
     <Chip
-      sx={{ height: "100%" }}
+      color="error"
+      sx={{ height: "100%", color: "black" }}
       label={user?.name}
       variant="outlined"
       onDelete={() => onDelete(user)}

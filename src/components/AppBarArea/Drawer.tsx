@@ -1,14 +1,7 @@
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
 import CustomSearchInput from "../CustomComponents/CustomSearchInput";
-import React, {
-  Children,
-  ReactElement,
-  ReactNode,
-  cloneElement,
-  isValidElement,
-  useState,
-} from "react";
+import React, { ReactNode } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { useDrawer } from "../../contexts/DrawerProvider";
