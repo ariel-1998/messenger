@@ -10,6 +10,7 @@ import {
   Popper,
   Stack,
   Typography,
+  Divider,
 } from "@mui/material";
 import ChildModal from "../../../CustomComponents/Modals/ChildModal";
 import { useMutation } from "@tanstack/react-query";
@@ -29,20 +30,31 @@ const RemoveGroupMembers: React.FC = () => {
   const openModal = () => setOpen(true);
   return (
     <>
-      <IconButton onClick={openModal} sx={{ p: 0 }}>
-        <VisibilityIcon />
+      <IconButton
+        onClick={openModal}
+        sx={{ ":hover": { background: "rgba(255,255,255,0.2)" } }}
+      >
+        <VisibilityIcon sx={{ fill: "white" }} />
       </IconButton>
-      <ChildModal sx={{ pb: 2 }} open={open} handleClose={closeModal}>
+
+      <ChildModal
+        sx={{ pb: 1, bgcolor: "#fff" }}
+        open={open}
+        handleClose={closeModal}
+      >
         <Stack spacing={1}>
           <List
             sx={{
               width: "100%",
               overflowY: "auto",
-              overflowX: "hidden",
-              maxHeight: "48vh",
-              margin: "auto",
+              display: "flex",
+              maxHeight: "70vh",
+              flexDirection: "column",
+              rowGap: 1,
             }}
           >
+            <Typography textAlign={"center"}>USERS</Typography>
+            <Divider flexItem />
             <UserPopperList />
           </List>
           <Button
@@ -170,7 +182,12 @@ function UserPopperList(): JSX.Element {
             key={user._id}
           >
             {isAdmin && <UserPopper user={user} chat={selectedChat} />}
-            <ProfileModal.User btnText="view profile" isBtn profile={user} />
+            <ProfileModal.User
+              btnText="view profile"
+              sx={{ ":hover": { bgcolor: "rgba(187, 222, 251, 0.3)" } }}
+              isBtn
+              profile={user}
+            />
           </ListItems.User>
         ))}
     </>

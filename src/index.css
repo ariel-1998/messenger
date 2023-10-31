@@ -21,6 +21,11 @@ body {
   font-size: 1rem;
 }
 
+.custom-input:focus {
+  outline: none;
+  border: 1px solid rgba(20, 101, 240, 0.5);
+}
+
 a {
   text-decoration: none;
   color: "#333";
@@ -44,4 +49,14 @@ a {
 .end {
   background-color: #2dd983;
   color: #544f4f;
+}
+
+.modal-background::before {
+  content: "";
+  position: absolute; /* Remove double quotes here */
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2));
 }

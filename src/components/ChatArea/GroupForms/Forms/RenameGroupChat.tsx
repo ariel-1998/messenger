@@ -36,14 +36,24 @@ const RenameGroupChat: React.FC<RenameGroupChatProps> = ({
 
   const onClick = () => {
     const input = renameRef.current?.firstChild as HTMLInputElement;
+    if (!input) return;
     const newName = input.value;
-    if (newName === groupName) return;
+    if (!newName) toastifyService.info("Must choose a name to submit!");
+    if (newName === groupName) {
+      toastifyService.info(
+        "This name is already the active name of this group!"
+      );
+    }
     try {
       groupNameSchema.parse(newName);
       renameMutation.mutate({ chatName: newName, groupId });
     } catch (error) {
       extractZodErrors(error as ZodError);
     }
+  };
+
+  const onEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") onClick();
   };
 
   return (
@@ -53,21 +63,22 @@ const RenameGroupChat: React.FC<RenameGroupChatProps> = ({
           <Input
             disabled={renameMutation.isLoading}
             ref={renameRef}
+            onKeyDown={onEnterKey}
             defaultValue={groupName}
+            sx={{ color: "white" }}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
+                  sx={{ ":hover": { background: "rgba(255,255,255,0.2)" } }}
                   onClick={onClick}
                   disabled={renameMutation.isLoading}
                 >
-                  <RenameIcon />
+                  <RenameIcon sx={{ fill: "white" }} />
                 </IconButton>
               </InputAdornment>
             }
           />
-          <FormHelperText id="outlined-weight-helper-text">
-            Rename
-          </FormHelperText>
+          <FormHelperText sx={{ color: "white" }}>Rename</FormHelperText>
         </FormControl>
       </Stack>
     </>

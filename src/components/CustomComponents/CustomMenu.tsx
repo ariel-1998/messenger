@@ -1,4 +1,4 @@
-import { Menu } from "@mui/material";
+import { Menu, SxProps, Theme } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import React, { ReactNode } from "react";
 
@@ -7,6 +7,7 @@ type CustomMenuProps = {
   children: ReactNode;
   open: boolean;
   onOpen: () => void;
+  sx?: SxProps<Theme>;
 };
 
 const CustomMenu: React.FC<CustomMenuProps> = ({
@@ -14,6 +15,7 @@ const CustomMenu: React.FC<CustomMenuProps> = ({
   children,
   open,
   onOpen,
+  sx,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -29,6 +31,7 @@ const CustomMenu: React.FC<CustomMenuProps> = ({
   return (
     <div>
       <IconButton
+        sx={sx}
         size="large"
         aria-label="account of current user"
         aria-controls="menu-appbar"

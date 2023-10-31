@@ -29,7 +29,7 @@ const CustomListItem: React.FC<CustomListItemProps> = ({
     ...btnSx,
     cursor: "auto",
     "&:hover": {
-      bgcolor: "#ddd", // Set the same background color on hover
+      bgcolor: "#ddd",
     },
   };
   return (

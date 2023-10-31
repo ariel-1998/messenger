@@ -1,4 +1,12 @@
-import { List, Avatar, Stack, Typography } from "@mui/material";
+import {
+  List,
+  Avatar,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+  Box,
+} from "@mui/material";
 import React, { useRef, useState } from "react";
 import CustomSearchInput from "../CustomComponents/CustomSearchInput";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -15,6 +23,8 @@ const DrawerSearch: React.FC = () => {
   const [userSearch, setUserSearch] = useState("");
   const { closeDrawer } = useDrawer();
   const { debounce, isLoading } = useDebounce({ fn: fetchUsers, wait: 700 });
+  const theme = useTheme();
+  const small = useMediaQuery(theme.breakpoints.down("sm"));
 
   const chatAccessMutation = useMutation({
     mutationFn: chatService.accessChat,
@@ -43,45 +53,72 @@ const DrawerSearch: React.FC = () => {
   }
 
   return (
-    <List sx={{ width: "100%" }}>
-      <Stack mb={2} width={"100%"} alignItems={"center"}>
-        <CustomSearchInput
-          ref={searchRef}
-          inputCursor="auto"
-          placeholder="Search..."
-          isIcon={false}
-          onChange={debounce}
-        />
-        <span>{isLoading && searchRef.current?.value ? "loading" : null}</span>
-      </Stack>
-
-      {isError && <Typography align="center">Users not found!</Typography>}
-
-      {isUserFetch && (
-        <Stack height={"88vh"}>
-          <LoadingSkeletons amount={12} />
+    <Box
+      sx={{
+        width: small ? "80vw" : 400,
+        height: "100vh",
+        bgcolor: "#eee",
+        overflowY: "auto",
+        m: 0,
+        px: 1,
+      }}
+    >
+      <List sx={{ width: "100%", pt: 0 }}>
+        <Stack
+          margin={"auto"}
+          position={"sticky"}
+          top={0}
+          zIndex={1000}
+          pb={2}
+          pt={1}
+          width={"100%"}
+          alignItems={"center"}
+          bgcolor={"#eee"}
+        >
+          <CustomSearchInput
+            ref={searchRef}
+            inputCursor="auto"
+            placeholder="Search..."
+            isIcon={false}
+            onChange={debounce}
+          />
+          <span>
+            {isLoading && searchRef.current?.value ? "loading" : null}
+          </span>
         </Stack>
-      )}
-      {users && (
-        <Stack spacing={1} pb={2}>
-          {users.map((user) => (
-            <CustomListItem
-              onClick={() => fetchChat(user._id)}
-              key={user._id}
-              sx={{ height: "80px" }}
-            >
-              <Stack flexDirection={"row"} width={"100%"} alignItems={"center"}>
-                <Stack spacing={1} p={2} width={"100%"}>
-                  <Typography variant="h6">{user.name}</Typography>
-                  <Typography>Email: {user.email}</Typography>
+
+        {isError && <Typography align="center">Users not found!</Typography>}
+
+        {isUserFetch && (
+          <Stack height={"88vh"}>
+            <LoadingSkeletons amount={12} />
+          </Stack>
+        )}
+        {users && (
+          <Stack spacing={1} pb={2}>
+            {users.map((user) => (
+              <CustomListItem
+                onClick={() => fetchChat(user._id)}
+                key={user._id}
+                sx={{ height: "80px" }}
+              >
+                <Stack
+                  flexDirection={"row"}
+                  width={"100%"}
+                  alignItems={"center"}
+                >
+                  <Stack spacing={1} p={2} width={"100%"}>
+                    <Typography variant="h6">{user.name}</Typography>
+                    <Typography>Email: {user.email}</Typography>
+                  </Stack>
+                  <Avatar src={user.image as string} />
                 </Stack>
-                <Avatar src={user.image as string} />
-              </Stack>
-            </CustomListItem>
-          ))}
-        </Stack>
-      )}
-    </List>
+              </CustomListItem>
+            ))}
+          </Stack>
+        )}
+      </List>
+    </Box>
   );
 };
 

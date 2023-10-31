@@ -51,7 +51,7 @@ const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
           {btnText}
         </Typography>
       )}
-      <CustomModal open={open} handleClose={handleClose} sx={{ pr: 2 }}>
+      <CustomModal open={open} handleClose={handleClose} sx={{ minHeight: 0 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={7} margin={"auto"}>
             <Stack direction="column" alignItems="center">
@@ -104,7 +104,17 @@ const GroupProfileModal: React.FC<UserProfileModalProps<null>> = ({
         {btnText}
       </Button>
       {selectedChat && (
-        <CustomModal open={open} handleClose={handleClose}>
+        <CustomModal
+          className="modal-background"
+          open={open}
+          handleClose={handleClose}
+          // sx={{
+          //   backgroundImage: `url(${vite})`, //need to change to selectedChat?.groupImg
+          //   backgroundSize: "100% 100%;",
+          //   backgroundRepeat: "no-repeat",
+          //   backgroundPosition: "center",
+          // }}
+        >
           <Stack
             sx={{
               rowGap: 1,
@@ -116,10 +126,20 @@ const GroupProfileModal: React.FC<UserProfileModalProps<null>> = ({
               alignItems: "center",
             }}
           >
-            <Typography align="center" variant="h6" p={0} m={0}>
+            <Typography
+              sx={{ zIndex: 1 }}
+              align="center"
+              color={"white"}
+              variant="h6"
+              p={0}
+              m={0}
+            >
               {selectedChat.chatName} <GroupForm.RemoveMember />
             </Typography>
-            <Divider flexItem />
+            <Divider
+              flexItem
+              sx={{ backgroundColor: "whitesmoke", zIndex: 1 }}
+            />
 
             {/* <Avatar sx={{ width: 150, height: 150 }} src={group?.image as string} /> */}
             <GroupForm.Rename
@@ -128,33 +148,11 @@ const GroupProfileModal: React.FC<UserProfileModalProps<null>> = ({
               groupId={selectedChat._id}
             />
             {isUserAdmin ? (
-              // <>
-              //   <GroupForm.AddMembers handleParentModalClose={handleClose} />
-              //   <GroupForm.Remove handleModalClose={handleClose} />
-              // </>
               <GroupSettings modalParentClose={handleClose} />
             ) : (
               <GroupForm.Leave />
             )}
           </Stack>
-
-          {/* <CustomMenu icon={<Add />}>
-            {isUserAdmin && (
-              <><MenuItem
-            key={i}
-            sx={{ padding: 0 }}
-            onClick={()
-                <GroupForm.AddMembers handleParentModalClose={handleClose} />
-                <GroupForm.Remove handleModalClose={handleClose} />
-              </>
-            )}
-            <GroupForm.Rename
-              handleModalClose={handleClose}
-              groupName={selectedChat.chatName}
-              groupId={selectedChat._id}
-            />
-            <GroupForm.RemoveMember />
-          </CustomMenu> */}
         </CustomModal>
       )}
     </>
@@ -178,7 +176,13 @@ function GroupSettings({ modalParentClose }: GroupSettingsProps) {
 
   return (
     <CustomMenu
-      icon={<Settings sx={{ fill: "#777" }} />}
+      sx={{
+        position: "absolute",
+        top: 0,
+        right: 0,
+        ":hover": { background: "rgba(255,255,255,0.2)" },
+      }}
+      icon={<Settings sx={{ fill: "white" }} />}
       open={open}
       onOpen={handleMenuOpen}
     >

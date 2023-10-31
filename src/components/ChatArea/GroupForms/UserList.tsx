@@ -20,7 +20,7 @@ const UserList: React.FC<UserListProps> = ({
         width: "100%",
         overflowY: "auto",
         overflowX: "hidden",
-        maxHeight: "48vh",
+        maxHeight: "40vh",
         margin: "auto",
       }}
     >

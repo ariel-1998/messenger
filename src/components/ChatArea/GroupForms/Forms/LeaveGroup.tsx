@@ -6,6 +6,7 @@ import { chatService } from "../../../../services/chatService";
 import { toastifyService } from "../../../../services/toastifyService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../utils/reduxStore";
+import { Logout } from "@mui/icons-material";
 
 const LeaveGroup: React.FC = () => {
   const [open, setOpen] = React.useState(false);
@@ -36,8 +37,8 @@ const LeaveGroup: React.FC = () => {
 
   return (
     <>
-      <LoadingButton onClick={handlePopper} ref={elRef}>
-        Leave Group
+      <LoadingButton color="error" onClick={handlePopper} ref={elRef}>
+        Leave Group <Logout />
       </LoadingButton>
       <Popper
         sx={{ zIndex: 2000, maxWidth: 250, minWidth: 250 }}

@@ -15,7 +15,7 @@ const passwordSchema = z
   .max(20, "Max number of letters is 20")
   .trim();
 
-const imageSchema = z.instanceof(FileList).refine((files) => {
+export const imageSchema = z.instanceof(FileList).refine((files) => {
   const type = files?.[0]?.type;
   if (!type) return false;
   if (!type.startsWith("image/") || type.endsWith("gif")) return false;

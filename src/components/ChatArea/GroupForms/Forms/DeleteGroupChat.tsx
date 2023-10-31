@@ -19,6 +19,7 @@ import { RootState } from "../../../../utils/reduxStore";
 import { LoadingButton } from "@mui/lab";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ChildModal from "../../../CustomComponents/Modals/ChildModal";
+import { MENU_ITEM_PADDING } from "../../../AppBarArea/ProfileMenu";
 type DeleteGroupChatProps = {
   handleModalClose(): void;
   menuClose(): void;
@@ -47,15 +48,30 @@ const DeleteGroupChat: React.FC<DeleteGroupChatProps> = ({
 
   return (
     <>
-      <Button
+      <Box
         onClick={() => {
           menuClose();
           handleOpen();
         }}
+        sx={MENU_ITEM_PADDING}
       >
-        Delete group <DeleteIcon />
-      </Button>
-      <ChildModal open={open} handleClose={handleClose}>
+        <Stack
+          direction={"row"}
+          height={"100%"}
+          width={"100%"}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+        >
+          <Typography color={"#444"}>Delete group</Typography>
+          <DeleteIcon sx={{ fill: "#444" }} />
+        </Stack>
+      </Box>
+
+      <ChildModal
+        sx={{ maxWidth: 200, pb: 1 }}
+        open={open}
+        handleClose={handleClose}
+      >
         <Typography>
           Are you sure you want to delete {selectedChat?.chatName} group?
         </Typography>

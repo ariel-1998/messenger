@@ -1,5 +1,14 @@
 import React, { ChangeEvent, useState } from "react";
-import { Divider, Stack, Typography, Box, Button } from "@mui/material";
+import {
+  Divider,
+  Stack,
+  Typography,
+  Box,
+  Button,
+  InputLabel,
+  Input,
+  FormHelperText,
+} from "@mui/material";
 import { userService } from "../../../../services/userService";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useDebounce from "../../../../hooks/useDebounce";
@@ -62,6 +71,7 @@ function CreateGroupChatContent({
   const [selectedUsers, setSelectedUsers] = useState<UserModel[]>([]);
   const [userSearch, setUserSearch] = useState("");
   const [groupName, setGroupName] = useState("");
+  const [groupImg, setGroupImg] = useState<FileList | null>(null);
   const { debounce: debouncedOnInput, isLoading } = useDebounce({
     fn: onInput,
     wait: 1500,
@@ -80,13 +90,36 @@ function CreateGroupChatContent({
     onSuccess: handleModalClose,
   });
 
+  const imageMutation = useMutation({
+    mutationFn: userService.uploadImage,
+    onError: () =>
+      toastifyService.error({
+        message: "There was an error, please try again later.",
+      }),
+  });
+
   const createGroup = () => {
     try {
-      createGroupSchema.parse({ chatName: groupName, users: selectedUsers });
-      groupMutation.mutate({
-        users: selectedUsers,
+      createGroupSchema.parse({
         chatName: groupName,
+        users: selectedUsers,
+        groupImg,
       });
+      if (groupImg) {
+        imageMutation.mutateAsync(groupImg).then((data) => {
+          groupMutation.mutate({
+            users: selectedUsers,
+            chatName: groupName,
+            groupImg: data.url,
+          });
+        });
+      } else {
+        groupMutation.mutate({
+          users: selectedUsers,
+          chatName: groupName,
+          groupImg: "",
+        });
+      }
     } catch (error) {
       extractZodErrors(error as ZodError);
     }
@@ -137,6 +170,15 @@ function CreateGroupChatContent({
           onInput={debouncedOnInput}
           endAdornment={isLoading && <Box width={"10px"}>loading</Box>}
         />
+        <Box>
+          <InputLabel>Group image</InputLabel>
+          <Input
+            type="file"
+            onChange={(e) => {
+              setGroupImg((e.target as any).file);
+            }}
+          />
+        </Box>
         <SelectedUsersList
           users={selectedUsers}
           setSelectedUsers={onDeleteUser}
@@ -152,15 +194,24 @@ function CreateGroupChatContent({
         {isError && (
           <Typography textAlign={"center"}>Nothing Found!</Typography>
         )}
-        <LoadingButton
-          sx={{ alignSelf: "end" }}
-          variant="contained"
-          loading={groupMutation.isLoading}
-          disabled={groupMutation.isLoading}
-          onClick={createGroup}
-        >
-          Create
-        </LoadingButton>
+        <Stack direction={"row"} columnGap={1} alignSelf="end">
+          <Button
+            color="error"
+            sx={{ alignSelf: "end" }}
+            variant="contained"
+            onClick={handleModalClose}
+          >
+            cancel
+          </Button>
+          <LoadingButton
+            variant="contained"
+            loading={groupMutation.isLoading}
+            disabled={groupMutation.isLoading}
+            onClick={createGroup}
+          >
+            Create
+          </LoadingButton>
+        </Stack>
       </Stack>
     </>
   );

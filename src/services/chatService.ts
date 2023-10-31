@@ -43,18 +43,17 @@ class ChatService {
   async createGroupChat({
     users,
     chatName,
+    groupImg,
   }: {
     users: UserModel[];
     chatName: string;
+    groupImg: string;
   }) {
     const usersIds = users.map((user) => user._id);
     const stringifyIds = JSON.stringify(usersIds);
     const { data } = await authenticatedAxios.post<ChatModel>(
       createGroupEndpoint,
-      {
-        users: stringifyIds,
-        chatName,
-      }
+      { groupImg, users: stringifyIds, chatName }
     );
     store.dispatch(createGroup(data));
   }

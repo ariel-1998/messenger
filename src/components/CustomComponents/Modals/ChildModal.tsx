@@ -16,21 +16,22 @@ const ChildModal: React.FC<ChildModalProps> = ({
   handleClose,
 }) => {
   const theme = useTheme();
-  const size = useMediaQuery(theme.breakpoints.down("xs"));
+  const size = useMediaQuery(theme.breakpoints.down("sm"));
 
   const style: SxProps<Theme> = {
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: size ? "90vw" : 300,
+    width: size ? "85vw" : 450,
     bgcolor: "background.paper",
-    border: "2px solid #000",
     boxShadow: 24,
+    minHeight: 100,
     pt: 2,
     px: 4,
     pb: 3,
   };
+
   return (
     <CustomModal open={open} sx={{ ...style, ...sx }} handleClose={handleClose}>
       {children}

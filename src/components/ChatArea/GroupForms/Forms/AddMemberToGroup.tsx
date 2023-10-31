@@ -47,10 +47,10 @@ const AddMemberToGroup: React.FC<AddMemberToGroupProps> = ({
           height={"100%"}
           width={"100%"}
           alignItems={"center"}
-          justifyContent={"center"}
+          justifyContent={"space-between"}
         >
-          <Typography textAlign={"center"}>Add Members</Typography>
-          <Add />
+          <Typography color={"#444"}>Add Members</Typography>
+          <Add sx={{ fill: "#444" }} />
         </Stack>
       </Box>
       <ChildModal open={open} handleClose={closeModal}>
@@ -159,18 +159,17 @@ function ChildModalContent({
           <Typography textAlign={"center"}>Nothing Found!</Typography>
         )}
         <Stack direction={"row"} spacing={1}>
+          <Button color="error" variant="contained" onClick={closeModalChild}>
+            Cancel
+          </Button>
           <LoadingButton
             loading={addMembersMutation.isLoading}
             disabled={addMembersMutation.isLoading}
             variant="contained"
-            sx={{ bgcolor: "#4CAF50", color: "black" }}
             onClick={addMembers}
           >
             Submit
           </LoadingButton>
-          <Button color="error" variant="contained" onClick={closeModalChild}>
-            Cancel
-          </Button>
         </Stack>
       </Stack>
     </Box>
