@@ -1,10 +1,4 @@
-import React, {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { ReactNode, createContext, useContext, useState } from "react";
 import { MessageModel } from "../models/MessageModel";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { messageService } from "../services/messageService";
@@ -17,6 +11,7 @@ type UnreadMessagesContextProps = {
   unreadAmount: number;
   addUnreadMessage: (message: MessageModel) => void;
   removeUnreadMessages: (chatId: string) => void;
+  fetchingChats: boolean;
 };
 
 const UnreadMessagesContext = createContext<UnreadMessagesContextProps | null>(
@@ -43,10 +38,7 @@ const UnreadMessagesProvider: React.FC<UnreadMessagesProviderProps> = ({
   const [unreadMessages, setUnreadMessages] = useState<UnreadMessages>({});
   const [unreadAmount, setUnreadAmount] = useState<number>(0);
 
-  useEffect(() => {
-    console.log(unreadAmount);
-  }, [unreadAmount]);
-  useQuery({
+  const { isLoading: fetchingChats } = useQuery({
     queryKey: [],
     queryFn: chatService.getAllChats,
     onError: (e) => toastifyService.error(e),
@@ -92,6 +84,7 @@ const UnreadMessagesProvider: React.FC<UnreadMessagesProviderProps> = ({
         unreadAmount,
         addUnreadMessage,
         removeUnreadMessages,
+        fetchingChats,
       }}
     >
       {children}

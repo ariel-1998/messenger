@@ -1,7 +1,7 @@
 import React from "react";
 import CustomMenu from "../CustomComponents/CustomMenu";
 import { Notifications } from "@mui/icons-material";
-import { Badge, MenuItem, Typography } from "@mui/material";
+import { Badge, Box, MenuItem, Stack, Typography } from "@mui/material";
 import { MENU_ITEM_PADDING } from "./ProfileMenu";
 import { useUnreadMessages } from "../../contexts/UnreadMessagesProvider";
 import { useDispatch } from "react-redux";
@@ -39,7 +39,7 @@ const NotificationMenu: React.FC = () => {
   );
 
   const onItemClick = (chat: ChatModel) => {
-    dispatch(setSelectedChat({ chat, isExist: false }));
+    dispatch(setSelectedChat({ chat, isExist: true }));
     handleClose();
   };
 
@@ -47,19 +47,43 @@ const NotificationMenu: React.FC = () => {
     <CustomMenu icon={NotificationIcon} open={open} onOpen={handleOpen}>
       {unreadAmount ? (
         notifications.map((val, i) => (
-          <MenuItem
-            key={i}
-            sx={{ padding: 0 }}
-            onClick={() => onItemClick(val.chat)}
-          >
-            <Typography sx={MENU_ITEM_PADDING}>
-              {val.chatName}: {val.content}, {val.length}
-            </Typography>
+          <MenuItem key={i} onClick={() => onItemClick(val.chat)}>
+            <Stack
+              direction={"row"}
+              sx={MENU_ITEM_PADDING}
+              alignItems={"center"}
+            >
+              <Typography color={"#2c387e"} fontWeight={"bold"} pr={1}>
+                {val.chatName}:
+              </Typography>
+              <Typography pr={1}>
+                {val.content.length > 20
+                  ? val.content.slice(0, 17) + "..."
+                  : val.content}
+              </Typography>
+              <Stack
+                borderRadius={"50%"}
+                color={"white"}
+                bgcolor={"#aaaaaa77"}
+                width={"1.2em"}
+                height={"1.2em"}
+              >
+                <Typography m={"auto"} fontSize={"0.9rem"}>
+                  {val.length}
+                </Typography>
+              </Stack>
+            </Stack>
           </MenuItem>
         ))
       ) : (
-        <MenuItem sx={{ padding: 0 }} onClick={handleClose}>
-          <Typography sx={MENU_ITEM_PADDING}>No messages</Typography>
+        <MenuItem onClick={handleClose}>
+          <Typography
+            sx={MENU_ITEM_PADDING}
+            color={"#2c387e"}
+            fontWeight={"bold"}
+          >
+            No messages
+          </Typography>
         </MenuItem>
       )}
     </CustomMenu>

@@ -135,7 +135,7 @@ const SelectedUsersList: React.FC<SelectedUsersListProps> = ({
     >
       {!users.length ? (
         <Box sx={{ textAlign: "center", width: "100%" }}>
-          <Typography>Select users</Typography>
+          <Typography>User list is currently empty!</Typography>
         </Box>
       ) : (
         <>

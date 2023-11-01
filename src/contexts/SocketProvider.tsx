@@ -8,12 +8,13 @@ import React, {
 import { Socket, io } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { MessageModel } from "../models/MessageModel";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../utils/reduxStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateMessages } from "../utils/messageMethods";
 import { useUnreadMessages } from "./UnreadMessagesProvider";
 import { messageService } from "../services/messageService";
+import { setChatLatestMessage } from "../utils/chatSlice";
 
 type SocketContextProps = {
   socket: Socket<DefaultEventsMap, DefaultEventsMap> | null;
@@ -38,6 +39,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const { addUnreadMessage } = useUnreadMessages();
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   const [socketConnection, setSocketConnection] = useState<Socket<
     DefaultEventsMap,
     DefaultEventsMap
@@ -49,7 +51,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (!user) return;
-    let socket = io("http://localhost:3001");
+    let socket = io(import.meta.env.VITE_BASE_URL);
     setSocketConnection(socket);
     socket.connect();
     socket.emit("setup", user._id);
@@ -69,6 +71,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         addUnreadMessage(data);
       }
       updateMessages(data, queryClient, true);
+      dispatch(setChatLatestMessage(data));
     };
 
     socketConnection?.on("message", event);

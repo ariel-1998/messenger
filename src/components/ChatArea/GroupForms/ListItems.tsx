@@ -5,6 +5,8 @@ import {
   Typography,
   Avatar,
   Theme,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import CustomListItem from "../../CustomComponents/CustomListItem";
 import { UserModel } from "../../../models/UserModel";
@@ -29,53 +31,63 @@ const UserListItem: React.FC<UserListItemProps> = ({
   sx,
   children,
   ...rest
-}) => (
-  <CustomListItem
-    disableBtnProps={disableBtnProps}
-    sx={{ position: "relative", ...sx }}
-    {...rest}
-    disableRipple={disableRipple}
-  >
-    <Stack width={"100%"} height={"100%"}>
-      <Stack
-        flexDirection={"row"}
-        width={"100%"}
-        pt={children ? 1 : 0}
-        alignItems={"start"}
-      >
+}) => {
+  const theme = useTheme();
+  const size = useMediaQuery(theme.breakpoints.down("sm"));
+  return (
+    <CustomListItem
+      disableBtnProps={disableBtnProps}
+      sx={{ position: "relative", ...sx }}
+      {...rest}
+      disableRipple={disableRipple}
+    >
+      <Stack width={"100%"} height={"100%"}>
+        <Stack
+          flexDirection={"row"}
+          width={"100%"}
+          pt={children ? 1 : 0}
+          alignItems={"start"}
+        >
+          <Typography
+            sx={{
+              width: "70%",
+              display: "inline-block",
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+            }}
+            variant="h6"
+          >
+            {user.name}
+          </Typography>
+          <Stack width={"30%"}>
+            <Avatar
+              sx={{
+                alignSelf: "end",
+                justifySelf: "start",
+                width: 50,
+                aspectRatio: 50,
+              }}
+              src={user.image as string}
+            />
+          </Stack>
+        </Stack>
+
         <Typography
           sx={{
-            width: "70%",
             display: "inline-block",
             textOverflow: "ellipsis",
             overflow: "hidden",
+            whiteSpace: "nowrap",
           }}
-          variant="h6"
         >
-          {user.name}
+          {!size && "Email: "}
+          {user.email.toLowerCase()}
         </Typography>
-        <Stack width={"30%"}>
-          <Avatar
-            sx={{ alignSelf: "end", justifySelf: "start" }}
-            src={user.image as string}
-          />
-        </Stack>
+        {children}
       </Stack>
-
-      <Typography
-        sx={{
-          display: "inline-block",
-          textOverflow: "ellipsis",
-          overflow: "hidden",
-          whiteSpace: "nowrap",
-        }}
-      >
-        Email: {user.email.toLowerCase()}
-      </Typography>
-      {children}
-    </Stack>
-  </CustomListItem>
-);
+    </CustomListItem>
+  );
+};
 
 type ChatListItemProps = {
   chat: ChatModel;
@@ -93,6 +105,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
 }) => {
   const user = useSelector((state: RootState) => state.auth);
   const isLoggedUserIsSender = chat.latestMessage?.sender?._id === user?._id;
+
   return (
     <CustomListItem
       sx={{ position: "relative", ...sx }}
@@ -117,10 +130,15 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
           </Typography>
           <Stack width={"30%"}>
             <Avatar
-              sx={{ alignSelf: "end", justifySelf: "start" }}
+              sx={{
+                alignSelf: "end",
+                justifySelf: "start",
+                width: 50,
+                aspectRatio: 50,
+              }}
               src={
                 chat.isGroupChat
-                  ? ""
+                  ? chat.groupImg
                   : (findUserInChat(chat, user)?.image as string)
               }
             />
@@ -128,6 +146,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
         </Stack>
 
         <Typography
+          height="1.5rem"
           sx={{
             display: "inline-block",
             textOverflow: "ellipsis",
@@ -135,12 +154,10 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
             whiteSpace: "nowrap",
           }}
         >
-          {chat.latestMessage
-            ? `${
-                !isLoggedUserIsSender ? chat.latestMessage.sender?.name : "You"
-              }: ${chat.latestMessage.content}`
-            : "New chat was opened"}
-          {/**need to change the way chats open */}
+          {!!chat.latestMessage &&
+            `${
+              !isLoggedUserIsSender ? chat.latestMessage.sender?.name : "You"
+            }: ${chat.latestMessage.content}`}
         </Typography>
       </Stack>
     </CustomListItem>

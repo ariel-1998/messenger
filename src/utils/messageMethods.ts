@@ -60,13 +60,3 @@ export const updateMessages = (
     }
   );
 };
-
-// export const filterUnreadMessages = (
-//   messages: MessageModel[],
-//   userId: string
-// ) => {
-//   const notReadMessages = messages
-//     .filter((msg) => msg.sender._id !== userId && !msg.readBy.includes(userId))
-//     .map((msg) => msg._id);
-//   return notReadMessages;
-// };

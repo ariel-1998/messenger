@@ -11,7 +11,8 @@ const Logout: React.FC<LogoutProps> = ({ sx }) => {
   const navigate = useNavigate();
   const logout = () => {
     authService.logout();
-    navigate("/auth");
+    window.location.reload();
+    window.location.href = "/auth";
   };
   return (
     <Box onClick={logout} sx={{ display: "flex", gap: 1, ...sx }}>

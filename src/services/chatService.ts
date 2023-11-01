@@ -20,7 +20,6 @@ const removeFromGroupEndpoint = (groupId: string, userId: string) =>
 
 class ChatService {
   async accessChat(userId: string) {
-    console.log("access", userId);
     const { chats } = store.getState().chat;
     const chat = chats?.find(
       (chat) =>
@@ -47,7 +46,7 @@ class ChatService {
   }: {
     users: UserModel[];
     chatName: string;
-    groupImg: string;
+    groupImg?: string;
   }) {
     const usersIds = users.map((user) => user._id);
     const stringifyIds = JSON.stringify(usersIds);

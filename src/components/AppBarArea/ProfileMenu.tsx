@@ -21,14 +21,14 @@ const ProfileMenu: React.FC = () => {
 
   return (
     <CustomMenu onOpen={handleOpen} open={open} icon={<AvatarIcon />}>
-      <MenuItem sx={{ padding: 0 }} onClick={handleClose}>
+      <MenuItem onClick={handleClose}>
         <ProfileModal.User
           btnText="My profile"
           sx={MENU_ITEM_PADDING}
           profile={user}
         />
       </MenuItem>
-      <MenuItem sx={{ padding: 0 }} onClick={handleClose}>
+      <MenuItem onClick={handleClose}>
         <Logout sx={MENU_ITEM_PADDING} />
       </MenuItem>
     </CustomMenu>

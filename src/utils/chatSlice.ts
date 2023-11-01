@@ -20,6 +20,7 @@ const chatSlice = createSlice({
       state.chats = chats;
       return state;
     },
+
     setSelectedChat(
       state,
       action: PayloadAction<{ chat: ChatModel | null; isExist: boolean }>
@@ -38,7 +39,6 @@ const chatSlice = createSlice({
     },
     updateGroup(state, action: PayloadAction<ChatModel>) {
       const updatedGroup = action.payload;
-      console.log("update", updatedGroup);
       state.chats =
         state.chats?.filter((chat) => chat._id !== updatedGroup._id) || [];
       state.chats.unshift(updatedGroup);
@@ -54,13 +54,21 @@ const chatSlice = createSlice({
     setChatLatestMessage(state, action: PayloadAction<MessageModel>) {
       const message = action.payload;
       const chatId = message.chat._id;
-      if (!state.chats) return;
-      state.chats = state.chats?.map((chat) => {
-        if (chat._id !== chatId) return chat;
-        chat._id = chatId;
-        chat.latestMessage = message;
-        return chat;
-      });
+      if (!state.chats) state.chats = [];
+      let chatToUpdate: ChatModel = {} as ChatModel;
+      if (state.chats.length) {
+        const chatToUpdateIndex = state.chats.findIndex(
+          (chat) => chat._id === chatId
+        );
+        if (chatToUpdateIndex !== -1) {
+          chatToUpdate = state.chats[chatToUpdateIndex];
+          state.chats.splice(chatToUpdateIndex, 1);
+        }
+      } else {
+        chatToUpdate = { ...message.chat };
+      }
+      chatToUpdate.latestMessage = message;
+      state.chats.unshift(chatToUpdate);
       return state;
     },
   },

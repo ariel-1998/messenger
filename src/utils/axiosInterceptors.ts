@@ -1,12 +1,11 @@
 import axios from "axios";
-import { apiConfig } from "./config";
 
 export const defaultAxios = axios.create({
-  baseURL: apiConfig.BASE_URL,
+  baseURL: import.meta.env.VITE_BASE_API_URL,
 });
 
 export const authenticatedAxios = axios.create({
-  baseURL: apiConfig.BASE_URL,
+  baseURL: import.meta.env.VITE_BASE_API_URL,
 });
 
 export function authAxios(token: string) {

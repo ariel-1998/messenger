@@ -1,4 +1,4 @@
-import { Menu, SxProps, Theme } from "@mui/material";
+import { Menu, Paper, SxProps, Theme } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import React, { ReactNode } from "react";
 
@@ -30,18 +30,11 @@ const CustomMenu: React.FC<CustomMenuProps> = ({
 
   return (
     <div>
-      <IconButton
-        sx={sx}
-        size="large"
-        aria-label="account of current user"
-        aria-controls="menu-appbar"
-        aria-haspopup="true"
-        onClick={handleMenu}
-        color="inherit"
-      >
+      <IconButton sx={sx} size="large" onClick={handleMenu} color="inherit">
         {icon}
       </IconButton>
       <Menu
+        sx={{ ".MuiMenu-paper": { background: "#ddd" } }}
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: "top",

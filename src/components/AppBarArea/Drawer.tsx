@@ -18,14 +18,30 @@ const Drawer: React.FC<DrawerProps> = ({ children }) => {
   return (
     <>
       {medium ? (
-        <CustomSearchInput
-          disabled
-          inputCursor="pointer"
-          placeholder="Search..."
-          handleClick={openDrawer}
-          disableFocusRipple
-          disableRipple
-        />
+        <Box
+          sx={{
+            position: "relative",
+          }}
+        >
+          <div
+            onClick={openDrawer}
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 0,
+              zIndex: 1,
+              cursor: "pointer",
+            }}
+          />
+          <CustomSearchInput
+            disabled
+            placeholder="Search..."
+            disableFocusRipple
+            disableRipple
+          />
+        </Box>
       ) : (
         <IconButton onClick={openDrawer} sx={{ color: "white" }}>
           <MenuIcon />

@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../utils/reduxStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { messageService } from "../../../services/messageService";
@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import { useSocket } from "../../../contexts/SocketProvider";
 import { updateMessages } from "../../../utils/messageMethods";
-import { UserModel } from "../../../models/UserModel";
 import useDebounce from "../../../hooks/useDebounce";
 
 type inputRef = {
@@ -28,6 +27,7 @@ function MessageInput(): JSX.Element {
   const [userTyping, setUserTyping] = useState("");
   const { socket } = useSocket();
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   const { debounce } = useDebounce({ fn: event, wait: 2000 });
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
@@ -56,7 +56,6 @@ function MessageInput(): JSX.Element {
   };
 
   function event() {
-    console.log("typing");
     setUserTyping("");
   }
 

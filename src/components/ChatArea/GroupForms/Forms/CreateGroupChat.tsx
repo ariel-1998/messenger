@@ -42,8 +42,8 @@ const CreateGroupChat: React.FC = () => {
           fontSize: "1.1rem",
           fontWeight: 400,
           lineHeight: 1.5,
-          color: "#f50057",
         }}
+        color="success"
         endIcon={<Add />}
       >
         new group
@@ -51,7 +51,7 @@ const CreateGroupChat: React.FC = () => {
       <CustomModal
         open={open}
         handleClose={handleClose}
-        sx={{ top: "5vh", pb: 3 }}
+        sx={{ top: "5vh", pb: 0 }}
       >
         <CreateGroupChatContent handleClose={handleClose} />
       </CustomModal>
@@ -117,7 +117,6 @@ function CreateGroupChatContent({
         groupMutation.mutate({
           users: selectedUsers,
           chatName: groupName,
-          groupImg: "",
         });
       }
     } catch (error) {
@@ -175,7 +174,7 @@ function CreateGroupChatContent({
           <Input
             type="file"
             onChange={(e) => {
-              setGroupImg((e.target as any).file);
+              setGroupImg((e.target as HTMLInputElement).files);
             }}
           />
         </Box>

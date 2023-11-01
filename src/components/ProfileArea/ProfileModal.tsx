@@ -108,12 +108,12 @@ const GroupProfileModal: React.FC<UserProfileModalProps<null>> = ({
           className="modal-background"
           open={open}
           handleClose={handleClose}
-          // sx={{
-          //   backgroundImage: `url(${vite})`, //need to change to selectedChat?.groupImg
-          //   backgroundSize: "100% 100%;",
-          //   backgroundRepeat: "no-repeat",
-          //   backgroundPosition: "center",
-          // }}
+          sx={{
+            backgroundImage: `url(${selectedChat?.groupImg})`,
+            backgroundSize: "100% 100%;",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+          }}
         >
           <Stack
             sx={{
@@ -186,13 +186,13 @@ function GroupSettings({ modalParentClose }: GroupSettingsProps) {
       open={open}
       onOpen={handleMenuOpen}
     >
-      <MenuItem sx={{ padding: 0 }}>
+      <MenuItem>
         <GroupForm.AddMembers
           menuClose={handleMenuClose}
           handleParentModalClose={modalParentClose}
         />
       </MenuItem>
-      <MenuItem sx={{ padding: 0 }}>
+      <MenuItem>
         <GroupForm.Remove
           menuClose={handleMenuClose}
           handleModalClose={modalParentClose}

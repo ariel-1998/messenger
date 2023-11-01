@@ -6,6 +6,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { messageService } from "../../../services/messageService";
 import { toastifyService } from "../../../services/toastifyService";
 import { useUnreadMessages } from "../../../contexts/UnreadMessagesProvider";
+import { Box, Typography } from "@mui/material";
 
 const MessageList: React.FC = () => {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
@@ -25,20 +26,9 @@ const MessageList: React.FC = () => {
     queryFn: () => messageService.getMessagesByChatId(selectedChat?._id!),
     enabled: !!selectedChat?._id,
     onError: (err) => toastifyService.error(err),
-    // onSuccess: (data) => {
-    // if (!selectedChat) return;
-    // const readMessages = unreadMessages[selectedChat._id];
-    // if (!readMessages) return;
-    // const messageIds = readMessages.map((msg) => msg._id);
-    // readByMessagesMutatin.mutate({
-    //   chatId: selectedChat._id,
-    //   messages: messageIds,
-    // });
-    // },
   });
 
   useEffect(() => {
-    console.log("first");
     if (!selectedChat) return;
     const readMessages = unreadMessages[selectedChat._id];
     if (!readMessages) return;
@@ -47,7 +37,7 @@ const MessageList: React.FC = () => {
       chatId: selectedChat._id,
       messages: messageIds,
     });
-  }, [unreadAmount]);
+  }, [unreadAmount, selectedChat]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({
@@ -61,28 +51,37 @@ const MessageList: React.FC = () => {
     });
   }, [selectedChat]);
 
-  // function onMessagesQuerySuccess(data: MessageModel[]) {
-  //   if (!user?._id || !selectedChat?._id) return;
-  //   const notReadMessages = filterUnreadMessages(data, user._id);
-  //   if (!notReadMessages.length) return;
-  //   readByMessagesMutatin.mutate({
-  //     messages: notReadMessages,
-  //     chatId: selectedChat._id,
-  //   });
-  // }
+  return (
+    <Box position={"relative"} width={"100%"} height={"100%"}>
+      {!messages?.length && (
+        <Typography
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            fontSize: 20,
+            color: "#ccc",
+          }}
+        >
+          Nothing here!
+        </Typography>
+      )}
 
-  return messages ? (
-    <>
-      {messages.map((msg, i) => (
-        <MessageBubble
-          messages={messages}
-          index={i}
-          message={msg}
-          key={msg._id}
-        />
-      ))}
-      <div ref={bottomRef}></div>
-    </>
-  ) : null;
+      {!!messages?.length && (
+        <>
+          {messages.map((msg, i) => (
+            <MessageBubble
+              messages={messages}
+              index={i}
+              message={msg}
+              key={msg._id}
+            />
+          ))}
+          <div ref={bottomRef}></div>
+        </>
+      )}
+    </Box>
+  );
 };
 export default MessageList;

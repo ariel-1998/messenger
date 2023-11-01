@@ -13,10 +13,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { toastifyService } from "../../services/toastifyService";
 import { userService } from "../../services/userService";
 import CustomListItem from "../CustomComponents/CustomListItem";
-import LoadingSkeletons from "../CustomComponents/LoadingSkeletons";
+import LoadingSkeletons, {
+  SkeletonUser,
+} from "../CustomComponents/LoadingSkeletons";
 import { chatService } from "../../services/chatService";
 import { useDrawer } from "../../contexts/DrawerProvider";
 import useDebounce from "../../hooks/useDebounce";
+import ListItems from "../ChatArea/GroupForms/ListItems";
 
 const DrawerSearch: React.FC = () => {
   const searchRef = useRef<HTMLInputElement>(null);
@@ -48,7 +51,6 @@ const DrawerSearch: React.FC = () => {
 
   function fetchUsers() {
     if (!searchRef.current?.value) return;
-    console.log("changed");
     setUserSearch(searchRef.current?.value);
   }
 
@@ -58,7 +60,7 @@ const DrawerSearch: React.FC = () => {
         width: small ? "80vw" : 400,
         height: "100vh",
         bgcolor: "#eee",
-        overflowY: "auto",
+        overflowY: isUserFetch ? "hidden" : "auto",
         m: 0,
         px: 1,
       }}
@@ -68,19 +70,16 @@ const DrawerSearch: React.FC = () => {
           margin={"auto"}
           position={"sticky"}
           top={0}
-          zIndex={1000}
-          pb={2}
-          pt={1}
-          width={"100%"}
-          alignItems={"center"}
+          zIndex={1}
+          py={1}
           bgcolor={"#eee"}
         >
           <CustomSearchInput
             ref={searchRef}
-            inputCursor="auto"
             placeholder="Search..."
             isIcon={false}
             onChange={debounce}
+            style={{ width: "100%", marginBottom: "10px" }}
           />
           <span>
             {isLoading && searchRef.current?.value ? "loading" : null}
@@ -90,30 +89,21 @@ const DrawerSearch: React.FC = () => {
         {isError && <Typography align="center">Users not found!</Typography>}
 
         {isUserFetch && (
-          <Stack height={"88vh"}>
-            <LoadingSkeletons amount={12} />
+          <Stack spacing={1}>
+            <LoadingSkeletons amount={12}>
+              <SkeletonUser />
+            </LoadingSkeletons>
           </Stack>
         )}
+
         {users && (
           <Stack spacing={1} pb={2}>
             {users.map((user) => (
-              <CustomListItem
-                onClick={() => fetchChat(user._id)}
+              <ListItems.User
                 key={user._id}
-                sx={{ height: "80px" }}
-              >
-                <Stack
-                  flexDirection={"row"}
-                  width={"100%"}
-                  alignItems={"center"}
-                >
-                  <Stack spacing={1} p={2} width={"100%"}>
-                    <Typography variant="h6">{user.name}</Typography>
-                    <Typography>Email: {user.email}</Typography>
-                  </Stack>
-                  <Avatar src={user.image as string} />
-                </Stack>
-              </CustomListItem>
+                user={user}
+                onClick={() => fetchChat(user._id)}
+              />
             ))}
           </Stack>
         )}

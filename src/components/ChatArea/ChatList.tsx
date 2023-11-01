@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useState } from "react";
 import CustomSearchInput from "../CustomComponents/CustomSearchInput";
-import { Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import useDebounce from "../../hooks/useDebounce";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../utils/reduxStore";
@@ -9,12 +9,16 @@ import GroupForm from "./GroupForms/Forms/GroupForm";
 import { ChatModel } from "../../models/ChatModel";
 import { setSelectedChat } from "../../utils/chatSlice";
 import ListItems from "./GroupForms/ListItems";
+import LoadingSkeletons, {
+  SkeletonUser,
+} from "../CustomComponents/LoadingSkeletons";
+import { useUnreadMessages } from "../../contexts/UnreadMessagesProvider";
 
 const ChatList: React.FC = () => {
   const theme = useTheme();
-  const screanSize = useMediaQuery(theme.breakpoints.up("md"));
+  const mdScreen = useMediaQuery(theme.breakpoints.up("md"));
+  const lgScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const [search, setSearch] = useState("");
-  const { selectedChat } = useSelector((state: RootState) => state.chat);
 
   const { debounce, isLoading: debounceLoad } = useDebounce({
     fn: searchChat,
@@ -32,41 +36,40 @@ const ChatList: React.FC = () => {
   return (
     <Stack
       sx={{
-        p: 2,
+        p: lgScreen ? 1.5 : 1,
         width: "100%",
         height: "100%",
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
-        borderRadius: screanSize ? "10px" : 0,
+        borderRadius: mdScreen ? "10px" : 0,
         background: "#f4f4f4",
         boxSizing: "border-box",
-        overflow: "auto",
       }}
     >
       <Stack
-        pb={1}
+        pb={1.5}
         direction={"row"}
+        boxSizing={"border-box"}
         alignItems={"center"}
         justifyContent={"space-around"}
       >
         <Typography variant="h6">Chats</Typography>
         <GroupForm.Create />
       </Stack>
-      <Stack alignItems={"center"}>
+      <Box>
         <CustomSearchInput
           isIcon={false}
-          inputCursor="auto"
           placeholder="Search..."
-          onInput={onInput}
+          onChange={onInput}
+          style={{ width: "100%", marginBottom: "10px" }}
         />
-      </Stack>
+      </Box>
+      {/* <TextField fullWidth label="fullWidth" id="fullWidth" /> */}
       {debounceLoad && (
         <Typography textAlign={"center"} variant="body2">
           Loading...
         </Typography>
       )}
-      <Stack p={2} spacing={0.1}>
-        <ChatListItems search={search} />
-      </Stack>
+      <ChatListItems search={search} />
     </Stack>
   );
 };
@@ -85,12 +88,14 @@ function ChatListItems({ search }: ChatListItemsProps): JSX.Element {
   );
   const dispatch = useDispatch();
 
-  const chats = chatList ? chatList : [];
+  const { fetchingChats } = useUnreadMessages();
   const onUserClick = (chat: ChatModel) => {
     dispatch(setSelectedChat({ chat, isExist: true }));
   };
 
   const stringToLowerCase = (string: string) => string.toLowerCase();
+
+  const chats = chatList ? chatList : [];
 
   const filteredChats = chats?.filter((chat) => {
     const lowerCaseSeearch = stringToLowerCase(search);
@@ -108,37 +113,34 @@ function ChatListItems({ search }: ChatListItemsProps): JSX.Element {
     );
     return includesName || includesEmail;
   });
+  return (
+    <Stack spacing={0.1} pt={1} overflow={fetchingChats ? "hidden" : "auto"}>
+      {fetchingChats && (
+        <Stack spacing={1}>
+          <LoadingSkeletons amount={10}>
+            <SkeletonUser />
+          </LoadingSkeletons>
+        </Stack>
+      )}
+      {!!filteredChats && !!filteredChats.length && (
+        <>
+          {filteredChats.map((chat) => (
+            <ListItems.Chat
+              sx={{
+                bgcolor: selectedChat?._id !== chat._id ? "#ddd" : "#bbdefb",
+                transition: "background-color 900ms ease",
+              }}
+              chat={chat}
+              key={chat._id}
+              onClick={() => onUserClick(chat)}
+            />
+          ))}
+        </>
+      )}
 
-  const content = filteredChats ? (
-    <>
-      {filteredChats.map((chat) => {
-        // if (chat._id === selectedChat?._id) {
-        //   return (
-        //     <ListItems.Chat
-        //       chat={chat}
-        //       disableRipple
-        //       disableBtnProps
-        //       sx={{ bgcolor: "#bbdefb" }}
-        //       key={chat._id}
-        //       onClick={() => onUserClick(chat)}
-        //     />
-        //   );
-        // }
-        return (
-          <ListItems.Chat
-            sx={{
-              bgcolor: selectedChat?._id !== chat._id ? "#ddd" : "#bbdefb",
-              transition: "background-color 900ms ease",
-            }}
-            chat={chat}
-            key={chat._id}
-            onClick={() => onUserClick(chat)}
-          />
-        );
-      })}
-    </>
-  ) : (
-    <Typography textAlign={"center"}>Empty!</Typography>
+      {!fetchingChats && !filteredChats.length && (
+        <Typography>Empty!</Typography>
+      )}
+    </Stack>
   );
-  return content;
 }
