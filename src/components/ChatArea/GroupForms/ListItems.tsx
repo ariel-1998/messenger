@@ -78,10 +78,13 @@ const UserListItem: React.FC<UserListItemProps> = ({
             textOverflow: "ellipsis",
             overflow: "hidden",
             whiteSpace: "nowrap",
+            width: "90%",
           }}
         >
           {!size && "Email: "}
           {user.email.toLowerCase()}
+          aks hiausigudasguysdagyugyuasdgyuasdgyuasdg yua suyg aks
+          hiausigudasguysdagyugyuasdgyuasdgyuasdg yua suyg
         </Typography>
         {children}
       </Stack>

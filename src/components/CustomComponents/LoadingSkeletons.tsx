@@ -1,6 +1,7 @@
-import { Skeleton, Stack } from "@mui/material";
-import React, { ReactNode } from "react";
+import { Avatar, Skeleton, Stack } from "@mui/material";
+import React, { ReactNode, useEffect, useState } from "react";
 import CustomListItem from "./CustomListItem";
+import { ChatModel } from "../../models/ChatModel";
 
 interface LoadingSkeletonsProps {
   amount: number;
@@ -52,5 +53,36 @@ export function SkeletonUser() {
         <Skeleton animation="wave" height={"1.2rem"} sx={{ width: "100%" }} />
       </Stack>
     </CustomListItem>
+  );
+}
+
+type SkeletonMessageProps = { chat: ChatModel };
+
+export function SkeletonMessage({ chat }: SkeletonMessageProps) {
+  const [senderIsMe] = useState(Boolean(Math.round(Math.random())));
+  const alignMessage = senderIsMe ? "end" : "start";
+  return (
+    <Stack
+      mt={1}
+      spacing={0.5}
+      direction={"row"}
+      justifyContent={alignMessage}
+      boxSizing={"border-box"}
+      width={"100%"}
+    >
+      {!senderIsMe && chat.isGroupChat && (
+        <Skeleton
+          animation="wave"
+          variant="circular"
+          sx={{ width: 35, height: 35, ml: 35 }}
+        />
+      )}
+
+      <div className={`bubble ${alignMessage}`}>
+        <Skeleton animation="wave" height={10} width="15ch" />
+        <Skeleton animation="wave" height={10} width="19ch" />
+        <Skeleton animation="wave" height={10} width="20ch" />
+      </div>
+    </Stack>
   );
 }

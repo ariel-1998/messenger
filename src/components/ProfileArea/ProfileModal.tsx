@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   Typography,
   Avatar,
@@ -23,15 +23,17 @@ import { Settings } from "@mui/icons-material";
 
 type UserProfileModalProps<T> = {
   profile?: T;
-  btnText: string;
+  btnText?: string;
   sx?: SxProps<Theme>;
   isBtn?: boolean;
+  CustomBtn?: ReactNode;
 };
 
 const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
   profile,
   btnText,
   isBtn = false,
+  CustomBtn,
   sx,
 }) => {
   const [open, setOpen] = useState(false);
@@ -51,6 +53,7 @@ const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
           {btnText}
         </Typography>
       )}
+      {!!CustomBtn && <span onClick={handleOpen}>{CustomBtn}</span>}
       <CustomModal open={open} handleClose={handleClose} sx={{ minHeight: 0 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={7} margin={"auto"}>

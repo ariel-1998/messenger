@@ -1,6 +1,14 @@
 import React, { ChangeEvent, useState } from "react";
 import CustomSearchInput from "../CustomComponents/CustomSearchInput";
-import { Box, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Divider,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import useDebounce from "../../hooks/useDebounce";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../utils/reduxStore";
@@ -13,6 +21,7 @@ import LoadingSkeletons, {
   SkeletonUser,
 } from "../CustomComponents/LoadingSkeletons";
 import { useUnreadMessages } from "../../contexts/UnreadMessagesProvider";
+import { Info, Search as SearchIcon } from "@mui/icons-material";
 
 const ChatList: React.FC = () => {
   const theme = useTheme();
@@ -22,7 +31,7 @@ const ChatList: React.FC = () => {
 
   const { debounce, isLoading: debounceLoad } = useDebounce({
     fn: searchChat,
-    wait: 500,
+    wait: 300,
   });
 
   function searchChat(search: string) {
@@ -55,20 +64,37 @@ const ChatList: React.FC = () => {
         <Typography variant="h6">Chats</Typography>
         <GroupForm.Create />
       </Stack>
-      <Box>
+      <Box position={"relative"}>
         <CustomSearchInput
           isIcon={false}
           placeholder="Search..."
           onChange={onInput}
-          style={{ width: "100%", marginBottom: "10px" }}
+          style={{
+            width: "100%",
+            marginBottom: "10px",
+            paddingRight: "55px",
+          }}
         />
+        <Stack
+          direction={"row"}
+          justifyContent={"space-around"}
+          gap={1}
+          sx={{ position: "absolute", top: 8, right: 20, width: 30 }}
+        >
+          <Divider
+            orientation="vertical"
+            flexItem
+            sx={{ justifySelf: "start" }}
+          />
+          <Box width={20}>
+            {!debounceLoad ? (
+              <SearchIcon sx={{ fill: "#999" }} />
+            ) : (
+              <CircularProgress size={20} />
+            )}
+          </Box>
+        </Stack>
       </Box>
-      {/* <TextField fullWidth label="fullWidth" id="fullWidth" /> */}
-      {debounceLoad && (
-        <Typography textAlign={"center"} variant="body2">
-          Loading...
-        </Typography>
-      )}
       <ChatListItems search={search} />
     </Stack>
   );
@@ -128,7 +154,7 @@ function ChatListItems({ search }: ChatListItemsProps): JSX.Element {
             <ListItems.Chat
               sx={{
                 bgcolor: selectedChat?._id !== chat._id ? "#ddd" : "#bbdefb",
-                transition: "background-color 900ms ease",
+                transition: "background-color 400ms ease",
               }}
               chat={chat}
               key={chat._id}
@@ -138,8 +164,15 @@ function ChatListItems({ search }: ChatListItemsProps): JSX.Element {
         </>
       )}
 
-      {!fetchingChats && !filteredChats.length && (
-        <Typography>Empty!</Typography>
+      {!fetchingChats && !filteredChats.length && !!search && (
+        <Info
+          sx={{
+            fill: "#ffcc00",
+            width: 40,
+            height: 40,
+            alignSelf: "center",
+          }}
+        />
       )}
     </Stack>
   );

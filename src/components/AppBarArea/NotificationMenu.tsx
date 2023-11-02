@@ -77,11 +77,7 @@ const NotificationMenu: React.FC = () => {
         ))
       ) : (
         <MenuItem onClick={handleClose}>
-          <Typography
-            sx={MENU_ITEM_PADDING}
-            color={"#2c387e"}
-            fontWeight={"bold"}
-          >
+          <Typography sx={MENU_ITEM_PADDING} color={"#333"} fontWeight={"bold"}>
             No messages
           </Typography>
         </MenuItem>

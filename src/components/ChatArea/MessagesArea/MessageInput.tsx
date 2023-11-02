@@ -6,6 +6,7 @@ import { messageService } from "../../../services/messageService";
 import SendIcon from "@mui/icons-material/Send";
 import {
   Box,
+  CircularProgress,
   FormControl,
   IconButton,
   InputAdornment,
@@ -14,6 +15,7 @@ import {
 import { useSocket } from "../../../contexts/SocketProvider";
 import { updateMessages } from "../../../utils/messageMethods";
 import useDebounce from "../../../hooks/useDebounce";
+import { setChatLatestMessage } from "../../../utils/chatSlice";
 
 type inputRef = {
   firstChild: HTMLInputElement;
@@ -36,15 +38,17 @@ function MessageInput(): JSX.Element {
   const sendMessageMutation = useMutation({
     mutationFn: messageService.sendMessage,
     onSuccess: (data) => {
-      socket?.emit("message", data);
+      setMessage("");
       updateMessages(data, queryClient, false);
+      socket?.emit("message", data);
+      dispatch(setChatLatestMessage(data));
     },
   });
 
   useEffect(() => {
     if (!selectedChat) return;
     inputRef.current?.firstChild?.focus();
-  }, [selectedChat]);
+  }, [selectedChat, sendMessageMutation.data]);
 
   const onKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" && message) {
@@ -76,7 +80,6 @@ function MessageInput(): JSX.Element {
       chatId: selectedChat?._id,
       content: message,
     });
-    setMessage("");
   };
 
   return (
@@ -107,21 +110,29 @@ function MessageInput(): JSX.Element {
         variant="outlined"
       >
         <OutlinedInput
-          disabled={!selectedChat}
+          disabled={!selectedChat || sendMessageMutation.isLoading}
           ref={inputRef}
           value={message}
           onChange={onInputChange}
           type="text"
           endAdornment={
             <InputAdornment position="end">
-              <IconButton
-                disabled={!message}
-                ref={btnRef}
-                onClick={sendMessage}
-                edge="end"
-              >
-                <SendIcon />
-              </IconButton>
+              {sendMessageMutation.isLoading ? (
+                <CircularProgress size={25} />
+              ) : (
+                <IconButton
+                  disabled={!message}
+                  ref={btnRef}
+                  onClick={sendMessage}
+                  edge="end"
+                >
+                  <SendIcon
+                    sx={{
+                      fill: selectedChat ? "rgba(83, 154, 208, 0.9)" : "#999",
+                    }}
+                  />
+                </IconButton>
+              )}
             </InputAdornment>
           }
           placeholder="Message..."

@@ -23,6 +23,7 @@ import { ChatModel } from "../../../../models/ChatModel";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ListItems from "../ListItems";
 import ProfileModal from "../../../ProfileArea/ProfileModal";
+import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
 
 const RemoveGroupMembers: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -50,11 +51,11 @@ const RemoveGroupMembers: React.FC = () => {
               display: "flex",
               maxHeight: "70vh",
               flexDirection: "column",
-              rowGap: 1,
+              rowGap: 0.1,
             }}
           >
             <Typography textAlign={"center"}>USERS</Typography>
-            <Divider flexItem />
+            <Divider flexItem sx={{ mb: 1 }} />
             <UserPopperList />
           </List>
           <Button
@@ -81,7 +82,8 @@ function UserPopper({ user, chat }: UserPopperProps): JSX.Element {
   const [open, setOpen] = React.useState(false);
   const elRef = useRef<HTMLButtonElement | null>(null);
 
-  const handlePopper = () => {
+  const handlePopper = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
     setOpen((previousOpen) => !previousOpen);
   };
 
@@ -108,14 +110,15 @@ function UserPopper({ user, chat }: UserPopperProps): JSX.Element {
         size="small"
         sx={{
           position: "absolute",
-          top: 1,
-          left: 1,
+          bottom: 2,
+          right: 10,
           height: 28,
           width: 28,
+          ":hover": { backgroundColor: "#E3735E22" },
         }}
-        onClick={handlePopper}
+        onClick={(e) => handlePopper(e)}
       >
-        <Delete sx={{ fill: "#E3735E" }} />
+        <PersonRemoveAlt1Icon sx={{ fill: "#E3735E" }} />
       </IconButton>
       <Popper
         sx={{ zIndex: 2000, maxWidth: 250, minWidth: 250 }}
@@ -175,20 +178,16 @@ function UserPopperList(): JSX.Element {
     <>
       {selectedChat &&
         users.map((user) => (
-          <ListItems.User
-            disableBtnProps
-            disableRipple
-            user={user}
+          <ProfileModal.User
             key={user._id}
-          >
-            {isAdmin && <UserPopper user={user} chat={selectedChat} />}
-            <ProfileModal.User
-              btnText="view profile"
-              sx={{ ":hover": { bgcolor: "rgba(187, 222, 251, 0.3)" } }}
-              isBtn
-              profile={user}
-            />
-          </ListItems.User>
+            sx={{ ":hover": { bgcolor: "rgba(187, 222, 251, 0.3)" } }}
+            profile={user}
+            CustomBtn={
+              <ListItems.User disableRipple user={user}>
+                {isAdmin && <UserPopper user={user} chat={selectedChat} />}
+              </ListItems.User>
+            }
+          />
         ))}
     </>
   );

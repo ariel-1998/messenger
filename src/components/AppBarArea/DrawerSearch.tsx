@@ -6,13 +6,15 @@ import {
   useMediaQuery,
   useTheme,
   Box,
+  Divider,
+  CircularProgress,
 } from "@mui/material";
 import React, { useRef, useState } from "react";
 import CustomSearchInput from "../CustomComponents/CustomSearchInput";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toastifyService } from "../../services/toastifyService";
 import { userService } from "../../services/userService";
-import CustomListItem from "../CustomComponents/CustomListItem";
+import { Search as SearchIcon } from "@mui/icons-material";
 import LoadingSkeletons, {
   SkeletonUser,
 } from "../CustomComponents/LoadingSkeletons";
@@ -74,16 +76,38 @@ const DrawerSearch: React.FC = () => {
           py={1}
           bgcolor={"#eee"}
         >
-          <CustomSearchInput
-            ref={searchRef}
-            placeholder="Search..."
-            isIcon={false}
-            onChange={debounce}
-            style={{ width: "100%", marginBottom: "10px" }}
-          />
-          <span>
-            {isLoading && searchRef.current?.value ? "loading" : null}
-          </span>
+          <Box position={"relative"}>
+            <CustomSearchInput
+              ref={searchRef}
+              isIcon={false}
+              placeholder="Search..."
+              onChange={debounce}
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                paddingRight: "55px",
+              }}
+            />
+            <Stack
+              direction={"row"}
+              justifyContent={"space-around"}
+              gap={1}
+              sx={{ position: "absolute", top: 8, right: 20, width: 30 }}
+            >
+              <Divider
+                orientation="vertical"
+                flexItem
+                sx={{ justifySelf: "start" }}
+              />
+              <Box width={20}>
+                {!isLoading ? (
+                  <SearchIcon sx={{ fill: "#999" }} />
+                ) : (
+                  <CircularProgress size={20} />
+                )}
+              </Box>
+            </Stack>
+          </Box>
         </Stack>
 
         {isError && <Typography align="center">Users not found!</Typography>}

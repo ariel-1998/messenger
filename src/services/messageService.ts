@@ -21,7 +21,7 @@ class MessageService {
         content,
       }
     );
-    store.dispatch(setChatLatestMessage(data));
+    // store.dispatch(setChatLatestMessage(data));
     return data;
   }
 

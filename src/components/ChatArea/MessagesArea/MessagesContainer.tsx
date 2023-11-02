@@ -13,13 +13,7 @@ function MessagesContainer(): JSX.Element {
       pt={1}
       boxSizing={"border-box"}
     >
-      <Stack
-        flexGrow={1}
-        width={"100%"}
-        sx={{ overflowY: "auto", overflowX: "hidden", whiteSpace: "normal" }}
-      >
-        <MessageList />
-      </Stack>
+      <MessageList />
       <Box flexShrink={0} py={1} flexBasis={"30px"} width={"100%"}>
         <MessageInput />
       </Box>

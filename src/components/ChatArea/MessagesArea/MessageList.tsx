@@ -6,7 +6,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { messageService } from "../../../services/messageService";
 import { toastifyService } from "../../../services/toastifyService";
 import { useUnreadMessages } from "../../../contexts/UnreadMessagesProvider";
-import { Box, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
+import LoadingSkeletons, {
+  SkeletonMessage,
+} from "../../CustomComponents/LoadingSkeletons";
 
 const MessageList: React.FC = () => {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
@@ -52,8 +55,17 @@ const MessageList: React.FC = () => {
   }, [selectedChat]);
 
   return (
-    <Box position={"relative"} width={"100%"} height={"100%"}>
-      {!messages?.length && (
+    <Stack
+      flexGrow={1}
+      width={"100%"}
+      position={"relative"}
+      sx={{
+        overflowY: messages ? "auto" : "hidden",
+        whiteSpace: "normal",
+        height: "100%",
+      }}
+    >
+      {messages && !messages.length && (
         <Typography
           sx={{
             position: "absolute",
@@ -67,7 +79,11 @@ const MessageList: React.FC = () => {
           Nothing here!
         </Typography>
       )}
-
+      {selectedChat && !messages && (
+        <LoadingSkeletons amount={12}>
+          <SkeletonMessage chat={selectedChat} />
+        </LoadingSkeletons>
+      )}
       {!!messages?.length && (
         <>
           {messages.map((msg, i) => (
@@ -81,7 +97,7 @@ const MessageList: React.FC = () => {
           <div ref={bottomRef}></div>
         </>
       )}
-    </Box>
+    </Stack>
   );
 };
 export default MessageList;

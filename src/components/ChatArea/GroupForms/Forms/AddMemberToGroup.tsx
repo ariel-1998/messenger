@@ -1,4 +1,11 @@
-import { Typography, Divider, Stack, Box, Button } from "@mui/material";
+import {
+  Typography,
+  Divider,
+  Stack,
+  Box,
+  Button,
+  CircularProgress,
+} from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { ChangeEvent, useState } from "react";
 import useDebounce from "../../../../hooks/useDebounce";
@@ -17,8 +24,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../utils/reduxStore";
 import ChildModal from "../../../CustomComponents/Modals/ChildModal";
 import { LoadingButton } from "@mui/lab";
-import { Add } from "@mui/icons-material";
+import { Add, Search as SeachIcon } from "@mui/icons-material";
 import { MENU_ITEM_PADDING } from "../../../AppBarArea/ProfileMenu";
+import LoadingSkeletons, {
+  SkeletonUser,
+} from "../../../CustomComponents/LoadingSkeletons";
 
 type AddMemberToGroupProps = {
   handleParentModalClose: () => void;
@@ -82,7 +92,11 @@ function ChildModalContent({
     wait: 700,
   });
 
-  const { data: usersData, isError } = useQuery({
+  const {
+    data: usersData,
+    isError,
+    isFetching: fetchingUserData,
+  } = useQuery({
     queryKey: ["search", userSearch],
     queryFn: () => userService.searchUsers(userSearch),
     enabled: !!userSearch,
@@ -141,7 +155,13 @@ function ChildModalContent({
           sx={{ boxSizing: "border-box" }}
           label={"Search Users..."}
           onInput={debouncedOnInput}
-          endAdornment={<>{isLoading && <Box width={"10px"}>loading</Box>}</>}
+          endAdornment={
+            isLoading ? (
+              <CircularProgress size={20} sx={{ ml: 1 }} />
+            ) : (
+              <SeachIcon sx={{ ml: 1, fill: "#999" }} />
+            )
+          }
         />
         <SelectedUsersList
           users={selectedUsers}
@@ -154,6 +174,18 @@ function ChildModalContent({
             selectedUsers={selectedUsers}
             onUserClick={onUserClick}
           />
+        )}
+        {fetchingUserData && (
+          <Stack
+            spacing={1}
+            maxHeight={"40vh"}
+            width={"100%"}
+            overflow={"hidden"}
+          >
+            <LoadingSkeletons amount={5}>
+              <SkeletonUser />
+            </LoadingSkeletons>
+          </Stack>
         )}
         {isError && (
           <Typography textAlign={"center"}>Nothing Found!</Typography>

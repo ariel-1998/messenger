@@ -35,6 +35,7 @@ class ChatService {
 
   async getAllChats() {
     const { data } = await authenticatedAxios.get<ChatModel[]>(chatEndpoint);
+    console.log(data);
     store.dispatch(getAllChats(data));
     return data;
   }

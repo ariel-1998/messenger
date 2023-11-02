@@ -8,6 +8,7 @@ import {
   InputLabel,
   Input,
   FormHelperText,
+  CircularProgress,
 } from "@mui/material";
 import { userService } from "../../../../services/userService";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -26,8 +27,11 @@ import GroupFormInput from "../GroupFormInput";
 import { extractZodErrors } from "../../../../utils/zodMetods";
 import { ZodError } from "zod";
 import { LoadingButton } from "@mui/lab";
-import { Add } from "@mui/icons-material";
+import { Add, Search as SeachIcon } from "@mui/icons-material";
 import CustomModal from "../../../CustomComponents/Modals/CustomModal";
+import LoadingSkeletons, {
+  SkeletonUser,
+} from "../../../CustomComponents/LoadingSkeletons";
 
 const CreateGroupChat: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -78,7 +82,11 @@ function CreateGroupChatContent({
   });
   const handleModalClose = handleClose || (() => undefined);
 
-  const { data: usersData, isError } = useQuery({
+  const {
+    data: usersData,
+    isError,
+    isFetching: fetchingUserData,
+  } = useQuery({
     queryKey: ["search", userSearch],
     queryFn: () => userService.searchUsers(userSearch),
     enabled: !!userSearch,
@@ -167,7 +175,13 @@ function CreateGroupChatContent({
           sx={{ boxSizing: "border-box" }}
           label={"Search Users..."}
           onInput={debouncedOnInput}
-          endAdornment={isLoading && <Box width={"10px"}>loading</Box>}
+          endAdornment={
+            isLoading ? (
+              <CircularProgress size={20} sx={{ ml: 1 }} />
+            ) : (
+              <SeachIcon sx={{ ml: 1, fill: "#999" }} />
+            )
+          }
         />
         <Box>
           <InputLabel>Group image</InputLabel>
@@ -189,6 +203,18 @@ function CreateGroupChatContent({
             selectedUsers={selectedUsers}
             onUserClick={onUserClick}
           />
+        )}
+        {fetchingUserData && (
+          <Stack
+            spacing={1}
+            maxHeight={"40vh"}
+            width={"100%"}
+            overflow={"hidden"}
+          >
+            <LoadingSkeletons amount={5}>
+              <SkeletonUser />
+            </LoadingSkeletons>
+          </Stack>
         )}
         {isError && (
           <Typography textAlign={"center"}>Nothing Found!</Typography>

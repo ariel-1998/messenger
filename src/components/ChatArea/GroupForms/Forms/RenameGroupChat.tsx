@@ -5,6 +5,9 @@ import {
   InputAdornment,
   FormHelperText,
   Stack,
+  CircularProgress,
+  createStyles,
+  makeStyles,
 } from "@mui/material";
 import React, { useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -27,7 +30,6 @@ const RenameGroupChat: React.FC<RenameGroupChatProps> = ({
   handleModalClose,
 }) => {
   const renameRef = useRef<HTMLDivElement>();
-
   const renameMutation = useMutation({
     mutationFn: chatService.renameGroup,
     onError: (error) => toastifyService.error(error),
@@ -40,7 +42,7 @@ const RenameGroupChat: React.FC<RenameGroupChatProps> = ({
     const newName = input.value;
     if (!newName) toastifyService.info("Must choose a name to submit!");
     if (newName === groupName) {
-      toastifyService.info(
+      return toastifyService.info(
         "This name is already the active name of this group!"
       );
     }
@@ -67,15 +69,19 @@ const RenameGroupChat: React.FC<RenameGroupChatProps> = ({
             defaultValue={groupName}
             sx={{ color: "white" }}
             endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  sx={{ ":hover": { background: "rgba(255,255,255,0.2)" } }}
-                  onClick={onClick}
-                  disabled={renameMutation.isLoading}
-                >
-                  <RenameIcon sx={{ fill: "white" }} />
-                </IconButton>
-              </InputAdornment>
+              <>
+                {!renameMutation.isLoading ? (
+                  <IconButton
+                    sx={{ ":hover": { background: "rgba(255,255,255,0.2)" } }}
+                    onClick={onClick}
+                    disabled={renameMutation.isLoading}
+                  >
+                    <RenameIcon sx={{ fill: "white" }} />
+                  </IconButton>
+                ) : (
+                  <CircularProgress size={20} />
+                )}
+              </>
             }
           />
           <FormHelperText sx={{ color: "white" }}>Rename</FormHelperText>
