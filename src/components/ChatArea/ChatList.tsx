@@ -102,7 +102,6 @@ const ChatList: React.FC = () => {
 
 export default ChatList;
 
-//filtered chatList
 type ChatListItemsProps = {
   search: string;
 };

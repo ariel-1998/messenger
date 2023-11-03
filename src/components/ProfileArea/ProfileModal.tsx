@@ -189,13 +189,13 @@ function GroupSettings({ modalParentClose }: GroupSettingsProps) {
       open={open}
       onOpen={handleMenuOpen}
     >
-      <MenuItem>
+      <MenuItem sx={{ padding: 0 }}>
         <GroupForm.AddMembers
           menuClose={handleMenuClose}
           handleParentModalClose={modalParentClose}
         />
       </MenuItem>
-      <MenuItem>
+      <MenuItem sx={{ padding: 0 }}>
         <GroupForm.Remove
           menuClose={handleMenuClose}
           handleModalClose={modalParentClose}

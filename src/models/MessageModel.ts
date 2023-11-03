@@ -7,4 +7,7 @@ export type MessageModel = {
   content: string;
   chat: ChatModel;
   readBy: string[];
+  createdAt: Date;
 };
+
+//timeStampFromUser is only for ux puposes so i could update messages faster

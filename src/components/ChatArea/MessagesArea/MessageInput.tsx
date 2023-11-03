@@ -15,7 +15,8 @@ import {
 import { useSocket } from "../../../contexts/SocketProvider";
 import { updateMessages } from "../../../utils/messageMethods";
 import useDebounce from "../../../hooks/useDebounce";
-import { setChatLatestMessage } from "../../../utils/chatSlice";
+import { MessageModel } from "../../../models/MessageModel";
+import { UserModel } from "../../../models/UserModel";
 
 type inputRef = {
   firstChild: HTMLInputElement;
@@ -29,7 +30,6 @@ function MessageInput(): JSX.Element {
   const [userTyping, setUserTyping] = useState("");
   const { socket } = useSocket();
   const queryClient = useQueryClient();
-  const dispatch = useDispatch();
   const { debounce } = useDebounce({ fn: event, wait: 2000 });
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
@@ -38,10 +38,7 @@ function MessageInput(): JSX.Element {
   const sendMessageMutation = useMutation({
     mutationFn: messageService.sendMessage,
     onSuccess: (data) => {
-      setMessage("");
-      updateMessages(data, queryClient, false);
       socket?.emit("message", data);
-      dispatch(setChatLatestMessage(data));
     },
   });
 
@@ -80,6 +77,15 @@ function MessageInput(): JSX.Element {
       chatId: selectedChat?._id,
       content: message,
     });
+    const newMessage: Omit<MessageModel, "_id"> = {
+      chat: selectedChat,
+      content: message,
+      sender: user as UserModel,
+      readBy: [],
+      createdAt: new Date(Date.now()),
+    };
+    setMessage("");
+    updateMessages(newMessage, queryClient, false);
   };
 
   return (
@@ -110,29 +116,25 @@ function MessageInput(): JSX.Element {
         variant="outlined"
       >
         <OutlinedInput
-          disabled={!selectedChat || sendMessageMutation.isLoading}
+          disabled={!selectedChat}
           ref={inputRef}
           value={message}
           onChange={onInputChange}
           type="text"
           endAdornment={
             <InputAdornment position="end">
-              {sendMessageMutation.isLoading ? (
-                <CircularProgress size={25} />
-              ) : (
-                <IconButton
-                  disabled={!message}
-                  ref={btnRef}
-                  onClick={sendMessage}
-                  edge="end"
-                >
-                  <SendIcon
-                    sx={{
-                      fill: selectedChat ? "rgba(83, 154, 208, 0.9)" : "#999",
-                    }}
-                  />
-                </IconButton>
-              )}
+              <IconButton
+                disabled={!message}
+                ref={btnRef}
+                onClick={sendMessage}
+                edge="end"
+              >
+                <SendIcon
+                  sx={{
+                    fill: selectedChat ? "rgba(83, 154, 208, 0.9)" : "#999",
+                  }}
+                />
+              </IconButton>
             </InputAdornment>
           }
           placeholder="Message..."

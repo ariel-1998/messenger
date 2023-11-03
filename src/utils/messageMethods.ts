@@ -40,7 +40,7 @@ export const messageMarginTop = (
 };
 
 export const updateMessages = (
-  message: MessageModel,
+  message: Omit<MessageModel, "_id">,
   queryClient: QueryClient,
   checkCached = true
 ) => {
@@ -52,7 +52,7 @@ export const updateMessages = (
     ]);
     if (!isCached) return;
   }
-  queryClient.setQueryData<MessageModel[]>(
+  queryClient.setQueryData<Omit<MessageModel, "_id" | "createdAt">[]>(
     ["messages", `{chatId: ${message.chat._id}}`],
     (oldData) => {
       if (!oldData) return [message];

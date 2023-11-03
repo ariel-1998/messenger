@@ -22,6 +22,7 @@ import { chatService } from "../../services/chatService";
 import { useDrawer } from "../../contexts/DrawerProvider";
 import useDebounce from "../../hooks/useDebounce";
 import ListItems from "../ChatArea/GroupForms/ListItems";
+import CustomTypo from "../CustomComponents/CustomTypo";
 
 const DrawerSearch: React.FC = () => {
   const searchRef = useRef<HTMLInputElement>(null);

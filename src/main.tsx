@@ -8,8 +8,6 @@ import { ToastContainer } from "react-toastify";
 import AppRouter from "./components/AppRouter.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "react-toastify/dist/ReactToastify.css";
-import UnreadMessagesProvider from "./contexts/UnreadMessagesProvider.tsx";
-import SocketProvider from "./contexts/SocketProvider.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {

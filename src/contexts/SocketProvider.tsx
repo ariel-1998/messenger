@@ -14,7 +14,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateMessages } from "../utils/messageMethods";
 import { useUnreadMessages } from "./UnreadMessagesProvider";
 import { messageService } from "../services/messageService";
-import { setChatLatestMessage } from "../utils/chatSlice";
 
 type SocketContextProps = {
   socket: Socket<DefaultEventsMap, DefaultEventsMap> | null;
@@ -62,6 +61,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const event = (data: MessageModel) => {
+      console.log(data);
       if (selectedChat?._id === data.chat._id) {
         readByMessagesMutatin.mutate({
           chatId: selectedChat._id,
@@ -71,7 +71,6 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         addUnreadMessage(data);
       }
       updateMessages(data, queryClient, true);
-      dispatch(setChatLatestMessage(data));
     };
 
     socketConnection?.on("message", event);

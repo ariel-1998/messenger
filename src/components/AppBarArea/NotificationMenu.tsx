@@ -39,7 +39,7 @@ const NotificationMenu: React.FC = () => {
   );
 
   const onItemClick = (chat: ChatModel) => {
-    dispatch(setSelectedChat({ chat, isExist: true }));
+    dispatch(setSelectedChat({ chat, checkIfExists: true }));
     handleClose();
   };
 
@@ -47,7 +47,11 @@ const NotificationMenu: React.FC = () => {
     <CustomMenu icon={NotificationIcon} open={open} onOpen={handleOpen}>
       {unreadAmount ? (
         notifications.map((val, i) => (
-          <MenuItem key={i} onClick={() => onItemClick(val.chat)}>
+          <MenuItem
+            key={i}
+            onClick={() => onItemClick(val.chat)}
+            sx={{ padding: 0 }}
+          >
             <Stack
               direction={"row"}
               sx={MENU_ITEM_PADDING}
@@ -76,7 +80,7 @@ const NotificationMenu: React.FC = () => {
           </MenuItem>
         ))
       ) : (
-        <MenuItem onClick={handleClose}>
+        <MenuItem sx={{ padding: 0 }} onClick={handleClose}>
           <Typography sx={MENU_ITEM_PADDING} color={"#333"} fontWeight={"bold"}>
             No messages
           </Typography>

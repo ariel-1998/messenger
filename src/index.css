@@ -39,13 +39,11 @@ a {
   word-wrap: break-word;
 }
 
-/* Left bubble style */
 .start {
   background-color: #bbdefb;
   color: #544f4f;
 }
 
-/* Right bubble style */
 .end {
   background-color: #2dd983;
   color: #544f4f;

@@ -93,10 +93,14 @@ function UserPopper({ user, chat }: UserPopperProps): JSX.Element {
   const removeMembersMutation = useMutation({
     mutationFn: chatService.removeMembersFromGroup,
     onError: (error) => toastifyService.error(error),
-    onSuccess: () => toastifyService.success("successfuly removed!"),
+    onSuccess: () => {
+      setOpen((previousOpen) => !previousOpen);
+      toastifyService.success("successfuly removed!");
+    },
   });
 
-  const onDelete = () => {
+  const onDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
     removeMembersMutation.mutate({
       groupId: chat._id,
       userId: user._id,
@@ -125,7 +129,7 @@ function UserPopper({ user, chat }: UserPopperProps): JSX.Element {
         id={id}
         open={open}
         anchorEl={elRef.current}
-        placement={"bottom-start"}
+        placement={"bottom-end"}
         transition
       >
         {({ TransitionProps }) => (

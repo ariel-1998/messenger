@@ -6,7 +6,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { messageService } from "../../../services/messageService";
 import { toastifyService } from "../../../services/toastifyService";
 import { useUnreadMessages } from "../../../contexts/UnreadMessagesProvider";
-import { Box, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import LoadingSkeletons, {
   SkeletonMessage,
 } from "../../CustomComponents/LoadingSkeletons";
@@ -91,7 +91,7 @@ const MessageList: React.FC = () => {
               messages={messages}
               index={i}
               message={msg}
-              key={msg._id}
+              key={i}
             />
           ))}
           <div ref={bottomRef}></div>
