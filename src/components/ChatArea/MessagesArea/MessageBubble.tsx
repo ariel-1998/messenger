@@ -8,6 +8,7 @@ import {
   shouldMakeMarginLeftToMsg,
   showSenderDetails,
 } from "../../../utils/messageMethods";
+import { DoneAll } from "@mui/icons-material";
 
 export type MessageBubbleProps = {
   message: MessageModel;
@@ -25,6 +26,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   const isGroupChat = selectedChat?.isGroupChat;
   const senderIsMe = user?._id === message.sender._id;
   const alignMessage = senderIsMe ? "end" : "start";
+  const date = new Date(message.frontendTimeStamp);
+  const createdAt = date.toLocaleString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false, // Use 24-hour format
+  });
 
   const marginTop = messageMarginTop(messages, message, index);
   const senderDetails = showSenderDetails(
@@ -71,6 +78,19 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
           </Typography>
         )}
         <Typography fontWeight={"bold"}>{message.content}</Typography>
+        <Stack direction={"row"} spacing={0.5} pt={0.7}>
+          {senderIsMe && !isGroupChat && (
+            <Typography fontSize={10}>
+              <DoneAll
+                sx={{
+                  fontSize: 15,
+                  fill: !!message.readBy.length ? "#3498db" : "#999",
+                }}
+              />
+            </Typography>
+          )}
+          <Typography fontSize={10}>{createdAt}</Typography>
+        </Stack>
       </Stack>
     </Stack>
   );

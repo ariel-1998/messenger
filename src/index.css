@@ -40,13 +40,13 @@ a {
 }
 
 .start {
-  background-color: #bbdefb;
-  color: #544f4f;
+  background-color: #f0f0f0;
+  color: #333333;
 }
 
 .end {
-  background-color: #2dd983;
-  color: #544f4f;
+  background-color: #0b4f6c;
+  color: #ffffff;
 }
 
 .modal-background::before {
@@ -57,4 +57,22 @@ a {
   height: 100%;
   width: 100%;
   background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2));
+}
+
+@keyframes flipAndChange {
+  0%,
+  100% {
+    transform: rotateY(0deg); /* Initial and final state: no rotation */
+    scale: 1;
+    fill: #999; /* Initial and final fill color */
+  }
+  50% {
+    transform: rotateY(180deg); /* Rotate 180 degrees at 50% keyframe */
+    scale: 1.5;
+    fill: #3498db; /* Change fill color at 50% keyframe */
+  }
+}
+
+#disabled-input::placeholder {
+  color: #e5e5e5;
 }

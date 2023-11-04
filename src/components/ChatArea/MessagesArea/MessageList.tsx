@@ -10,17 +10,20 @@ import { Stack, Typography } from "@mui/material";
 import LoadingSkeletons, {
   SkeletonMessage,
 } from "../../CustomComponents/LoadingSkeletons";
+import { useSocket } from "../../../contexts/SocketProvider";
 
 const MessageList: React.FC = () => {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const { removeUnreadMessages, unreadMessages, unreadAmount } =
-    useUnreadMessages();
-
+  const { removeUnreadMessages, unreadMessages } = useUnreadMessages();
+  const { socket } = useSocket();
+  const user = useSelector((state: RootState) => state.auth);
+  const renderRef = useRef(true);
   const readByMessagesMutatin = useMutation({
     mutationFn: messageService.updateReadBy,
-    onSuccess: () => {
-      if (selectedChat) removeUnreadMessages(selectedChat._id);
+    onSuccess: (chat) => {
+      socket?.emit("readMessage", chat, user?._id);
+      removeUnreadMessages(chat._id);
     },
   });
 
@@ -32,27 +35,25 @@ const MessageList: React.FC = () => {
   });
 
   useEffect(() => {
+    renderRef.current = true;
     if (!selectedChat) return;
     const readMessages = unreadMessages[selectedChat._id];
     if (!readMessages) return;
-    const messageIds = readMessages.map((msg) => msg._id);
+    const messageIds = readMessages.map((msg) => msg._id!);
     readByMessagesMutatin.mutate({
       chatId: selectedChat._id,
       messages: messageIds,
     });
-  }, [unreadAmount, selectedChat]);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({
-      behavior: "smooth",
-    });
-  }, [messages]);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({
-      behavior: "instant",
-    });
   }, [selectedChat]);
+
+  useEffect(() => {
+    if (!messages) return;
+    const isFirstRendr = renderRef.current;
+    bottomRef.current?.scrollIntoView({
+      behavior: isFirstRendr ? "instant" : "smooth",
+    });
+    renderRef.current = false;
+  }, [messages]);
 
   return (
     <Stack

@@ -11,9 +11,10 @@ import { MessageModel } from "../models/MessageModel";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../utils/reduxStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateMessages } from "../utils/messageMethods";
+import { updateMessages, updateMessagesReadBy } from "../utils/messageMethods";
 import { useUnreadMessages } from "./UnreadMessagesProvider";
 import { messageService } from "../services/messageService";
+import { ChatModel } from "../models/ChatModel";
 
 type SocketContextProps = {
   socket: Socket<DefaultEventsMap, DefaultEventsMap> | null;
@@ -38,7 +39,6 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const { addUnreadMessage } = useUnreadMessages();
   const queryClient = useQueryClient();
-  const dispatch = useDispatch();
   const [socketConnection, setSocketConnection] = useState<Socket<
     DefaultEventsMap,
     DefaultEventsMap
@@ -46,36 +46,42 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   const readByMessagesMutatin = useMutation({
     mutationFn: messageService.updateReadBy,
+    onSuccess: (chat) => {
+      socketConnection?.emit("readMessage", chat, user?._id);
+    },
   });
 
+  const messageEvent = (data: MessageModel) => {
+    if (selectedChat?._id === data.chat._id) {
+      readByMessagesMutatin.mutate({
+        chatId: selectedChat._id,
+        messages: [data._id!],
+      });
+    } else {
+      addUnreadMessage(data);
+    }
+    updateMessages(data, queryClient, true);
+  };
+  const readByEvent = (chat: ChatModel, userId: string) => {
+    updateMessagesReadBy(chat, userId, queryClient);
+  };
   useEffect(() => {
     if (!user) return;
     let socket = io(import.meta.env.VITE_BASE_URL);
     setSocketConnection(socket);
     socket.connect();
     socket.emit("setup", user._id);
+    socket.on("readMessage", readByEvent);
     return () => {
+      socket.off("readMessage", readByEvent);
       socket.disconnect();
     };
   }, [user]);
 
   useEffect(() => {
-    const event = (data: MessageModel) => {
-      console.log(data);
-      if (selectedChat?._id === data.chat._id) {
-        readByMessagesMutatin.mutate({
-          chatId: selectedChat._id,
-          messages: [data._id],
-        });
-      } else {
-        addUnreadMessage(data);
-      }
-      updateMessages(data, queryClient, true);
-    };
-
-    socketConnection?.on("message", event);
+    socketConnection?.on("message", messageEvent);
     return () => {
-      socketConnection?.off("message", event);
+      socketConnection?.off("message", messageEvent);
     };
   }, [selectedChat, socketConnection]);
 

@@ -73,16 +73,18 @@ function MessageInput(): JSX.Element {
 
   const sendMessage = () => {
     if (!selectedChat) return;
+    const frontendTimeStamp = new Date(Date.now());
     sendMessageMutation.mutate({
       chatId: selectedChat?._id,
       content: message,
+      frontendTimeStamp,
     });
-    const newMessage: Omit<MessageModel, "_id"> = {
+    const newMessage: MessageModel = {
       chat: selectedChat,
       content: message,
       sender: user as UserModel,
       readBy: [],
-      createdAt: new Date(Date.now()),
+      frontendTimeStamp,
     };
     setMessage("");
     updateMessages(newMessage, queryClient, false);
@@ -131,7 +133,7 @@ function MessageInput(): JSX.Element {
               >
                 <SendIcon
                   sx={{
-                    fill: selectedChat ? "rgba(83, 154, 208, 0.9)" : "#999",
+                    fill: selectedChat ? "#0B4F6C" : "#999",
                   }}
                 />
               </IconButton>

@@ -37,6 +37,7 @@ const Drawer: React.FC<DrawerProps> = ({ children }) => {
           />
           <CustomSearchInput
             disabled
+            id="disabled-input"
             placeholder="Search..."
             disableFocusRipple
             disableRipple

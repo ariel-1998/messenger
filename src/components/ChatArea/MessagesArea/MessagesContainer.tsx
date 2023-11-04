@@ -5,7 +5,6 @@ import MessageList from "./MessageList";
 function MessagesContainer(): JSX.Element {
   return (
     <Stack
-      bgcolor={"rgba(176, 172, 165, 0.1)"}
       width={"100%"}
       height={"100%"}
       overflow={"auto"}

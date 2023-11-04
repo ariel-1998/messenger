@@ -51,7 +51,7 @@ const ChatBox: React.FC = () => {
         height: "100%",
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
         borderRadius: screanSize ? "10px" : 0,
-        background: "#f4f4f4",
+        background: "#E5E5E5",
         boxSizing: "border-box",
       }}
     >

@@ -1,5 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import { MessageModel } from "../models/MessageModel";
+import { ChatModel } from "../models/ChatModel";
 
 export const showSenderDetails = (
   isGroupChat: boolean | undefined,
@@ -57,6 +58,77 @@ export const updateMessages = (
     (oldData) => {
       if (!oldData) return [message];
       return [...oldData, message];
+    }
+  );
+};
+
+// export const updateMessagesReadBy = (
+//   message: MessageModel,
+//   queryClient: QueryClient
+// ) => {
+//   queryClient.setQueryData<MessageModel[]>(
+//     ["messages", `{chatId: ${message.chat._id}}`],
+//     (oldData) => {
+//       if (!oldData) return [message];
+//       const cached = [...oldData];
+//       const messageIndex = cached.findIndex((cachedMessage) => {
+//         return (
+//           cachedMessage.sender._id === message.sender._id &&
+//           new Date(cachedMessage.frontendTimeStamp).getTime() ===
+//             new Date(message.frontendTimeStamp).getTime()
+//         );
+//       });
+
+//       if (messageIndex === -1) return [...cached, { ...message }];
+//       cached[messageIndex] = { ...message };
+//       return [...cached];
+//     }
+//   );
+// };
+
+// export function binarySearchMessage(
+//   sortedArray: MessageModel[],
+//   message: MessageModel
+// ) {
+//   let start = 0;
+//   let end = sortedArray.length - 1;
+//   while (start <= end) {
+//     const middle = Math.floor((start + end) / 2);
+//     const currentItem = sortedArray[middle];
+
+//     const currentItemTimeStamp = new Date(
+//       currentItem.frontendTimeStamp
+//     ).getTime();
+//     const messageTimeStamp = new Date(message.frontendTimeStamp).getTime();
+//     if (
+//       currentItem.sender._id === message.sender._id &&
+//       currentItemTimeStamp === messageTimeStamp
+//     ) {
+//       return middle;
+//     }
+
+//     if (currentItemTimeStamp < messageTimeStamp) {
+//       start = middle + 1;
+//     } else {
+//       end = middle - 1;
+//     }
+//   }
+//   return -1;
+// }
+
+export const updateMessagesReadBy = (
+  chat: ChatModel,
+  userId: string,
+  queryClient: QueryClient
+) => {
+  queryClient.setQueryData<MessageModel[]>(
+    ["messages", `{chatId: ${chat._id}}`],
+    (oldData) => {
+      if (!oldData) return;
+      return oldData.map((message) => {
+        if (message.readBy.includes(userId)) return message;
+        return { ...message, readBy: [...message.readBy, userId] };
+      });
     }
   );
 };

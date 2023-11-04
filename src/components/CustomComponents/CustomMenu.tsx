@@ -34,7 +34,7 @@ const CustomMenu: React.FC<CustomMenuProps> = ({
         {icon}
       </IconButton>
       <Menu
-        sx={{ ".MuiMenu-paper": { background: "#ddd" } }}
+        sx={{ ".MuiMenu-paper": { background: "#e5e5e5" } }}
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: "top",

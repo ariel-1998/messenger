@@ -52,18 +52,13 @@ const AddMemberToGroup: React.FC<AddMemberToGroupProps> = ({
         }}
         sx={MENU_ITEM_PADDING}
       >
-        <Stack
-          direction={"row"}
-          height={"100%"}
-          width={"100%"}
-          alignItems={"center"}
-          justifyContent={"space-between"}
-        >
-          <Typography color={"#444"}>Add Members</Typography>
-          <Add sx={{ fill: "#444" }} />
-        </Stack>
+        <Typography>Add Members</Typography>
       </Box>
-      <ChildModal open={open} handleClose={closeModal}>
+      <ChildModal
+        sx={{ bgcolor: "#E5E5E5" }}
+        open={open}
+        handleClose={closeModal}
+      >
         <ChildModalContent
           closeModalChild={closeModal}
           closeRootModal={handleParentModalClose}

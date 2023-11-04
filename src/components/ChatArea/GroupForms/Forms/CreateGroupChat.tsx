@@ -46,16 +46,17 @@ const CreateGroupChat: React.FC = () => {
           fontSize: "1.1rem",
           fontWeight: 400,
           lineHeight: 1.5,
+          color: "#0B4F6C",
         }}
-        color="success"
         endIcon={<Add />}
+        variant="text"
       >
         new group
       </Button>
       <CustomModal
         open={open}
         handleClose={handleClose}
-        sx={{ top: "5vh", pb: 0 }}
+        sx={{ top: "5vh", pb: 0, bgcolor: "#E5E5E5" }}
       >
         <CreateGroupChatContent handleClose={handleClose} />
       </CustomModal>

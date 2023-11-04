@@ -55,20 +55,11 @@ const DeleteGroupChat: React.FC<DeleteGroupChatProps> = ({
         }}
         sx={MENU_ITEM_PADDING}
       >
-        <Stack
-          direction={"row"}
-          height={"100%"}
-          width={"100%"}
-          alignItems={"center"}
-          justifyContent={"space-between"}
-        >
-          <Typography color={"#444"}>Delete group</Typography>
-          <DeleteIcon sx={{ fill: "#444" }} />
-        </Stack>
+        <Typography>Delete group</Typography>
       </Box>
 
       <ChildModal
-        sx={{ maxWidth: 200, pb: 1 }}
+        sx={{ maxWidth: 300, pb: 1 }}
         open={open}
         handleClose={handleClose}
       >
@@ -86,8 +77,7 @@ const DeleteGroupChat: React.FC<DeleteGroupChatProps> = ({
         >
           <LoadingButton
             variant="contained"
-            size="small"
-            sx={{ bgcolor: "#ffff32", color: "black" }}
+            color="warning"
             loading={deleteMutation.isLoading}
             disabled={deleteMutation.isLoading}
             onClick={onDelete}
@@ -97,7 +87,6 @@ const DeleteGroupChat: React.FC<DeleteGroupChatProps> = ({
           <Button
             color="error"
             variant="contained"
-            size="small"
             onClick={handleClose}
             disabled={deleteMutation.isLoading}
           >

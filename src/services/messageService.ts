@@ -1,3 +1,4 @@
+import { ChatModel } from "../models/ChatModel";
 import { MessageModel } from "../models/MessageModel";
 import { authenticatedAxios } from "../utils/axiosInterceptors";
 
@@ -8,15 +9,18 @@ class MessageService {
   async sendMessage({
     chatId,
     content,
+    frontendTimeStamp,
   }: {
     chatId: string;
     content: string;
+    frontendTimeStamp: Date;
   }): Promise<MessageModel> {
     const { data } = await authenticatedAxios.post<MessageModel>(
       messageEndpoint,
       {
         chat: chatId,
         content,
+        frontendTimeStamp,
       }
     );
     return data;
@@ -36,10 +40,13 @@ class MessageService {
     chatId: string;
   }) {
     const stringifyIds = JSON.stringify(messages);
-    await authenticatedAxios.put(messageEndpoint, {
+    console.log("updatingReadBy", messages);
+    const { data } = await authenticatedAxios.put<ChatModel>(messageEndpoint, {
       messages: stringifyIds,
       chatId,
     });
+    console.log(data);
+    return data;
   }
 
   async getAllUnreadMessages({

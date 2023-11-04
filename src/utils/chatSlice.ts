@@ -62,12 +62,6 @@ const chatSlice = createSlice({
       if (state.selectedChat?._id !== updatedGroup._id) return state;
       state.selectedChat = { ...updatedGroup };
       return state;
-
-      // state.chats =
-      //   state.chats?.filter((chat) => chat._id !== updatedGroup._id) || [];
-      // state.chats.unshift(updatedGroup);
-      // state.selectedChat = { ...updatedGroup };
-      // return state;
     },
     deleteGroup(state, action: PayloadAction<string>) {
       const groupId = action.payload;
@@ -78,7 +72,6 @@ const chatSlice = createSlice({
       if (chatToUpdateIndex === -1) return;
       state.chats[chatToUpdateIndex];
       state.chats.splice(chatToUpdateIndex, 1);
-      // state.chats = state.chats?.filter((chat) => chat._id !== groupId) || [];
       if (state.selectedChat?._id === groupId) state.selectedChat = null;
       return state;
     },

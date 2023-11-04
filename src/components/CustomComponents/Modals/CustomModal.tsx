@@ -36,6 +36,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
     borderRadius: 2,
     maxHeight: "83vh",
     minHeight: 300,
+    backgroundColor: "#E5E5E5",
     overflowY: "auto",
     boxShadow: 24,
     p: 3,

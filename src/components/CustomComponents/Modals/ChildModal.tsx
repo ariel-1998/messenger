@@ -27,6 +27,7 @@ const ChildModal: React.FC<ChildModalProps> = ({
     bgcolor: "background.paper",
     boxShadow: 24,
     minHeight: 100,
+    backgroundColor: "#E5E5E5",
     pt: 2,
     px: 4,
     pb: 3,

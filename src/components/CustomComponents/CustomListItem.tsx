@@ -36,7 +36,7 @@ const CustomListItem: React.FC<CustomListItemProps> = ({
     <ListItem
       disablePadding
       sx={{
-        bgcolor: "#ddd",
+        bgcolor: "#f0f0f0",
         boxSizing: "border-box",
         borderRadius: "10px",
         ...sx,

@@ -62,7 +62,7 @@ const DrawerSearch: React.FC = () => {
       sx={{
         width: small ? "80vw" : 400,
         height: "100vh",
-        bgcolor: "#eee",
+        bgcolor: "#E5E5E5",
         overflowY: isUserFetch ? "hidden" : "auto",
         m: 0,
         px: 1,
@@ -75,13 +75,13 @@ const DrawerSearch: React.FC = () => {
           top={0}
           zIndex={1}
           py={1}
-          bgcolor={"#eee"}
+          bgcolor={"#E5E5E5"}
         >
           <Box position={"relative"}>
             <CustomSearchInput
               ref={searchRef}
               isIcon={false}
-              placeholder="Search..."
+              placeholder="Search Users..."
               onChange={debounce}
               style={{
                 width: "100%",
@@ -122,9 +122,10 @@ const DrawerSearch: React.FC = () => {
         )}
 
         {users && (
-          <Stack spacing={1} pb={2}>
+          <Stack pb={2}>
             {users.map((user) => (
               <ListItems.User
+                sx={{ bgcolor: "#f0f0f0" }}
                 key={user._id}
                 user={user}
                 onClick={() => fetchChat(user._id)}

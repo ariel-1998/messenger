@@ -50,7 +50,7 @@ const ChatList: React.FC = () => {
         height: "100%",
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
         borderRadius: mdScreen ? "10px" : 0,
-        background: "#f4f4f4",
+        background: "#E5E5E5",
         boxSizing: "border-box",
       }}
     >
@@ -67,7 +67,7 @@ const ChatList: React.FC = () => {
       <Box position={"relative"}>
         <CustomSearchInput
           isIcon={false}
-          placeholder="Search..."
+          placeholder="Search Chats..."
           onChange={onInput}
           style={{
             width: "100%",
@@ -152,7 +152,8 @@ function ChatListItems({ search }: ChatListItemsProps): JSX.Element {
           {filteredChats.map((chat) => (
             <ListItems.Chat
               sx={{
-                bgcolor: selectedChat?._id !== chat._id ? "#ddd" : "#bbdefb",
+                bgcolor:
+                  selectedChat?._id !== chat._id ? "#f0f0f0" : "#0B4F6C88",
                 transition: "background-color 400ms ease",
               }}
               chat={chat}

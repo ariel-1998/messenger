@@ -83,8 +83,6 @@ const UserListItem: React.FC<UserListItemProps> = ({
         >
           {!size && "Email: "}
           {user.email.toLowerCase()}
-          aks hiausigudasguysdagyugyuasdgyuasdgyuasdg yua suyg aks
-          hiausigudasguysdagyugyuasdgyuasdgyuasdg yua suyg
         </Typography>
         {children}
       </Stack>

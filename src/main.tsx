@@ -8,6 +8,8 @@ import { ToastContainer } from "react-toastify";
 import AppRouter from "./components/AppRouter.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "react-toastify/dist/ReactToastify.css";
+import { ThemeProvider } from "@mui/material";
+import { theme } from "./utils/theme.ts";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,13 +26,15 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <AppRouter />
-        <ToastContainer
-          position="top-center"
-          hideProgressBar={true}
-          autoClose={2000}
-          theme={"colored"}
-        />
+        <ThemeProvider theme={theme}>
+          <AppRouter />
+          <ToastContainer
+            position="top-center"
+            hideProgressBar={true}
+            autoClose={2000}
+            theme={"colored"}
+          />
+        </ThemeProvider>
       </Provider>
       <ReactQueryDevtools />
     </QueryClientProvider>

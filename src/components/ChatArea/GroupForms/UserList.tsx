@@ -28,11 +28,12 @@ const UserList: React.FC<UserListProps> = ({
         <ListItems.User
           key={user._id}
           sx={{
+            mb: 0.5,
             bgcolor:
               selectedUsers && isUserInArr(selectedUsers, user) === -1
-                ? "#ddd"
-                : "#bbdefb" || "#ddd",
-            transition: "background-color 500ms ease",
+                ? "#f0f0f0"
+                : "#0B4F6C88" || "#f0f0f0",
+            transition: "background-color 400ms ease",
           }}
           onClick={() => {
             if (!onUserClick) return;
