@@ -7,7 +7,6 @@ import {
   Button,
   InputLabel,
   Input,
-  FormHelperText,
   CircularProgress,
 } from "@mui/material";
 import { userService } from "../../../../services/userService";
@@ -45,14 +44,13 @@ const CreateGroupChat: React.FC = () => {
         sx={{
           p: 0,
           fontSize: "1.1rem",
-          fontWeight: 400,
+          fontWeight: 600,
           lineHeight: 1.5,
           color: "#0B4F6C",
         }}
-        endIcon={<Add />}
         variant="text"
       >
-        new group
+        new group <Add />
       </Button>
       <CustomModal
         open={open}

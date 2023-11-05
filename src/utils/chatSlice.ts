@@ -99,30 +99,23 @@ const chatSlice = createSlice({
         (chat) => chat._id === groupId
       );
       if (chatToUpdateIndex === -1) return;
-      state.chats[chatToUpdateIndex]; //check if needed
       state.chats.splice(chatToUpdateIndex, 1);
       return state;
     },
-    // setChatLatestMessage(state, action: PayloadAction<MessageModel>) {
-    //   const message = action.payload;
-    //   const chatId = message.chat._id;
-    //   if (!state.chats) state.chats = [];
-    //   let chatToUpdate: ChatModel = {} as ChatModel;
-    //   if (state.chats.length) {
-    //     const chatToUpdateIndex = state.chats.findIndex(
-    //       (chat) => chat._id === chatId
-    //     );
-    //     if (chatToUpdateIndex !== -1) {
-    //       chatToUpdate = state.chats[chatToUpdateIndex];
-    //       state.chats.splice(chatToUpdateIndex, 1);
-    //     }
-    //   } else {
-    //     chatToUpdate = { ...message.chat };
-    //   }
-    //   chatToUpdate.latestMessage = message;
-    //   state.chats.unshift(chatToUpdate);
-    //   return state;
-    // },
+    setChatLatestMessage(state, action: PayloadAction<MessageModel>) {
+      const message = action.payload;
+      const chatId = message.chat._id;
+      if (!state.chats) state.chats = [];
+      const chatToUpdateIndex = state.chats.findIndex(
+        (chat) => chat._id === chatId
+      );
+      if (chatToUpdateIndex === -1) {
+        const chat = { ...message.chat };
+        chat.latestMessage = { ...message };
+        state.chats.unshift(chat);
+      } else state.chats[chatToUpdateIndex].latestMessage = message;
+      return state;
+    },
   },
 });
 
@@ -134,6 +127,7 @@ export const {
   deleteGroup,
   onAddedToGroup,
   onRemoveFromGroup,
+  setChatLatestMessage,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

@@ -30,7 +30,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   const createdAt = date.toLocaleString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
-    hour12: false, // Use 24-hour format
+    hour12: false,
   });
 
   const marginTop = messageMarginTop(messages, message, index);

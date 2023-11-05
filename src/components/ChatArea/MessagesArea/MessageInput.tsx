@@ -1,12 +1,11 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/reduxStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { messageService } from "../../../services/messageService";
 import SendIcon from "@mui/icons-material/Send";
 import {
   Box,
-  CircularProgress,
   FormControl,
   IconButton,
   InputAdornment,

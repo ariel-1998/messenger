@@ -2,12 +2,9 @@ import {
   FormControl,
   IconButton,
   Input,
-  InputAdornment,
   FormHelperText,
   Stack,
   CircularProgress,
-  createStyles,
-  makeStyles,
 } from "@mui/material";
 import React, { useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -67,7 +64,7 @@ const RenameGroupChat: React.FC<RenameGroupChatProps> = ({
             ref={renameRef}
             onKeyDown={onEnterKey}
             defaultValue={groupName}
-            sx={{ color: "white" }}
+            sx={{ color: "white", fontWeight: "bold" }}
             endAdornment={
               <>
                 {!renameMutation.isLoading ? (

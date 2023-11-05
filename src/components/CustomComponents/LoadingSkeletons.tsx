@@ -1,5 +1,5 @@
-import { Avatar, Skeleton, Stack } from "@mui/material";
-import React, { ReactNode, useEffect, useState } from "react";
+import { Skeleton, Stack } from "@mui/material";
+import React, { ReactNode, useState } from "react";
 import CustomListItem from "./CustomListItem";
 import { ChatModel } from "../../models/ChatModel";
 

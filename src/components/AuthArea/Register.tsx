@@ -89,7 +89,6 @@ const Register: React.FC = () => {
             <FormHelperText>{errors.confirmPassword.message}</FormHelperText>
           )}
         </FormControl>
-        {/* add input tipe file */}
         <Box>
           <InputLabel>Profile image</InputLabel>
           <Input type="file" {...register("image")} />

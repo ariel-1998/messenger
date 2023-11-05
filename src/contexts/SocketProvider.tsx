@@ -19,6 +19,7 @@ import {
   deleteGroup,
   onAddedToGroup,
   onRemoveFromGroup,
+  setChatLatestMessage,
 } from "../utils/chatSlice";
 import { UserModel } from "../models/UserModel";
 
@@ -67,6 +68,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     } else {
       addUnreadMessage(data);
     }
+    dispatch(setChatLatestMessage(data));
     updateMessages(data, queryClient, true);
   };
   const readByEvent = (chat: ChatModel, userId: string) => {

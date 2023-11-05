@@ -46,7 +46,7 @@ export const updateMessages = (
   queryClient: QueryClient,
   checkCached = true
 ) => {
-  //not updating message if its chat messages haven't been cached (fatched) yet,
+  //not updating message if its chat messages haven't been cached (fatched) yet.
   if (checkCached) {
     const isCached = queryClient.getQueryData<MessageModel[] | undefined>([
       "messages",
@@ -62,36 +62,6 @@ export const updateMessages = (
     }
   );
 };
-
-// export function binarySearchMessage(
-//   sortedArray: Omit<MessageModel, "_id" | "createdAt">[],
-//   message: Omit<MessageModel, "_id" | "chat"> & { chat: string }
-// ) {
-//   let start = 0;
-//   let end = sortedArray.length - 1;
-//   while (start <= end) {
-//     const middle = Math.floor((start + end) / 2);
-//     const currentItem = sortedArray[middle];
-
-//     const currentItemTimeStamp = new Date(
-//       currentItem.frontendTimeStamp
-//     ).getTime();
-//     const messageTimeStamp = new Date(message.frontendTimeStamp).getTime();
-//     if (
-//       currentItem.sender._id === message.sender._id &&
-//       currentItemTimeStamp === messageTimeStamp
-//     ) {
-//       return middle;
-//     }
-
-//     if (currentItemTimeStamp < messageTimeStamp) {
-//       start = middle + 1;
-//     } else {
-//       end = middle - 1;
-//     }
-//   }
-//   return -1;
-// }
 
 export const revertMessageOnError = (
   message: Omit<MessageModel, "_id" | "chat" | "sender"> & {
@@ -117,12 +87,6 @@ export const revertMessageOnError = (
       });
     }
   );
-  // queryClient.setQueryData<
-  //   Omit<MessageModel, "_id" | "chat"> & { chat: string }[]
-  // >(["messages", `{chatId: ${message.chat}}`], (oldData) => {
-  //   if (!oldData) return [message];
-  //   return [...oldData, message];
-  // });
 };
 
 export const updateMessagesReadBy = (

@@ -61,7 +61,9 @@ const ChatList: React.FC = () => {
         alignItems={"center"}
         justifyContent={"space-around"}
       >
-        <Typography variant="h6">Chats</Typography>
+        <Typography variant="h6" fontWeight={"bold"}>
+          Chats
+        </Typography>
         <GroupForm.Create />
       </Stack>
       <Box position={"relative"}>
@@ -166,8 +168,8 @@ function ChatListItems({ search }: ChatListItemsProps): JSX.Element {
 
       {!fetchingChats && !filteredChats.length && !!search && (
         <Info
+          color="warning"
           sx={{
-            fill: "#ffcc00",
             width: 40,
             height: 40,
             alignSelf: "center",

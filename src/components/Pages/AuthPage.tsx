@@ -16,7 +16,7 @@ const AuthPage: React.FC = () => {
           borderRadius,
         }}
       >
-        <Typography variant="h4">Welcome to Messenger</Typography>
+        <Typography variant="h4">Messenger</Typography>
       </Box>
       <Box bgcolor="white" p={3} borderRadius={borderRadius}>
         <AuthMenu />

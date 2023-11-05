@@ -2,6 +2,7 @@ import jwtDecode from "jwt-decode";
 import { UserModel } from "../models/UserModel";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { authAxios } from "./axiosInterceptors";
+import { useQueryClient } from "@tanstack/react-query";
 
 type UserToken = Omit<UserModel, "confirmPassword" | "password">;
 

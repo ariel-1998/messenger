@@ -63,7 +63,6 @@ const ChatBox: React.FC = () => {
           px: 1,
         }}
       >
-        {/**change it to a button the set selectedChat to null */}
         {!screanSize && (
           <Button onClick={onBackClick} sx={{ p: 1 }}>
             Back

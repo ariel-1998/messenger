@@ -27,7 +27,6 @@ const CustomModal: React.FC<CustomModalProps> = ({
   const size = useMediaQuery(theme.breakpoints.down("sm"));
   const modalStyle: SxProps<Theme> = {
     position: "absolute",
-    // position: "relative",
     top: "5vh",
     left: "50%",
     transform: "translateX(-50%)",

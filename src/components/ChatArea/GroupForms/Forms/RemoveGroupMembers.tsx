@@ -16,7 +16,6 @@ import ChildModal from "../../../CustomComponents/Modals/ChildModal";
 import { useMutation } from "@tanstack/react-query";
 import { chatService } from "../../../../services/chatService";
 import { toastifyService } from "../../../../services/toastifyService";
-import Delete from "@mui/icons-material/HighlightOffRounded";
 import { LoadingButton } from "@mui/lab";
 import { UserModel } from "../../../../models/UserModel";
 import { ChatModel } from "../../../../models/ChatModel";

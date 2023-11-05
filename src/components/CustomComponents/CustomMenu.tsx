@@ -1,4 +1,4 @@
-import { Menu, Paper, SxProps, Theme } from "@mui/material";
+import { Menu, SxProps, Theme } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import React, { ReactNode } from "react";
 

@@ -58,7 +58,11 @@ const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
         <Grid container spacing={2}>
           <Grid item xs={12} sm={7} margin={"auto"}>
             <Stack direction="column" alignItems="center">
-              <Typography variant="h4" component="h2">
+              <Typography
+                variant="h4"
+                component="h2"
+                sx={{ fontWeight: "600" }}
+              >
                 {profile?.name}
               </Typography>
               {!smallScreen && (
@@ -68,7 +72,11 @@ const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
                 />
               )}
               <Box sx={{ mt: 2, width: "100%", overflowWrap: "break-word" }}>
-                <Typography variant="h5" textAlign="center">
+                <Typography
+                  variant="h5"
+                  textAlign="center"
+                  sx={{ color: "#666", fontWeight: "600" }}
+                >
                   {profile?.email}
                 </Typography>
               </Box>
@@ -130,7 +138,7 @@ const GroupProfileModal: React.FC<UserProfileModalProps<null>> = ({
             }}
           >
             <Typography
-              sx={{ zIndex: 1 }}
+              sx={{ zIndex: 1, fontWeight: "bold" }}
               align="center"
               color={"white"}
               variant="h6"

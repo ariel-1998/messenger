@@ -45,6 +45,7 @@ const CustomListItem: React.FC<CustomListItemProps> = ({
     >
       <ListItemButton
         disableRipple={disableRipple}
+        disabled={disableBtnProps}
         sx={disableBtnProps ? disabledBtnProps : btnSx}
       >
         {children}

@@ -23,7 +23,7 @@ const SelectedUsersList: React.FC<SelectedUsersListProps> = ({
 
   useEffect(() => {
     if (!containerRef.current) return;
-    const observer = new ResizeObserver((entries) => {
+    const observer = new ResizeObserver(() => {
       const container = containerRef.current;
       if (!container) return;
       setIsLeftVisible(translate > 0);
@@ -146,7 +146,7 @@ const SelectedUsersList: React.FC<SelectedUsersListProps> = ({
             sx={{
               width: "max-content",
               transform: `translateX(-${translate}px)`,
-              transition: "transform 0.5s ease", // Add transition for smooth animation
+              transition: "transform 0.5s ease",
             }}
           >
             {users.map((user) => (

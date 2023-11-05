@@ -1,6 +1,8 @@
 import { ChatModel } from "../models/ChatModel";
 import { MessageModel } from "../models/MessageModel";
 import { authenticatedAxios } from "../utils/axiosInterceptors";
+import { setChatLatestMessage } from "../utils/chatSlice";
+import { store } from "../utils/reduxStore";
 
 const messageEndpoint = "message";
 const unreadMessagesEndpoint = `${messageEndpoint}/unread`;
@@ -23,6 +25,7 @@ class MessageService {
         frontendTimeStamp,
       }
     );
+    store.dispatch(setChatLatestMessage(data));
     return data;
   }
 

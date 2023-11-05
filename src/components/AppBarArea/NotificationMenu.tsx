@@ -1,7 +1,7 @@
 import React from "react";
 import CustomMenu from "../CustomComponents/CustomMenu";
 import { Notifications } from "@mui/icons-material";
-import { Badge, Box, MenuItem, Stack, Typography } from "@mui/material";
+import { Badge, MenuItem, Stack, Typography } from "@mui/material";
 import { MENU_ITEM_PADDING } from "./ProfileMenu";
 import { useUnreadMessages } from "../../contexts/UnreadMessagesProvider";
 import { useDispatch } from "react-redux";

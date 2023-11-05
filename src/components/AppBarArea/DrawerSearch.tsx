@@ -1,6 +1,5 @@
 import {
   List,
-  Avatar,
   Stack,
   Typography,
   useMediaQuery,
@@ -65,6 +64,7 @@ const DrawerSearch: React.FC = () => {
         overflowY: isUserFetch ? "hidden" : "auto",
         m: 0,
         px: 1,
+        position: "relative",
       }}
     >
       <List sx={{ width: "100%", pt: 0 }}>
@@ -124,6 +124,7 @@ const DrawerSearch: React.FC = () => {
           <Stack pb={2}>
             {users.map((user) => (
               <ListItems.User
+                disableBtnProps={chatAccessMutation.isLoading}
                 sx={{ mb: 0.5 }}
                 key={user._id}
                 user={user}
@@ -133,6 +134,18 @@ const DrawerSearch: React.FC = () => {
           </Stack>
         )}
       </List>
+      {chatAccessMutation.isLoading && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
     </Box>
   );
 };
