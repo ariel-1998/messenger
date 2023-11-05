@@ -24,11 +24,12 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../utils/reduxStore";
 import ChildModal from "../../../CustomComponents/Modals/ChildModal";
 import { LoadingButton } from "@mui/lab";
-import { Add, Search as SeachIcon } from "@mui/icons-material";
+import { Search as SeachIcon } from "@mui/icons-material";
 import { MENU_ITEM_PADDING } from "../../../AppBarArea/ProfileMenu";
 import LoadingSkeletons, {
   SkeletonUser,
 } from "../../../CustomComponents/LoadingSkeletons";
+import { useSocket } from "../../../../contexts/SocketProvider";
 
 type AddMemberToGroupProps = {
   handleParentModalClose: () => void;
@@ -52,7 +53,7 @@ const AddMemberToGroup: React.FC<AddMemberToGroupProps> = ({
         }}
         sx={MENU_ITEM_PADDING}
       >
-        <Typography>Add Members</Typography>
+        <Typography sx={{ fontWeight: "bold" }}>Add Members</Typography>
       </Box>
       <ChildModal
         sx={{ bgcolor: "#E5E5E5" }}
@@ -86,6 +87,7 @@ function ChildModalContent({
     fn: onInput,
     wait: 700,
   });
+  const { socket } = useSocket();
 
   const {
     data: usersData,
@@ -100,9 +102,11 @@ function ChildModalContent({
   const addMembersMutation = useMutation({
     mutationFn: chatService.addMembersToGroup,
     onError: (error: ErrorModels) => toastifyService.error(error),
-    onSuccess: () => {
+    onSuccess: (data) => {
       closeModalChild();
       closeRootModal();
+      toastifyService.success("Successfuly added new members!");
+      socket?.emit("addingToGroup", data);
     },
   });
 
@@ -165,7 +169,10 @@ function ChildModalContent({
 
         {usersData && (
           <UserList
-            users={usersData}
+            users={usersData.filter(
+              (user) =>
+                !selectedChat?.users.some((myUser) => myUser._id === user._id)
+            )}
             selectedUsers={selectedUsers}
             onUserClick={onUserClick}
           />

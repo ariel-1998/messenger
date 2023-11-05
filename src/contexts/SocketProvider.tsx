@@ -15,6 +15,12 @@ import { updateMessages, updateMessagesReadBy } from "../utils/messageMethods";
 import { useUnreadMessages } from "./UnreadMessagesProvider";
 import { messageService } from "../services/messageService";
 import { ChatModel } from "../models/ChatModel";
+import {
+  deleteGroup,
+  onAddedToGroup,
+  onRemoveFromGroup,
+} from "../utils/chatSlice";
+import { UserModel } from "../models/UserModel";
 
 type SocketContextProps = {
   socket: Socket<DefaultEventsMap, DefaultEventsMap> | null;
@@ -37,8 +43,9 @@ type SocketProviderProps = {
 const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const user = useSelector((state: RootState) => state.auth);
   const { selectedChat } = useSelector((state: RootState) => state.chat);
-  const { addUnreadMessage } = useUnreadMessages();
+  const { addUnreadMessage, removeUnreadMessages } = useUnreadMessages();
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   const [socketConnection, setSocketConnection] = useState<Socket<
     DefaultEventsMap,
     DefaultEventsMap
@@ -65,6 +72,32 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const readByEvent = (chat: ChatModel, userId: string) => {
     updateMessagesReadBy(chat, userId, queryClient);
   };
+
+  const onAddedToGroupEvent = (groupChat: ChatModel) => {
+    dispatch(onAddedToGroup(groupChat));
+  };
+
+  const onRemovingFromGroupEvent = (
+    groupChat: ChatModel,
+    userToRemove: UserModel
+  ) => {
+    console.log("removing", groupChat, userToRemove);
+    dispatch(
+      onRemoveFromGroup({
+        chat: groupChat,
+        isRemoved: userToRemove._id === user?._id,
+      })
+    );
+    if (userToRemove._id === user?._id) {
+      removeUnreadMessages(groupChat._id);
+    }
+  };
+
+  const onDeletingGroupEvent = (chatId: string) => {
+    dispatch(deleteGroup(chatId));
+    removeUnreadMessages(chatId);
+  };
+
   useEffect(() => {
     if (!user) return;
     let socket = io(import.meta.env.VITE_BASE_URL);
@@ -72,8 +105,14 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     socket.connect();
     socket.emit("setup", user._id);
     socket.on("readMessage", readByEvent);
+    socket.on("addedToGroup", onAddedToGroupEvent);
+    socket.on("removingFromGroup", onRemovingFromGroupEvent);
+    socket.on("deletingGroup", onDeletingGroupEvent);
     return () => {
       socket.off("readMessage", readByEvent);
+      socket.off("addedToGroup", onAddedToGroupEvent);
+      socket.off("removingFromGroup", onRemovingFromGroupEvent);
+      socket.off("deletingGroup", onDeletingGroupEvent);
       socket.disconnect();
     };
   }, [user]);

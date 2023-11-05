@@ -54,6 +54,7 @@ const UserListItem: React.FC<UserListItemProps> = ({
               display: "inline-block",
               textOverflow: "ellipsis",
               overflow: "hidden",
+              fontWeight: "bold",
             }}
             variant="h6"
           >
@@ -79,6 +80,8 @@ const UserListItem: React.FC<UserListItemProps> = ({
             overflow: "hidden",
             whiteSpace: "nowrap",
             width: "90%",
+            fontWeight: "bold",
+            color: "#666",
           }}
         >
           {!size && "Email: "}
@@ -122,6 +125,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
               display: "inline-block",
               textOverflow: "ellipsis",
               overflow: "hidden",
+              fontWeight: "bold",
             }}
             variant="h6"
           >
@@ -149,16 +153,19 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
         <Typography
           height="1.5rem"
           sx={{
+            color: "#666",
             display: "inline-block",
             textOverflow: "ellipsis",
             overflow: "hidden",
             whiteSpace: "nowrap",
+            fontWeight: "600",
           }}
         >
           {!!chat.latestMessage &&
             `${
               !isLoggedUserIsSender ? chat.latestMessage.sender?.name : "You"
-            }: ${chat.latestMessage.content}`}
+            }: `}
+          <span style={{ color: "black" }}>{chat.latestMessage?.content}</span>
         </Typography>
       </Stack>
     </CustomListItem>

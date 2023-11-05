@@ -7,17 +7,14 @@ import { toastifyService } from "../../../../services/toastifyService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../utils/reduxStore";
 import { Logout } from "@mui/icons-material";
+import ChildModal from "../../../CustomComponents/Modals/ChildModal";
 
 const LeaveGroup: React.FC = () => {
   const [open, setOpen] = React.useState(false);
-  const elRef = useRef<HTMLButtonElement | null>(null);
 
-  const handlePopper = () => {
-    setOpen((previousOpen) => !previousOpen);
-  };
+  const handleClose = () => setOpen(false);
+  const handleOpen = () => setOpen(true);
 
-  const canBeOpen = open && Boolean(elRef);
-  const id = canBeOpen ? "spring-popper" : undefined;
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const user = useSelector((state: RootState) => state.auth);
 
@@ -37,55 +34,57 @@ const LeaveGroup: React.FC = () => {
 
   return (
     <>
-      <LoadingButton color="error" onClick={handlePopper} ref={elRef}>
-        Leave Group <Logout />
-      </LoadingButton>
-      <Popper
-        sx={{ zIndex: 2000, maxWidth: 250, minWidth: 250 }}
-        id={id}
-        open={open}
-        anchorEl={elRef.current}
-        placement={"top"}
-        transition
+      <Button
+        sx={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          ":hover": { background: "rgba(255,255,255,0.2)" },
+        }}
+        color="error"
+        onClick={handleOpen}
       >
-        {({ TransitionProps }) => (
-          <Fade {...TransitionProps} timeout={350}>
-            <Box sx={{ border: 1, p: 2, pb: 1, bgcolor: "#999" }}>
-              <Typography>
-                Are you sure you want to leave this group??
-              </Typography>
-              <Stack
-                direction={"row"}
-                columnGap={1}
-                pt={1}
-                width={"100%"}
-                justifyContent={"center"}
-                px={1}
-              >
-                <LoadingButton
-                  variant="contained"
-                  color="error"
-                  size="small"
-                  onClick={onDelete}
-                  loading={LeaveGroupMutation.isLoading}
-                  disabled={LeaveGroupMutation.isLoading}
-                >
-                  Leave
-                </LoadingButton>
-                <Button
-                  disabled={LeaveGroupMutation.isLoading}
-                  sx={{ bgcolor: "#ffff32", color: "black" }}
-                  variant="contained"
-                  size="small"
-                  onClick={handlePopper}
-                >
-                  Cancel
-                </Button>
-              </Stack>
-            </Box>
-          </Fade>
-        )}
-      </Popper>
+        <Logout sx={{ fill: "red" }} />
+      </Button>
+      <ChildModal
+        sx={{ maxWidth: 300, pb: 1 }}
+        open={open}
+        handleClose={handleClose}
+      >
+        <Box>
+          <Typography>Are you sure you want to leave this group?</Typography>
+          <Stack
+            direction={"row"}
+            columnGap={1}
+            pt={1}
+            width={"100%"}
+            justifyContent={"center"}
+            px={1}
+          >
+            <LoadingButton
+              variant="contained"
+              color="error"
+              onClick={onDelete}
+              loading={LeaveGroupMutation.isLoading}
+              disabled={LeaveGroupMutation.isLoading}
+            >
+              Leave
+            </LoadingButton>
+            <Button
+              disabled={LeaveGroupMutation.isLoading}
+              sx={{
+                bgcolor: "#ffff32",
+                color: "black",
+                ":hover": { bgcolor: "#ffff32" },
+              }}
+              variant="contained"
+              onClick={handleClose}
+            >
+              Cancel
+            </Button>
+          </Stack>
+        </Box>
+      </ChildModal>
     </>
   );
 };

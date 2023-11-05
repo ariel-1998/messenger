@@ -8,7 +8,6 @@ type LogoutProps = {
   sx?: SxProps<Theme>;
 };
 const Logout: React.FC<LogoutProps> = ({ sx }) => {
-  const navigate = useNavigate();
   const logout = () => {
     authService.logout();
     window.location.reload();
@@ -16,7 +15,7 @@ const Logout: React.FC<LogoutProps> = ({ sx }) => {
   };
   return (
     <Box onClick={logout} sx={{ display: "flex", gap: 1, ...sx }}>
-      <Typography>Logout</Typography>
+      <Typography sx={{ fontWeight: "bold" }}>Logout</Typography>
       <LogoutIcon />
     </Box>
   );

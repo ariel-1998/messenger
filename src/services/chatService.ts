@@ -56,6 +56,7 @@ class ChatService {
       { groupImg, users: stringifyIds, chatName }
     );
     store.dispatch(createGroup(data));
+    return data;
   }
 
   async renameGroup({
@@ -86,6 +87,7 @@ class ChatService {
       users: stringifyIds,
     });
     store.dispatch(updateGroup(data));
+    return data;
   }
 
   async removeMembersFromGroup({
@@ -97,8 +99,10 @@ class ChatService {
   }) {
     const endpoint = removeFromGroupEndpoint(groupId, userId);
     const { data, status } = await authenticatedAxios.put<ChatModel>(endpoint);
-    if (status === 200) store.dispatch(updateGroup(data));
-    else store.dispatch(deleteGroup(groupId));
+    if (status === 200) {
+      store.dispatch(updateGroup(data));
+      return data;
+    } else store.dispatch(deleteGroup(groupId));
   }
 
   async deleteGroupChat(groupId: string) {

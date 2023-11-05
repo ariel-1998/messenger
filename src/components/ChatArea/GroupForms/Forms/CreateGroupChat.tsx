@@ -32,6 +32,7 @@ import CustomModal from "../../../CustomComponents/Modals/CustomModal";
 import LoadingSkeletons, {
   SkeletonUser,
 } from "../../../CustomComponents/LoadingSkeletons";
+import { useSocket } from "../../../../contexts/SocketProvider";
 
 const CreateGroupChat: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -77,11 +78,11 @@ function CreateGroupChatContent({
   const [userSearch, setUserSearch] = useState("");
   const [groupName, setGroupName] = useState("");
   const [groupImg, setGroupImg] = useState<FileList | null>(null);
+  const { socket } = useSocket();
   const { debounce: debouncedOnInput, isLoading } = useDebounce({
     fn: onInput,
     wait: 1500,
   });
-  const handleModalClose = handleClose || (() => undefined);
 
   const {
     data: usersData,
@@ -96,7 +97,10 @@ function CreateGroupChatContent({
   const groupMutation = useMutation({
     mutationFn: chatService.createGroupChat,
     onError: (err: ErrorModels) => toastifyService.error(err),
-    onSuccess: handleModalClose,
+    onSuccess: (data) => {
+      socket?.emit("addingToGroup", data);
+      handleClose();
+    },
   });
 
   const imageMutation = useMutation({
@@ -225,7 +229,7 @@ function CreateGroupChatContent({
             color="error"
             sx={{ alignSelf: "end" }}
             variant="contained"
-            onClick={handleModalClose}
+            onClick={handleClose}
           >
             cancel
           </Button>

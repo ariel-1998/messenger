@@ -13,10 +13,14 @@ import {
   OutlinedInput,
 } from "@mui/material";
 import { useSocket } from "../../../contexts/SocketProvider";
-import { updateMessages } from "../../../utils/messageMethods";
+import {
+  revertMessageOnError,
+  updateMessages,
+} from "../../../utils/messageMethods";
 import useDebounce from "../../../hooks/useDebounce";
 import { MessageModel } from "../../../models/MessageModel";
 import { UserModel } from "../../../models/UserModel";
+import { toastifyService } from "../../../services/toastifyService";
 
 type inputRef = {
   firstChild: HTMLInputElement;
@@ -39,6 +43,18 @@ function MessageInput(): JSX.Element {
     mutationFn: messageService.sendMessage,
     onSuccess: (data) => {
       socket?.emit("message", data);
+    },
+    onError(err: any) {
+      const status = err.response.status;
+      if (status === 500) toastifyService.error({ message: "Server Error!" });
+      if (status === 404)
+        toastifyService.error({ message: "Chat was not found!" });
+      if (status === 403)
+        toastifyService.error({
+          message: "You are not part of this chat!",
+        });
+      if (!user) return;
+      revertMessageOnError(err.response.data, user, queryClient);
     },
   });
 

@@ -1,6 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { MessageModel } from "../models/MessageModel";
 import { ChatModel } from "../models/ChatModel";
+import { UserModel } from "../models/UserModel";
 
 export const showSenderDetails = (
   isGroupChat: boolean | undefined,
@@ -62,33 +63,9 @@ export const updateMessages = (
   );
 };
 
-// export const updateMessagesReadBy = (
-//   message: MessageModel,
-//   queryClient: QueryClient
-// ) => {
-//   queryClient.setQueryData<MessageModel[]>(
-//     ["messages", `{chatId: ${message.chat._id}}`],
-//     (oldData) => {
-//       if (!oldData) return [message];
-//       const cached = [...oldData];
-//       const messageIndex = cached.findIndex((cachedMessage) => {
-//         return (
-//           cachedMessage.sender._id === message.sender._id &&
-//           new Date(cachedMessage.frontendTimeStamp).getTime() ===
-//             new Date(message.frontendTimeStamp).getTime()
-//         );
-//       });
-
-//       if (messageIndex === -1) return [...cached, { ...message }];
-//       cached[messageIndex] = { ...message };
-//       return [...cached];
-//     }
-//   );
-// };
-
 // export function binarySearchMessage(
-//   sortedArray: MessageModel[],
-//   message: MessageModel
+//   sortedArray: Omit<MessageModel, "_id" | "createdAt">[],
+//   message: Omit<MessageModel, "_id" | "chat"> & { chat: string }
 // ) {
 //   let start = 0;
 //   let end = sortedArray.length - 1;
@@ -115,6 +92,38 @@ export const updateMessages = (
 //   }
 //   return -1;
 // }
+
+export const revertMessageOnError = (
+  message: Omit<MessageModel, "_id" | "chat" | "sender"> & {
+    chat: string;
+    sender: null | UserModel;
+  },
+  sender: UserModel,
+  queryClient: QueryClient
+) => {
+  message.sender = { ...sender };
+  queryClient.setQueryData<Omit<MessageModel, "_id" | "createdAt">[]>(
+    ["messages", `{chatId: ${message.chat}}`],
+    (oldData) => {
+      if (!oldData) return;
+      return oldData.filter((cachedMessage) => {
+        if (
+          new Date(cachedMessage.frontendTimeStamp).getTime() ===
+            new Date(message.frontendTimeStamp).getTime() &&
+          cachedMessage.sender._id === message.sender?._id
+        )
+          return;
+        return message;
+      });
+    }
+  );
+  // queryClient.setQueryData<
+  //   Omit<MessageModel, "_id" | "chat"> & { chat: string }[]
+  // >(["messages", `{chatId: ${message.chat}}`], (oldData) => {
+  //   if (!oldData) return [message];
+  //   return [...oldData, message];
+  // });
+};
 
 export const updateMessagesReadBy = (
   chat: ChatModel,

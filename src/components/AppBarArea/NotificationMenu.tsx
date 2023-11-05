@@ -18,7 +18,7 @@ const NotificationMenu: React.FC = () => {
 
   const NotificationIcon = (
     <Badge badgeContent={unreadAmount} color="error">
-      <Notifications />
+      <Notifications sx={{ fill: "#E5E5E5" }} />
     </Badge>
   );
 

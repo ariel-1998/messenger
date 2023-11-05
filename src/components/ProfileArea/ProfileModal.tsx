@@ -143,8 +143,6 @@ const GroupProfileModal: React.FC<UserProfileModalProps<null>> = ({
               flexItem
               sx={{ backgroundColor: "whitesmoke", zIndex: 1 }}
             />
-
-            {/* <Avatar sx={{ width: 150, height: 150 }} src={group?.image as string} /> */}
             <GroupForm.Rename
               handleModalClose={handleClose}
               groupName={selectedChat.chatName}

@@ -81,7 +81,9 @@ const ChatBox: React.FC = () => {
               />
             )))}
       </Box>
-      <Divider textAlign="center">{chatTitle}</Divider>
+      <Divider textAlign="center" sx={{ fontWeight: "bold", color: "#666" }}>
+        {chatTitle}
+      </Divider>
       <MessagesContainer />
     </Stack>
   );

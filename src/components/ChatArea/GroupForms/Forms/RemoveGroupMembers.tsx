@@ -24,6 +24,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import ListItems from "../ListItems";
 import ProfileModal from "../../../ProfileArea/ProfileModal";
 import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
+import { useSocket } from "../../../../contexts/SocketProvider";
 
 const RemoveGroupMembers: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -81,6 +82,7 @@ type UserPopperProps = {
 function UserPopper({ user, chat }: UserPopperProps): JSX.Element {
   const [open, setOpen] = React.useState(false);
   const elRef = useRef<HTMLButtonElement | null>(null);
+  const { socket } = useSocket();
 
   const handlePopper = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
@@ -93,9 +95,10 @@ function UserPopper({ user, chat }: UserPopperProps): JSX.Element {
   const removeMembersMutation = useMutation({
     mutationFn: chatService.removeMembersFromGroup,
     onError: (error) => toastifyService.error(error),
-    onSuccess: () => {
+    onSuccess: (data) => {
       setOpen((previousOpen) => !previousOpen);
       toastifyService.success("successfuly removed!");
+      socket?.emit("removingFromGroup", data, user);
     },
   });
 

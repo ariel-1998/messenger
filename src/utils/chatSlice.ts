@@ -53,7 +53,6 @@ const chatSlice = createSlice({
       const chatToUpdateIndex = state.chats?.findIndex(
         (chat) => chat._id === updatedGroup._id
       );
-      console.log(updatedGroup);
       if (chatToUpdateIndex === -1) {
         state.chats.unshift(updatedGroup);
       } else {
@@ -63,16 +62,45 @@ const chatSlice = createSlice({
       state.selectedChat = { ...updatedGroup };
       return state;
     },
+    onAddedToGroup(state, action: PayloadAction<ChatModel>) {
+      const AddedToGroup = action.payload;
+      if (!state.chats) state.chats = [];
+      const index = state.chats.findIndex(
+        (chat) => AddedToGroup._id === chat._id
+      );
+      if (index !== -1) state.chats[index] = AddedToGroup;
+      else state.chats.unshift(action.payload);
+      return state;
+    },
+    onRemoveFromGroup(
+      state,
+      action: PayloadAction<{ chat: ChatModel; isRemoved: boolean }>
+    ) {
+      if (!state.chats) return;
+      const { chat, isRemoved } = action.payload;
+
+      const index = state.chats.findIndex(
+        (cachedChat) => cachedChat._id === chat._id
+      );
+      if (state.selectedChat?._id === chat._id && isRemoved)
+        state.selectedChat = null;
+      if (state.selectedChat?._id === chat._id && !isRemoved)
+        state.selectedChat = chat;
+      if (index === -1) return;
+      if (isRemoved) state.chats.splice(index, 1);
+      else state.chats[index] = chat;
+      return state;
+    },
     deleteGroup(state, action: PayloadAction<string>) {
       const groupId = action.payload;
+      if (state.selectedChat?._id === groupId) state.selectedChat = null;
       if (!state.chats) return;
       const chatToUpdateIndex = state.chats?.findIndex(
         (chat) => chat._id === groupId
       );
       if (chatToUpdateIndex === -1) return;
-      state.chats[chatToUpdateIndex];
+      state.chats[chatToUpdateIndex]; //check if needed
       state.chats.splice(chatToUpdateIndex, 1);
-      if (state.selectedChat?._id === groupId) state.selectedChat = null;
       return state;
     },
     // setChatLatestMessage(state, action: PayloadAction<MessageModel>) {
@@ -104,7 +132,8 @@ export const {
   createGroup,
   updateGroup,
   deleteGroup,
-  // setChatLatestMessage,
+  onAddedToGroup,
+  onRemoveFromGroup,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

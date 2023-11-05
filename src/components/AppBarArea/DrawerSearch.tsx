@@ -22,7 +22,6 @@ import { chatService } from "../../services/chatService";
 import { useDrawer } from "../../contexts/DrawerProvider";
 import useDebounce from "../../hooks/useDebounce";
 import ListItems from "../ChatArea/GroupForms/ListItems";
-import CustomTypo from "../CustomComponents/CustomTypo";
 
 const DrawerSearch: React.FC = () => {
   const searchRef = useRef<HTMLInputElement>(null);
@@ -125,7 +124,7 @@ const DrawerSearch: React.FC = () => {
           <Stack pb={2}>
             {users.map((user) => (
               <ListItems.User
-                sx={{ bgcolor: "#f0f0f0" }}
+                sx={{ mb: 0.5 }}
                 key={user._id}
                 user={user}
                 onClick={() => fetchChat(user._id)}

@@ -6,7 +6,11 @@ import { useSelector } from "react-redux";
 import { Avatar, MenuItem } from "@mui/material";
 import Logout from "../AuthArea/Logout";
 
-export const MENU_ITEM_PADDING = { px: 2, py: 1, width: "100%" };
+export const MENU_ITEM_PADDING = {
+  px: 2,
+  py: 1,
+  width: "100%",
+};
 
 const ProfileMenu: React.FC = () => {
   const [open, setOpen] = React.useState(false);
@@ -24,12 +28,12 @@ const ProfileMenu: React.FC = () => {
       <MenuItem sx={{ padding: 0 }} onClick={handleClose}>
         <ProfileModal.User
           btnText="My profile"
-          sx={MENU_ITEM_PADDING}
+          sx={{ ...MENU_ITEM_PADDING, fontWeight: "bold" }}
           profile={user}
         />
       </MenuItem>
       <MenuItem sx={{ padding: 0 }} onClick={handleClose}>
-        <Logout sx={MENU_ITEM_PADDING} />
+        <Logout sx={{ ...MENU_ITEM_PADDING }} />
       </MenuItem>
     </CustomMenu>
   );

@@ -1,14 +1,6 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Fade,
-  Popper,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import React, { useRef } from "react";
+import React from "react";
 import { chatService } from "../../../../services/chatService";
 import {
   ErrorModels,
@@ -17,9 +9,9 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../utils/reduxStore";
 import { LoadingButton } from "@mui/lab";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ChildModal from "../../../CustomComponents/Modals/ChildModal";
 import { MENU_ITEM_PADDING } from "../../../AppBarArea/ProfileMenu";
+import { useSocket } from "../../../../contexts/SocketProvider";
 type DeleteGroupChatProps = {
   handleModalClose(): void;
   menuClose(): void;
@@ -29,10 +21,14 @@ const DeleteGroupChat: React.FC<DeleteGroupChatProps> = ({
   handleModalClose,
   menuClose,
 }) => {
+  const { socket } = useSocket();
   const deleteMutation = useMutation({
     mutationFn: chatService.deleteGroupChat,
     onError: (err: ErrorModels) => toastifyService.error(err),
-    onSuccess: handleModalClose,
+    onSuccess: () => {
+      socket?.emit("deletingGroup", selectedChat);
+      handleModalClose();
+    },
   });
 
   const onDelete = () => {
@@ -55,7 +51,7 @@ const DeleteGroupChat: React.FC<DeleteGroupChatProps> = ({
         }}
         sx={MENU_ITEM_PADDING}
       >
-        <Typography>Delete group</Typography>
+        <Typography sx={{ fontWeight: "bold" }}>Delete group</Typography>
       </Box>
 
       <ChildModal
@@ -77,7 +73,11 @@ const DeleteGroupChat: React.FC<DeleteGroupChatProps> = ({
         >
           <LoadingButton
             variant="contained"
-            color="warning"
+            sx={{
+              bgcolor: "#ffff32",
+              color: "black",
+              ":hover": { bgcolor: "#ffff32" },
+            }}
             loading={deleteMutation.isLoading}
             disabled={deleteMutation.isLoading}
             onClick={onDelete}
