@@ -22,21 +22,17 @@ const NotificationMenu: React.FC = () => {
     </Badge>
   );
 
-  const notifications = Object.entries(unreadMessages).map(
-    ([key, messages]) => {
-      const lastMessage = messages[messages.length - 1];
-      const { chat } = lastMessage;
-      const chatName = chat.isGroupChat
-        ? chat.chatName
-        : lastMessage.sender.name;
-      return {
-        chat,
-        chatName,
-        content: lastMessage.content,
-        length: messages.length,
-      };
-    }
-  );
+  const notifications = Object.entries(unreadMessages).map(([_, messages]) => {
+    const lastMessage = messages[messages.length - 1];
+    const { chat } = lastMessage;
+    const chatName = chat.isGroupChat ? chat.chatName : lastMessage.sender.name;
+    return {
+      chat,
+      chatName,
+      content: lastMessage.content,
+      length: messages.length,
+    };
+  });
 
   const onItemClick = (chat: ChatModel) => {
     dispatch(setSelectedChat({ chat, checkIfExists: true }));

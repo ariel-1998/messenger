@@ -7,7 +7,7 @@ import Register from "./Register";
 const AuthMenu: React.FC = () => {
   const [value, setValue] = useState(0);
 
-  const handleChange = (event: SyntheticEvent, newValue: number) => {
+  const handleChange = (_: SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
