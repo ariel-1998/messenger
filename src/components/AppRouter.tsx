@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { Navigate, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../utils/reduxStore";
-import ErrorPage from "./Pages/ErrorPage";
 import ChatPage from "./Pages/AuthedPages/ChatPage";
 import AuthPage from "./Pages/AuthPage";
 import SocketProvider from "../contexts/SocketProvider";
@@ -22,7 +21,7 @@ const AppRouter: React.FC = () => {
         <>
           <Route path="/" element={<AuthedProviders />}>
             <Route path="chat" element={<ChatPage />} />
-            <Route path="*" element={<ErrorPage navigatTo={"/chat"} />} />
+            <Route path="*" element={<Navigate to={"/"} />} />
           </Route>
         </>
       )}
