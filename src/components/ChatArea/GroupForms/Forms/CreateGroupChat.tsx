@@ -31,7 +31,7 @@ import CustomModal from "../../../CustomComponents/Modals/CustomModal";
 import LoadingSkeletons, {
   SkeletonUser,
 } from "../../../CustomComponents/LoadingSkeletons";
-import { useSocket } from "../../../../contexts/SocketProvider";
+import useSocket from "../../../../hooks/useSocket";
 
 const CreateGroupChat: React.FC = () => {
   const [open, setOpen] = useState(false);

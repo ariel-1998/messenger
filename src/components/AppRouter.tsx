@@ -35,7 +35,7 @@ function AuthedProviders() {
   const navigate = useNavigate();
   useEffect(() => {
     navigate("/chat");
-  }, []);
+  }, [navigate]);
   return (
     <UnreadMessagesProvider>
       <SocketProvider>

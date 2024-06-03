@@ -4,7 +4,7 @@ import CustomSearchInput from "../CustomComponents/CustomSearchInput";
 import React, { ReactNode } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { IconButton, useMediaQuery, useTheme } from "@mui/material";
-import { useDrawer } from "../../contexts/DrawerProvider";
+import useDrawer from "../../hooks/useDrawer";
 
 type DrawerProps = {
   children: ReactNode;

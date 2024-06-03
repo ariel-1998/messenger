@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { MessageModel } from "../models/MessageModel";
 import { ChatModel } from "../models/ChatModel";
-import { UserModel } from "../models/UserModel";
+// import { UserModel } from "../models/UserModel";
 
 export const showSenderDetails = (
   isGroupChat: boolean | undefined,
@@ -63,24 +63,25 @@ export const updateMessages = (
   );
 };
 
+type RevertMessage = Omit<
+  MessageModel,
+  "chat" | "_id" | "content" | "readBy"
+> & {
+  chatId: string;
+};
 export const revertMessageOnError = (
-  message: Omit<MessageModel, "_id" | "chat" | "sender"> & {
-    chat: string;
-    sender: null | UserModel;
-  },
-  sender: UserModel,
+  message: RevertMessage,
   queryClient: QueryClient
 ) => {
-  message.sender = { ...sender };
   queryClient.setQueryData<Omit<MessageModel, "_id" | "createdAt">[]>(
-    ["messages", `{chatId: ${message.chat}}`],
+    ["messages", `{chatId: ${message.chatId}}`],
     (oldData) => {
       if (!oldData) return;
       return oldData.filter((cachedMessage) => {
         if (
           new Date(cachedMessage.frontendTimeStamp).getTime() ===
             new Date(message.frontendTimeStamp).getTime() &&
-          cachedMessage.sender._id === message.sender?._id
+          cachedMessage.sender._id === message.sender._id
         )
           return;
         return message;

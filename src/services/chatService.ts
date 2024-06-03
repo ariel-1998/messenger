@@ -26,7 +26,6 @@ class ChatService {
         !chat.isGroupChat && chat.users.some((user) => user._id === userId)
     );
     if (chat) return store.dispatch(setSelectedChat({ chat, isExist: true }));
-
     const { data } = await authenticatedAxios.post<ChatModel>(chatEndpoint, {
       userId,
     });

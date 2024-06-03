@@ -23,7 +23,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import ListItems from "../ListItems";
 import ProfileModal from "../../../ProfileArea/ProfileModal";
 import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
-import { useSocket } from "../../../../contexts/SocketProvider";
+import useSocket from "../../../../hooks/useSocket";
 
 const RemoveGroupMembers: React.FC = () => {
   const [open, setOpen] = useState(false);

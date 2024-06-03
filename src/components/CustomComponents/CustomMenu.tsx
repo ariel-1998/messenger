@@ -1,6 +1,6 @@
 import { Menu, SxProps, Theme } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 
 type CustomMenuProps = {
   icon?: ReactNode;
@@ -17,7 +17,7 @@ const CustomMenu: React.FC<CustomMenuProps> = ({
   onOpen,
   sx,
 }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);

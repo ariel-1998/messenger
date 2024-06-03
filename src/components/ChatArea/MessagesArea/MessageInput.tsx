@@ -11,7 +11,6 @@ import {
   InputAdornment,
   OutlinedInput,
 } from "@mui/material";
-import { useSocket } from "../../../contexts/SocketProvider";
 import {
   revertMessageOnError,
   updateMessages,
@@ -20,6 +19,7 @@ import useDebounce from "../../../hooks/useDebounce";
 import { MessageModel } from "../../../models/MessageModel";
 import { UserModel } from "../../../models/UserModel";
 import { toastifyService } from "../../../services/toastifyService";
+import useSocket from "../../../hooks/useSocket";
 
 type inputRef = {
   firstChild: HTMLInputElement;
@@ -40,27 +40,35 @@ function MessageInput(): JSX.Element {
 
   const sendMessageMutation = useMutation({
     mutationFn: messageService.sendMessage,
+    onMutate({ content, frontendTimeStamp }) {
+      setMessage("");
+      const newMessage: MessageModel = {
+        chat: selectedChat!,
+        content,
+        sender: user as UserModel,
+        readBy: [],
+        frontendTimeStamp,
+      };
+      updateMessages(newMessage, queryClient, false);
+    },
     onSuccess: (data) => {
       socket?.emit("message", data);
     },
-    onError(err: any) {
-      const status = err.response.status;
-      if (status === 500) toastifyService.error({ message: "Server Error!" });
-      if (status === 404)
-        toastifyService.error({ message: "Chat was not found!" });
-      if (status === 403)
-        toastifyService.error({
-          message: "You are not part of this chat!",
-        });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError(err: any, { chatId, frontendTimeStamp }) {
+      toastifyService.error(err);
       if (!user) return;
-      revertMessageOnError(err.response.data, user, queryClient);
+      revertMessageOnError(
+        { chatId, frontendTimeStamp, sender: user },
+        queryClient
+      );
     },
   });
 
   useEffect(() => {
     if (!selectedChat) return;
     inputRef.current?.firstChild?.focus();
-  }, [selectedChat, sendMessageMutation.data]);
+  }, [selectedChat]);
 
   const onKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" && message) {
@@ -84,25 +92,17 @@ function MessageInput(): JSX.Element {
     return () => {
       socket?.off("typing", typingEvent);
     };
-  }, []);
+  }, [debounce, socket]);
 
   const sendMessage = () => {
     if (!selectedChat) return;
-    const frontendTimeStamp = new Date(Date.now());
+    const frontendTimeStamp = new Date();
     sendMessageMutation.mutate({
-      chatId: selectedChat?._id,
+      chatId: selectedChat._id,
       content: message,
       frontendTimeStamp,
     });
-    const newMessage: MessageModel = {
-      chat: selectedChat,
-      content: message,
-      sender: user as UserModel,
-      readBy: [],
-      frontendTimeStamp,
-    };
-    setMessage("");
-    updateMessages(newMessage, queryClient, false);
+    inputRef.current?.firstChild?.focus();
   };
 
   return (

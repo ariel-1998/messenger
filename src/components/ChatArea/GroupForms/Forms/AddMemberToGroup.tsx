@@ -29,7 +29,7 @@ import { MENU_ITEM_PADDING } from "../../../AppBarArea/ProfileMenu";
 import LoadingSkeletons, {
   SkeletonUser,
 } from "../../../CustomComponents/LoadingSkeletons";
-import { useSocket } from "../../../../contexts/SocketProvider";
+import useSocket from "../../../../hooks/useSocket";
 
 type AddMemberToGroupProps = {
   handleParentModalClose: () => void;
@@ -80,14 +80,14 @@ function ChildModalContent({
   closeRootModal,
   closeModalChild,
 }: ChildModalContentProps) {
-  const [selectedUsers, setSelectedUsers] = useState<UserModel[]>([]);
+  const { socket } = useSocket();
   const [userSearch, setUserSearch] = useState("");
+  const [selectedUsers, setSelectedUsers] = useState<UserModel[]>([]);
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const { debounce: debouncedOnInput, isLoading } = useDebounce({
     fn: onInput,
     wait: 700,
   });
-  const { socket } = useSocket();
 
   const {
     data: usersData,

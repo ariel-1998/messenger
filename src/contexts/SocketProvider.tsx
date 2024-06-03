@@ -1,7 +1,7 @@
 import React, {
   ReactNode,
   createContext,
-  useContext,
+  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../utils/reduxStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateMessages, updateMessagesReadBy } from "../utils/messageMethods";
-import { useUnreadMessages } from "./UnreadMessagesProvider";
 import { messageService } from "../services/messageService";
 import { ChatModel } from "../models/ChatModel";
 import {
@@ -22,20 +21,13 @@ import {
   setChatLatestMessage,
 } from "../utils/chatSlice";
 import { UserModel } from "../models/UserModel";
+import useUnreadMessages from "../hooks/useUnreadMessages";
 
 type SocketContextProps = {
   socket: Socket<DefaultEventsMap, DefaultEventsMap> | null;
 };
 
-const SocketContext = createContext<SocketContextProps | null>(null);
-
-export const useSocket = () => {
-  const context = useContext(SocketContext);
-  if (context === null) {
-    throw new Error("useSocket must be used within a SocketProvider");
-  }
-  return context;
-};
+export const SocketContext = createContext<SocketContextProps | null>(null);
 
 type SocketProviderProps = {
   children: ReactNode;
@@ -52,79 +44,103 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     DefaultEventsMap
   > | null>(null);
 
-  const readByMessagesMutatin = useMutation({
+  const { mutate: readByMutate } = useMutation({
     mutationFn: messageService.updateReadBy,
     onSuccess: (chat) => {
       socketConnection?.emit("readMessage", chat, user?._id);
     },
   });
 
-  const messageEvent = (data: MessageModel) => {
-    if (selectedChat?._id === data.chat._id) {
-      readByMessagesMutatin.mutate({
-        chatId: selectedChat._id,
-        messages: [data._id!],
-      });
-    } else {
-      addUnreadMessage(data);
-    }
-    dispatch(setChatLatestMessage(data));
-    updateMessages(data, queryClient, true);
-  };
-  const readByEvent = (chat: ChatModel, userId: string) => {
-    updateMessagesReadBy(chat, userId, queryClient);
-  };
+  const messageEvent = useCallback(
+    (data: MessageModel) => {
+      if (selectedChat?._id === data.chat._id) {
+        readByMutate({
+          chatId: selectedChat._id,
+          messages: [data._id!],
+        });
+      } else {
+        addUnreadMessage(data);
+      }
+      dispatch(setChatLatestMessage(data));
+      updateMessages(data, queryClient, true);
+    },
+    [selectedChat, readByMutate, addUnreadMessage, dispatch, queryClient]
+  );
 
-  const onAddedToGroupEvent = (groupChat: ChatModel) => {
-    dispatch(onAddedToGroup(groupChat));
-  };
+  const readByEvent = useCallback(
+    (chat: ChatModel, userId: string) => {
+      updateMessagesReadBy(chat, userId, queryClient);
+    },
+    [queryClient]
+  );
 
-  const onRemovingFromGroupEvent = (
-    groupChat: ChatModel,
-    userToRemove: UserModel
-  ) => {
-    console.log("removing", groupChat, userToRemove);
-    dispatch(
-      onRemoveFromGroup({
-        chat: groupChat,
-        isRemoved: userToRemove._id === user?._id,
-      })
-    );
-    if (userToRemove._id === user?._id) {
-      removeUnreadMessages(groupChat._id);
-    }
-  };
+  const onAddedToGroupEvent = useCallback(
+    (groupChat: ChatModel) => {
+      dispatch(onAddedToGroup(groupChat));
+    },
+    [dispatch]
+  );
 
-  const onDeletingGroupEvent = (chatId: string) => {
-    dispatch(deleteGroup(chatId));
-    removeUnreadMessages(chatId);
-  };
+  const onRemovingFromGroupEvent = useCallback(
+    (groupChat: ChatModel, userToRemove: UserModel) => {
+      dispatch(
+        onRemoveFromGroup({
+          chat: groupChat,
+          isRemoved: userToRemove._id === user?._id,
+        })
+      );
+      if (userToRemove._id === user?._id) {
+        removeUnreadMessages(groupChat._id);
+      }
+    },
+    [dispatch, removeUnreadMessages, user]
+  );
+
+  const onDeletingGroupEvent = useCallback(
+    (chatId: string) => {
+      dispatch(deleteGroup(chatId));
+      removeUnreadMessages(chatId);
+    },
+    [dispatch, removeUnreadMessages]
+  );
 
   useEffect(() => {
     if (!user) return;
-    let socket = io(import.meta.env.VITE_BASE_URL);
+    const socket = io(import.meta.env.VITE_SERVER_BASE_URL);
     setSocketConnection(socket);
     socket.connect();
     socket.emit("setup", user._id);
-    socket.on("readMessage", readByEvent);
-    socket.on("addedToGroup", onAddedToGroupEvent);
-    socket.on("removingFromGroup", onRemovingFromGroupEvent);
-    socket.on("deletingGroup", onDeletingGroupEvent);
     return () => {
-      socket.off("readMessage", readByEvent);
-      socket.off("addedToGroup", onAddedToGroupEvent);
-      socket.off("removingFromGroup", onRemovingFromGroupEvent);
-      socket.off("deletingGroup", onDeletingGroupEvent);
       socket.disconnect();
     };
   }, [user]);
+
+  useEffect(() => {
+    if (!socketConnection) return;
+    socketConnection.on("readMessage", readByEvent);
+    socketConnection.on("addedToGroup", onAddedToGroupEvent);
+    socketConnection.on("removingFromGroup", onRemovingFromGroupEvent);
+    socketConnection.on("deletingGroup", onDeletingGroupEvent);
+    return () => {
+      socketConnection.off("readMessage", readByEvent);
+      socketConnection.off("addedToGroup", onAddedToGroupEvent);
+      socketConnection.off("removingFromGroup", onRemovingFromGroupEvent);
+      socketConnection.off("deletingGroup", onDeletingGroupEvent);
+    };
+  }, [
+    socketConnection,
+    readByEvent,
+    onAddedToGroupEvent,
+    onRemovingFromGroupEvent,
+    onDeletingGroupEvent,
+  ]);
 
   useEffect(() => {
     socketConnection?.on("message", messageEvent);
     return () => {
       socketConnection?.off("message", messageEvent);
     };
-  }, [selectedChat, socketConnection]);
+  }, [messageEvent, selectedChat, socketConnection]);
 
   return (
     <SocketContext.Provider value={{ socket: socketConnection }}>

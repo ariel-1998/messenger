@@ -20,8 +20,8 @@ import ListItems from "./GroupForms/ListItems";
 import LoadingSkeletons, {
   SkeletonUser,
 } from "../CustomComponents/LoadingSkeletons";
-import { useUnreadMessages } from "../../contexts/UnreadMessagesProvider";
 import { Info, Search as SearchIcon } from "@mui/icons-material";
+import useUnreadMessages from "../../hooks/useUnreadMessages";
 
 const ChatList: React.FC = () => {
   const theme = useTheme();

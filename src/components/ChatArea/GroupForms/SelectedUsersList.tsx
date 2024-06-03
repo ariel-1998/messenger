@@ -32,11 +32,11 @@ const SelectedUsersList: React.FC<SelectedUsersListProps> = ({
       );
     });
     observer.observe(containerRef.current);
-
     return () => {
       observer.disconnect();
     };
-  }, [translate, users]);
+  }, [translate]);
+
   const LeftBtn = () => {
     return (
       <Box

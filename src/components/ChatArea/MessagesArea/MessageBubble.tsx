@@ -90,7 +90,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
               <DoneAll
                 sx={{
                   fontSize: 15,
-                  fill: !!message.readBy.length ? "#3498db" : "#999",
+                  fill: !message.readBy.length ? "#999" : "#3498db",
                 }}
               />
             </Typography>

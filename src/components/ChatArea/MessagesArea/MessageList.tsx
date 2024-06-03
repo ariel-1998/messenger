@@ -5,12 +5,12 @@ import MessageBubble from "./MessageBubble";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { messageService } from "../../../services/messageService";
 import { toastifyService } from "../../../services/toastifyService";
-import { useUnreadMessages } from "../../../contexts/UnreadMessagesProvider";
 import { Stack, Typography } from "@mui/material";
 import LoadingSkeletons, {
   SkeletonMessage,
 } from "../../CustomComponents/LoadingSkeletons";
-import { useSocket } from "../../../contexts/SocketProvider";
+import useUnreadMessages from "../../../hooks/useUnreadMessages";
+import useSocket from "../../../hooks/useSocket";
 
 const MessageList: React.FC = () => {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
@@ -19,7 +19,7 @@ const MessageList: React.FC = () => {
   const { socket } = useSocket();
   const user = useSelector((state: RootState) => state.auth);
   const renderRef = useRef(true);
-  const readByMessagesMutatin = useMutation({
+  const { mutate } = useMutation({
     mutationFn: messageService.updateReadBy,
     onSuccess: (chat) => {
       socket?.emit("readMessage", chat, user?._id);
@@ -29,22 +29,23 @@ const MessageList: React.FC = () => {
 
   const { data: messages } = useQuery({
     queryKey: ["messages", `{chatId: ${selectedChat?._id}}`],
-    queryFn: () => messageService.getMessagesByChatId(selectedChat?._id!),
+    queryFn: () => messageService.getMessagesByChatId(selectedChat!._id!),
     enabled: !!selectedChat?._id,
     onError: (err) => toastifyService.error(err),
   });
 
   useEffect(() => {
-    renderRef.current = true;
+    // renderRef.current = true;
     if (!selectedChat) return;
     const readMessages = unreadMessages[selectedChat._id];
     if (!readMessages) return;
     const messageIds = readMessages.map((msg) => msg._id!);
-    readByMessagesMutatin.mutate({
+    mutate({
       chatId: selectedChat._id,
       messages: messageIds,
     });
-  }, [selectedChat]);
+  }, [selectedChat, mutate, unreadMessages]);
+  // }, [selectedChat,mutate]);
 
   useEffect(() => {
     if (!messages) return;
@@ -52,7 +53,7 @@ const MessageList: React.FC = () => {
     bottomRef.current?.scrollIntoView({
       behavior: isFirstRendr ? "instant" : "smooth",
     });
-    renderRef.current = false;
+    // renderRef.current = false;
   }, [messages]);
 
   return (

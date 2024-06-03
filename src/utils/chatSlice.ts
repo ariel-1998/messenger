@@ -6,7 +6,8 @@ type ChatState = {
   chats: ChatModel[] | null;
   selectedChat: ChatModel | null;
 };
-let initialState: ChatState = {
+// let initialState: ChatState = {
+const initialState: ChatState = {
   chats: null,
   selectedChat: null,
 };

@@ -18,9 +18,9 @@ import LoadingSkeletons, {
   SkeletonUser,
 } from "../CustomComponents/LoadingSkeletons";
 import { chatService } from "../../services/chatService";
-import { useDrawer } from "../../contexts/DrawerProvider";
 import useDebounce from "../../hooks/useDebounce";
 import ListItems from "../ChatArea/GroupForms/ListItems";
+import useDrawer from "../../hooks/useDrawer";
 
 const DrawerSearch: React.FC = () => {
   const searchRef = useRef<HTMLInputElement>(null);

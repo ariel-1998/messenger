@@ -11,7 +11,7 @@ import { RootState } from "../../../../utils/reduxStore";
 import { LoadingButton } from "@mui/lab";
 import ChildModal from "../../../CustomComponents/Modals/ChildModal";
 import { MENU_ITEM_PADDING } from "../../../AppBarArea/ProfileMenu";
-import { useSocket } from "../../../../contexts/SocketProvider";
+import useSocket from "../../../../hooks/useSocket";
 
 type DeleteGroupChatProps = {
   handleModalClose(): void;

@@ -26,6 +26,7 @@ class MessageService {
       }
     );
     store.dispatch(setChatLatestMessage(data));
+    console.log("data", data);
     return data;
   }
 

@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../utils/reduxStore";
 import { setSelectedChat } from "../../utils/chatSlice";
 import MessagesContainer from "./MessagesArea/MessagesContainer";
-import { useSocket } from "../../contexts/SocketProvider";
+import useSocket from "../../hooks/useSocket";
 
 const ChatBox: React.FC = () => {
   const theme = useTheme();
@@ -28,13 +28,13 @@ const ChatBox: React.FC = () => {
   const { socket } = useSocket();
 
   useEffect(() => {
-    if (!selectedChat) return;
-    socket?.emit("joinChat", selectedChat._id);
+    if (!selectedChat || !socket) return;
+    socket.emit("joinChat", selectedChat._id);
 
     return () => {
-      socket?.emit("leaveChat", selectedChat._id);
+      socket.emit("leaveChat", selectedChat._id);
     };
-  }, [selectedChat]);
+  }, [selectedChat, socket]);
 
   const chatTitle = !selectedChat
     ? "Chat"

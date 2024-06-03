@@ -1,27 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import CustomMenu from "../CustomComponents/CustomMenu";
 import { Notifications } from "@mui/icons-material";
 import { Badge, MenuItem, Stack, Typography } from "@mui/material";
 import { MENU_ITEM_PADDING } from "./ProfileMenu";
-import { useUnreadMessages } from "../../contexts/UnreadMessagesProvider";
 import { useDispatch } from "react-redux";
 import { setSelectedChat } from "../../utils/chatSlice";
 import { ChatModel } from "../../models/ChatModel";
+import useUnreadMessages from "../../hooks/useUnreadMessages";
 
 const NotificationMenu: React.FC = () => {
   const { unreadAmount, unreadMessages } = useUnreadMessages();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const NotificationIcon = (
-    <Badge badgeContent={unreadAmount} color="error">
-      <Notifications sx={{ fill: "#E5E5E5" }} />
-    </Badge>
-  );
+  // const NotificationIcon = (
+  //   <Badge badgeContent={unreadAmount} color="error">
+  //     <Notifications sx={{ fill: "#E5E5E5" }} />
+  //   </Badge>
+  // );
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const notifications = Object.entries(unreadMessages).map(([_, messages]) => {
     const lastMessage = messages[messages.length - 1];
     const { chat } = lastMessage;
@@ -40,7 +41,11 @@ const NotificationMenu: React.FC = () => {
   };
 
   return (
-    <CustomMenu icon={NotificationIcon} open={open} onOpen={handleOpen}>
+    <CustomMenu
+      icon={<NotificationIcon unreadAmount={unreadAmount} />}
+      open={open}
+      onOpen={handleOpen}
+    >
       {unreadAmount ? (
         notifications.map((val, i) => (
           <MenuItem
@@ -87,3 +92,14 @@ const NotificationMenu: React.FC = () => {
 };
 
 export default NotificationMenu;
+
+type NotificationIconProps = {
+  unreadAmount: number;
+};
+function NotificationIcon({ unreadAmount }: NotificationIconProps) {
+  return (
+    <Badge badgeContent={unreadAmount} color="error">
+      <Notifications sx={{ fill: "#E5E5E5" }} />
+    </Badge>
+  );
+}

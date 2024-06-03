@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useContext, useState } from "react";
+import React, { ReactNode, createContext, useState } from "react";
 import { MessageModel } from "../models/MessageModel";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { messageService } from "../services/messageService";
@@ -14,22 +14,11 @@ type UnreadMessagesContextProps = {
   fetchingChats: boolean;
 };
 
-const UnreadMessagesContext = createContext<UnreadMessagesContextProps | null>(
-  null
-);
+export const UnreadMessagesContext =
+  createContext<UnreadMessagesContextProps | null>(null);
 
 type UnreadMessagesProviderProps = {
   children: ReactNode;
-};
-
-export const useUnreadMessages = () => {
-  const context = useContext(UnreadMessagesContext);
-  if (context === null) {
-    throw new Error(
-      "useUnreadMessages must be used within a UnreadMessagesProvider"
-    );
-  }
-  return context;
 };
 
 const UnreadMessagesProvider: React.FC<UnreadMessagesProviderProps> = ({
@@ -39,7 +28,7 @@ const UnreadMessagesProvider: React.FC<UnreadMessagesProviderProps> = ({
   const [unreadAmount, setUnreadAmount] = useState<number>(0);
 
   const { isLoading: fetchingChats } = useQuery({
-    queryKey: [],
+    queryKey: ["chats"],
     queryFn: chatService.getAllChats,
     onError: (e) => toastifyService.error(e),
     onSuccess: (data) => {
