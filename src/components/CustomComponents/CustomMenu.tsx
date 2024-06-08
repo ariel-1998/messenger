@@ -29,7 +29,7 @@ const CustomMenu: React.FC<CustomMenuProps> = ({
   };
 
   return (
-    <div>
+    <div role="menu">
       <IconButton sx={sx} size="large" onClick={handleMenu} color="inherit">
         {icon}
       </IconButton>

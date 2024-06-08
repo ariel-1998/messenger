@@ -1,6 +1,6 @@
-import React, { ReactNode, createContext, useState } from "react";
+import React, { ReactNode, createContext, useCallback, useState } from "react";
 import { MessageModel } from "../models/MessageModel";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { messageService } from "../services/messageService";
 import { chatService } from "../services/chatService";
 import { toastifyService } from "../services/toastifyService";
@@ -31,40 +31,41 @@ const UnreadMessagesProvider: React.FC<UnreadMessagesProviderProps> = ({
     queryKey: ["chats"],
     queryFn: chatService.getAllChats,
     onError: (e) => toastifyService.error(e),
-    onSuccess: (data) => {
-      if (!data.length) return;
-      const chatIds = data?.map((chat) => chat._id);
-      getUnreadMessagesMutation.mutate({ chats: chatIds });
-    },
   });
-
-  const getUnreadMessagesMutation = useMutation({
-    mutationFn: messageService.getAllUnreadMessages,
+  useQuery({
+    queryKey: ["getAllUnreadMessages"],
+    queryFn: messageService.getAllUnreadMessages,
     onSuccess: (data) => {
-      const messagegeByChatId: UnreadMessages = {};
-      data.forEach((message) => addMessageToObj(messagegeByChatId, message));
-      setUnreadMessages(messagegeByChatId);
+      const messagesByChatId: UnreadMessages = {};
+      data.forEach((message) => addMessageToObj(messagesByChatId, message));
+      setUnreadMessages(messagesByChatId);
       setUnreadAmount(data.length);
     },
   });
 
-  const addUnreadMessage = (message: MessageModel) => {
+  const addUnreadMessage = useCallback((message: MessageModel) => {
     setUnreadMessages((prev) => {
       addMessageToObj(prev, message);
       return { ...prev };
     });
     setUnreadAmount((prev) => prev + 1);
-  };
+  }, []);
 
-  const removeUnreadMessages = (chatId: string) => {
+  const removeUnreadMessages = useCallback((chatId: string) => {
     setUnreadMessages((prevMessages) => {
-      setUnreadAmount(
-        (prevAmount) => prevAmount - prevMessages[chatId]?.length
-      );
+      const chatMessages = prevMessages[chatId] || [];
+
+      setUnreadAmount((prevAmount) => prevAmount - chatMessages.length);
       delete prevMessages[chatId];
       return { ...prevMessages };
     });
-  };
+  }, []);
+
+  function addMessageToObj(obj: UnreadMessages, message: MessageModel) {
+    const chatId = message.chat._id;
+    if (!obj[chatId]) obj[chatId] = [];
+    obj[chatId].push(message);
+  }
 
   return (
     <UnreadMessagesContext.Provider
@@ -82,9 +83,3 @@ const UnreadMessagesProvider: React.FC<UnreadMessagesProviderProps> = ({
 };
 
 export default UnreadMessagesProvider;
-
-function addMessageToObj(obj: UnreadMessages, message: MessageModel) {
-  const chatId = message.chat._id;
-  if (!obj[chatId]) obj[chatId] = [];
-  obj[chatId].push(message);
-}

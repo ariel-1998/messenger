@@ -42,7 +42,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal open={open} onClose={handleClose} data-testid="modal-overlay-test">
       <Box sx={{ ...modalStyle, ...sx }} className={className}>
         {children}
       </Box>

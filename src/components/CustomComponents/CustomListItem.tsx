@@ -34,6 +34,7 @@ const CustomListItem: React.FC<CustomListItemProps> = ({
   };
   return (
     <ListItem
+      data-testid="ListItem"
       disablePadding
       sx={{
         bgcolor: "#f0f0f0",
@@ -44,6 +45,7 @@ const CustomListItem: React.FC<CustomListItemProps> = ({
       {...rest}
     >
       <ListItemButton
+        data-testid="ListItemButton"
         disableRipple={disableRipple}
         disabled={disableBtnProps}
         sx={disableBtnProps ? disabledBtnProps : btnSx}

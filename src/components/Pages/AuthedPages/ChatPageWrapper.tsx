@@ -9,7 +9,7 @@ const ChatPageWrapper: React.FC<ChatPageWrapperProps> = ({ children }) => {
   return (
     <Stack p={0} m={0} height={"100vh"}>
       <AppBar />
-      <Box height={"calc(100vh - 60px)"}>{children}</Box>
+      <Box height={"calc(100dvh - 60px)"}>{children}</Box>
     </Stack>
   );
 };

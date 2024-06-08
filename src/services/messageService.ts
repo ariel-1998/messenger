@@ -6,7 +6,8 @@ import { store } from "../utils/reduxStore";
 
 const messageEndpoint = "message";
 const unreadMessagesEndpoint = `${messageEndpoint}/unread`;
-const getMessagesByChatIDEndpoint = (chatId: string) => `message/${chatId}`;
+const getMessagesByChatIDEndpoint = (chatId: string) =>
+  `message/chat/${chatId}`;
 class MessageService {
   async sendMessage({
     chatId,
@@ -26,7 +27,6 @@ class MessageService {
       }
     );
     store.dispatch(setChatLatestMessage(data));
-    console.log("data", data);
     return data;
   }
 
@@ -36,35 +36,18 @@ class MessageService {
     return data;
   }
 
-  async updateReadBy({
-    messages,
-    chatId,
-  }: {
-    messages: string[];
-    chatId: string;
-  }) {
-    const stringifyIds = JSON.stringify(messages);
-    console.log("updatingReadBy", messages);
+  async updateReadBy({ chatId }: { chatId: string }) {
     const { data } = await authenticatedAxios.put<ChatModel>(messageEndpoint, {
-      messages: stringifyIds,
       chatId,
     });
-    console.log(data);
     return data;
   }
 
-  async getAllUnreadMessages({
-    chats,
-  }: {
-    chats: string[];
-  }): Promise<MessageModel[]> {
-    const stringifyIds = JSON.stringify(chats);
-    const { data } = await authenticatedAxios.post<MessageModel[]>(
-      unreadMessagesEndpoint,
-      {
-        chats: stringifyIds,
-      }
+  async getAllUnreadMessages(): Promise<MessageModel[]> {
+    const { data } = await authenticatedAxios.get<MessageModel[]>(
+      unreadMessagesEndpoint
     );
+    console.log("data", data);
     return data;
   }
 }

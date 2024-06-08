@@ -56,7 +56,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       if (selectedChat?._id === data.chat._id) {
         readByMutate({
           chatId: selectedChat._id,
-          messages: [data._id!],
+          // messages: [data._id!],
         });
       } else {
         addUnreadMessage(data);

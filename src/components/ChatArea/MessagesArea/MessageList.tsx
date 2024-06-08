@@ -39,10 +39,10 @@ const MessageList: React.FC = () => {
     if (!selectedChat) return;
     const readMessages = unreadMessages[selectedChat._id];
     if (!readMessages) return;
-    const messageIds = readMessages.map((msg) => msg._id!);
+    // const messageIds = readMessages.map((msg) => msg._id!);
     mutate({
       chatId: selectedChat._id,
-      messages: messageIds,
+      // messages: messageIds,
     });
   }, [selectedChat, mutate, unreadMessages]);
   // }, [selectedChat,mutate]);

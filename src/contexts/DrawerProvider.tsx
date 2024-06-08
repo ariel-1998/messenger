@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useState } from "react";
+import React, { ReactNode, createContext, useCallback, useState } from "react";
 
 type DrawerContextProps = {
   open: boolean;
@@ -14,8 +14,8 @@ type DrawerProviderProps = {
 
 const DrawerProvider: React.FC<DrawerProviderProps> = ({ children }) => {
   const [open, setOpen] = useState(false);
-  const openDrawer = () => setOpen(true);
-  const closeDrawer = () => setOpen(false);
+  const openDrawer = useCallback(() => setOpen(true), []);
+  const closeDrawer = useCallback(() => setOpen(false), []);
   return (
     <DrawerContext.Provider value={{ open, openDrawer, closeDrawer }}>
       {children}

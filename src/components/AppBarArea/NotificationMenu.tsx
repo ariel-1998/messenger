@@ -16,12 +16,6 @@ const NotificationMenu: React.FC = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  // const NotificationIcon = (
-  //   <Badge badgeContent={unreadAmount} color="error">
-  //     <Notifications sx={{ fill: "#E5E5E5" }} />
-  //   </Badge>
-  // );
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const notifications = Object.entries(unreadMessages).map(([_, messages]) => {
     const lastMessage = messages[messages.length - 1];
