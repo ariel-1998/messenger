@@ -83,7 +83,7 @@ const MessageList: React.FC = () => {
       )}
       {selectedChat && !messages && (
         <LoadingSkeletons amount={12}>
-          <SkeletonMessage chat={selectedChat} />
+          <SkeletonMessage isGroupChat={selectedChat.isGroupChat} />
         </LoadingSkeletons>
       )}
       {!!messages?.length && (

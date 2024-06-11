@@ -1,7 +1,7 @@
 import type { Config } from "@jest/types";
 
 const config: Config.InitialOptions = {
-  verbose: true,
+  // verbose: true,
   preset: "ts-jest",
   testEnvironment: "jest-environment-jsdom",
   testMatch: ["**/__tests__/**/*.test.(ts|tsx)"],

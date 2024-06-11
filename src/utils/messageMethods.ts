@@ -106,3 +106,5 @@ export const updateMessagesReadBy = (
     }
   );
 };
+
+export const skeletonRandomSender = () => Boolean(Math.round(Math.random()));

@@ -35,7 +35,6 @@ class ChatService {
   async getAllChats() {
     const { data } = await authenticatedAxios.get<ChatModel[]>(chatEndpoint);
     store.dispatch(getAllChats(data));
-    console.log(data);
     return data;
   }
 
@@ -49,10 +48,10 @@ class ChatService {
     groupImg?: string;
   }) {
     const usersIds = users.map((user) => user._id);
-    const stringifyIds = JSON.stringify(usersIds);
+    // const stringifyIds = JSON.stringify(usersIds);
     const { data } = await authenticatedAxios.post<ChatModel>(
       createGroupEndpoint,
-      { groupImg, users: stringifyIds, chatName }
+      { groupImg, users: usersIds, chatName }
     );
     store.dispatch(createGroup(data));
     return data;

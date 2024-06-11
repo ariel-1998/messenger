@@ -29,13 +29,20 @@ const CustomMenu: React.FC<CustomMenuProps> = ({
   };
 
   return (
-    <div role="menu">
-      <IconButton sx={sx} size="large" onClick={handleMenu} color="inherit">
+    <div role="menu-field">
+      <IconButton
+        role="open-menu-button"
+        sx={sx}
+        size="large"
+        onClick={handleMenu}
+        color="inherit"
+      >
         {icon}
       </IconButton>
       <Menu
         sx={{ ".MuiMenu-paper": { background: "#F0F0F0", color: "#333333" } }}
         anchorEl={anchorEl}
+        data-testid="menu-list"
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",

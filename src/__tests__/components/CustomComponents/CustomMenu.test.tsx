@@ -1,9 +1,7 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import CustomMenu from "../../../components/CustomComponents/CustomMenu";
 import { useState } from "react";
 import userEvent from "@testing-library/user-event";
-
-const onOpen = jest.fn();
 
 const CustomMenuTest = () => {
   const [open, setOpen] = useState(false);
@@ -11,9 +9,8 @@ const CustomMenuTest = () => {
   const handleClose = () => setOpen(false);
   return (
     <>
-      <button onClick={handleOpen}>open</button>
       <button onClick={handleClose}>close</button>
-      <CustomMenu onOpen={onOpen} open={open} icon={<div>icon</div>}>
+      <CustomMenu onOpen={handleOpen} open={open} icon={<div>icon</div>}>
         <div>children</div>
       </CustomMenu>
     </>
@@ -23,37 +20,35 @@ const CustomMenuTest = () => {
 describe("CustomMenu", () => {
   it("should render properly", () => {
     render(
-      <CustomMenu onOpen={onOpen} open={false} icon={<div>icon</div>}>
+      <CustomMenu onOpen={jest.fn()} open={false} icon={<div>icon</div>}>
         <div>children</div>
       </CustomMenu>
     );
-    const menu = screen.getByRole("menu");
-    const icon = screen.getByText("icon");
+    const menu = screen.getByRole("menu-field");
+    const openBtn = screen.getByRole("open-menu-button");
     const children = screen.getByText("children");
 
     expect(menu).toBeInTheDocument();
-    expect(icon).toBeInTheDocument();
+    expect(openBtn).toBeInTheDocument();
     expect(children).toBeInTheDocument();
 
     expect(menu).toBeVisible();
-    expect(icon).toBeVisible();
+    expect(openBtn).toBeVisible();
     expect(children).not.toBeVisible();
   });
   it("should hide and show menu properly", async () => {
     render(<CustomMenuTest />);
     const user = userEvent.setup();
 
-    const open = screen.getByText("open");
-    const close = screen.getByText("close");
+    const openBtn = screen.getByRole("open-menu-button");
+    const closeBtn = screen.getByText("close");
 
-    await user.click(open);
-    await waitFor(async () =>
-      expect(screen.getByText("children")).not.toBeVisible()
-    );
+    const children = screen.getByText("children");
 
-    await user.click(close);
-    expect(screen.getByText("children")).not.toBeVisible();
+    await user.click(openBtn);
+    expect(children).toBeVisible();
 
-    expect(onOpen).toHaveBeenCalledTimes(1);
+    await user.click(closeBtn);
+    expect(children).not.toBeVisible();
   });
 });
