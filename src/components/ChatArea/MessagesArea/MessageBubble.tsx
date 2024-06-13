@@ -9,6 +9,7 @@ import {
   showSenderDetails,
 } from "../../../utils/messageMethods";
 import { DoneAll } from "@mui/icons-material";
+import { urlImageOptimize } from "../../../utils/urlImageOptimize";
 
 export type MessageBubbleProps = {
   message: MessageModel;
@@ -60,7 +61,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
     >
       {senderDetails && !marginMessage && (
         <Avatar
-          src={(message.sender.image as string) || ""}
+          src={urlImageOptimize.generateIconImageUrl(
+            message.sender.image as string
+          )}
+          // src={(message.sender.image as string) || ""}
           sx={{ width: 35, height: 35, flexBasis: 35 }}
         />
       )}

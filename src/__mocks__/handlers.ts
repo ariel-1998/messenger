@@ -10,20 +10,20 @@ const chats: ChatModel[] = [
     chatName: "null",
     _id: "6656fba46aa44317972f8ee8",
     groupImg:
-      "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+      "http://res.cloudinary.com/dnlv6fy3z/image/upload/v1718276606/hyhe3h69womcfeqw1kjs.png",
     isGroupChat: false,
     users: [
       {
         email: "arielkas@gmail.com",
         image:
-          "http://res.cloudinary.com/dnlv6fy3z/image/upload/v1695323373/kio5oj2oshuwnq1nk311.jpg",
+          "http://res.cloudinary.com/dnlv6fy3z/image/upload/v1718276606/hyhe3h69womcfeqw1kjs.png",
         name: "ariel",
         _id: "650c94e3cb09fe8dc1f01b3d",
       },
       {
         email: "hi@gmail.com",
         image:
-          "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+          "http://res.cloudinary.com/dnlv6fy3z/image/upload/v1718276606/hyhe3h69womcfeqw1kjs.png",
         name: "ariel",
         _id: "6654d1f98200b98b13e29687",
       },
@@ -33,12 +33,12 @@ const chats: ChatModel[] = [
     chatName: "group chat",
     _id: "6656fba46aa44317972f8ee7",
     groupImg:
-      "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+      "http://res.cloudinary.com/dnlv6fy3z/image/upload/v1718276606/hyhe3h69womcfeqw1kjs.png",
     isGroupChat: true,
     groupAdmin: {
       email: "arielkas@gmail.com",
       image:
-        "http://res.cloudinary.com/dnlv6fy3z/image/upload/v1695323373/kio5oj2oshuwnq1nk311.jpg",
+        "http://res.cloudinary.com/dnlv6fy3z/image/upload/v1718276606/hyhe3h69womcfeqw1kjs.png",
       name: "ariel",
       _id: "650c94e3cb09fe8dc1f01b3d",
     },
@@ -46,14 +46,14 @@ const chats: ChatModel[] = [
       {
         email: "arielkas@gmail.com",
         image:
-          "http://res.cloudinary.com/dnlv6fy3z/image/upload/v1695323373/kio5oj2oshuwnq1nk311.jpg",
+          "http://res.cloudinary.com/dnlv6fy3z/image/upload/v1718276606/hyhe3h69womcfeqw1kjs.png",
         name: "ariel",
         _id: "650c94e3cb09fe8dc1f01b3d",
       },
       {
         email: "hi@gmail.com",
         image:
-          "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+          "http://res.cloudinary.com/dnlv6fy3z/image/upload/v1718276606/hyhe3h69womcfeqw1kjs.png",
         name: "ariel",
         _id: "6654d1f98200b98b13e29687",
       },

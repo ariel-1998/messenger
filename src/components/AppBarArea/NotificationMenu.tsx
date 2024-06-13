@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import CustomMenu from "../CustomComponents/CustomMenu";
 import { Notifications } from "@mui/icons-material";
 import { Badge, MenuItem, Stack, Typography } from "@mui/material";
-import { MENU_ITEM_PADDING } from "./ProfileMenu";
 import { useDispatch } from "react-redux";
 import { setSelectedChat } from "../../utils/chatSlice";
 import { ChatModel } from "../../models/ChatModel";
 import useUnreadMessages from "../../hooks/useUnreadMessages";
+import { MENU_ITEM_PADDING } from "../../utils/constants";
 
 const NotificationMenu: React.FC = () => {
   const { unreadAmount, unreadMessages } = useUnreadMessages();

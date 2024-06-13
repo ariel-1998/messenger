@@ -20,6 +20,7 @@ import { RootState } from "../../utils/reduxStore";
 import { useSelector } from "react-redux";
 import CustomMenu from "../CustomComponents/CustomMenu";
 import { Settings } from "@mui/icons-material";
+import { urlImageOptimize } from "../../utils/urlImageOptimize";
 
 type UserProfileModalProps<T> = {
   profile?: T;
@@ -68,7 +69,10 @@ const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
               {!smallScreen && (
                 <Avatar
                   sx={{ flexBasis: 150, width: 150, height: 150 }}
-                  src={profile?.image as string}
+                  src={urlImageOptimize.generateProfileCardUrl(
+                    profile?.image as string
+                  )}
+                  // src={profile?.image as string}
                 />
               )}
               <Box sx={{ mt: 2, width: "100%", overflowWrap: "break-word" }}>
@@ -86,7 +90,10 @@ const UserProfileModal: React.FC<UserProfileModalProps<UserModel | null>> = ({
             <Grid item xs={12} sm={5}>
               <Avatar
                 sx={{ flexBasis: 150, width: 150, height: 150 }}
-                src={profile?.image as string}
+                src={urlImageOptimize.generateProfileCardUrl(
+                  profile?.image as string
+                )}
+                // src={profile?.image as string}
               />
             </Grid>
           )}
@@ -120,7 +127,9 @@ const GroupProfileModal: React.FC<UserProfileModalProps<null>> = ({
           open={open}
           handleClose={handleClose}
           sx={{
-            backgroundImage: `url(${selectedChat?.groupImg})`,
+            backgroundImage: `url(${urlImageOptimize.generateProfileCardUrl(
+              selectedChat?.groupImg as string
+            )})`,
             backgroundSize: "100% 100%;",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",

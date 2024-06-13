@@ -25,11 +25,11 @@ import { RootState } from "../../../../utils/reduxStore";
 import ChildModal from "../../../CustomComponents/Modals/ChildModal";
 import { LoadingButton } from "@mui/lab";
 import { Search as SeachIcon } from "@mui/icons-material";
-import { MENU_ITEM_PADDING } from "../../../AppBarArea/ProfileMenu";
 import LoadingSkeletons, {
   SkeletonUser,
 } from "../../../CustomComponents/LoadingSkeletons";
 import useSocket from "../../../../hooks/useSocket";
+import { MENU_ITEM_PADDING } from "../../../../utils/constants";
 
 type AddMemberToGroupProps = {
   handleParentModalClose: () => void;

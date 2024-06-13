@@ -15,6 +15,7 @@ import { ChatModel } from "../../../models/ChatModel";
 import { findUserInChat } from "../../../utils/userMethods";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/reduxStore";
+import { urlImageOptimize } from "../../../utils/urlImageOptimize";
 
 type UserListItemProps = {
   user: UserModel;
@@ -34,6 +35,8 @@ const UserListItem: React.FC<UserListItemProps> = ({
 }) => {
   const theme = useTheme();
   const size = useMediaQuery(theme.breakpoints.down("sm"));
+  const url = urlImageOptimize.generateIconImageUrl(user?.image as string);
+
   return (
     <CustomListItem
       disableBtnProps={disableBtnProps}
@@ -68,7 +71,7 @@ const UserListItem: React.FC<UserListItemProps> = ({
                 width: 50,
                 aspectRatio: 50,
               }}
-              src={user.image as string}
+              src={url}
             />
           </Stack>
         </Stack>
@@ -143,9 +146,16 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
               }}
               src={
                 chat.isGroupChat
-                  ? chat.groupImg
-                  : (findUserInChat(chat, user)?.image as string)
+                  ? urlImageOptimize.generateIconImageUrl(chat.groupImg)
+                  : urlImageOptimize.generateIconImageUrl(
+                      findUserInChat(chat, user)?.image as string
+                    )
               }
+              // src={
+              //   chat.isGroupChat
+              //     ? chat.groupImg
+              //     : (findUserInChat(chat, user)?.image as string)
+              // }
             />
           </Stack>
         </Stack>

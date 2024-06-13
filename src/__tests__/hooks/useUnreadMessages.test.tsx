@@ -5,6 +5,8 @@ import { MessageModel } from "../../models/MessageModel";
 import UnreadMessagesProvider from "../../contexts/UnreadMessagesProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import userEvent from "@testing-library/user-event";
+import { Provider } from "react-redux";
+import { store } from "../../utils/reduxStore";
 
 const Messages = ({ chatId = "15" }) => {
   const {
@@ -43,9 +45,11 @@ const Messages = ({ chatId = "15" }) => {
 };
 const MessagesTest = () => (
   <QueryClientProvider client={new QueryClient()}>
-    <UnreadMessagesProvider>
-      <Messages chatId="15" />
-    </UnreadMessagesProvider>
+    <Provider store={store}>
+      <UnreadMessagesProvider>
+        <Messages chatId="15" />
+      </UnreadMessagesProvider>
+    </Provider>
   </QueryClientProvider>
 );
 
@@ -53,8 +57,7 @@ describe("useUnreadMessages", () => {
   it("initial states should be correct", async () => {
     render(<MessagesTest />);
 
-    const chats = screen.queryByRole("chats");
-    expect(chats).not.toBeInTheDocument();
+    expect(store.getState().chat.chats).toBeNull();
     const fetchingChats = screen.getByRole("fetchingChats");
     expect(fetchingChats).toHaveTextContent("fetching");
     const undreadMessages = screen.getByRole("unreadMessages");
@@ -72,6 +75,7 @@ describe("useUnreadMessages", () => {
     });
     const fetchingChats = screen.queryByRole("fetchingChats");
     expect(fetchingChats).not.toBeInTheDocument();
+    await waitFor(() => expect(store.getState().chat.chats).toHaveLength(2));
   });
   it("should add and remove unread messages and reduce unread amount when reading chat", async () => {
     render(<MessagesTest />);

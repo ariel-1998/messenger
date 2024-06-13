@@ -17,10 +17,16 @@ const passwordSchema = z
 
 export const imageSchema = z.instanceof(FileList).refine((files) => {
   const type = files?.[0]?.type;
-  if (!type) return false;
+  if (!type) return true;
   if (!type.startsWith("image/") || type.endsWith("gif")) return false;
   return true;
-}, "Image required, only image files are valid");
+}, "Only image files are allowed");
+// export const imageSchema = z.instanceof(FileList).refine((files) => {
+//   const type = files?.[0]?.type;
+//   if (!type) return false;
+//   if (!type.startsWith("image/") || type.endsWith("gif")) return false;
+//   return true;
+// }, "Image required, only image files are valid");
 
 export const userSchema = z.object({
   name: z

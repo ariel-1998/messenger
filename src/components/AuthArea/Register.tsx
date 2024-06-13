@@ -48,10 +48,17 @@ const Register: React.FC = () => {
       }),
   });
 
-  const onSubmit = (data: UserModel) => {
-    imageMutation.mutateAsync(data.image as FileList).then((imgData) => {
-      formMutation.mutate({ ...data, image: imgData.url });
-    });
+  const onSubmit = async (data: UserModel) => {
+    console.log("submited");
+    let imgUrl: string | undefined = undefined;
+    if (data.image[0]) {
+      const { url } = await imageMutation.mutateAsync(data.image as FileList);
+      imgUrl = url;
+    }
+    // imageMutation.mutateAsync(data.image as FileList).then((imgData) => {
+    //   formMutation.mutate({ ...data, image: imgData.url });
+    // });
+    formMutation.mutate({ ...data, image: imgUrl });
   };
 
   return (
