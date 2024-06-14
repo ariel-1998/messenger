@@ -40,28 +40,26 @@ function MessageInput(): JSX.Element {
 
   const sendMessageMutation = useMutation({
     mutationFn: messageService.sendMessage,
-    onMutate({ content, frontendTimeStamp }) {
+    onMutate({ content }) {
+      if (!selectedChat) return;
+
       setMessage("");
       const newMessage: MessageModel = {
-        chat: selectedChat!,
+        chat: selectedChat,
         content,
         sender: user as UserModel,
         readBy: [],
-        frontendTimeStamp,
+        createdAt: new Date(),
       };
-      updateMessages(newMessage, queryClient, false);
+      return updateMessages(newMessage, queryClient, false);
     },
     onSuccess: (data) => {
       socket?.emit("message", data);
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onError(err: any, { chatId, frontendTimeStamp }) {
+    onError(err: any, { chatId }, ctx) {
       toastifyService.error(err);
-      if (!user) return;
-      revertMessageOnError(
-        { chatId, frontendTimeStamp, sender: user },
-        queryClient
-      );
+      revertMessageOnError(chatId, ctx, queryClient);
     },
   });
 
@@ -96,11 +94,10 @@ function MessageInput(): JSX.Element {
 
   const sendMessage = () => {
     if (!selectedChat) return;
-    const frontendTimeStamp = new Date();
+    // const frontendTimeStamp = new Date();
     sendMessageMutation.mutate({
       chatId: selectedChat._id,
       content: message,
-      frontendTimeStamp,
     });
     inputRef.current?.firstChild?.focus();
   };

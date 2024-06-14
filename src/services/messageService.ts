@@ -8,22 +8,23 @@ const messageEndpoint = "message";
 const unreadMessagesEndpoint = `${messageEndpoint}/unread`;
 const getMessagesByChatIDEndpoint = (chatId: string) =>
   `message/chat/${chatId}`;
+
 class MessageService {
   async sendMessage({
     chatId,
     content,
-    frontendTimeStamp,
-  }: {
+  }: // frontendTimeStamp,
+  {
     chatId: string;
     content: string;
-    frontendTimeStamp: Date;
+    // createdAt: Date;
   }): Promise<MessageModel> {
     const { data } = await authenticatedAxios.post<MessageModel>(
       messageEndpoint,
       {
         chat: chatId,
         content,
-        frontendTimeStamp,
+        // frontendTimeStamp,
       }
     );
     store.dispatch(setChatLatestMessage(data));

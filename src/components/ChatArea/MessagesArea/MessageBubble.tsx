@@ -10,31 +10,28 @@ import {
 } from "../../../utils/messageMethods";
 import { DoneAll } from "@mui/icons-material";
 import { urlImageOptimize } from "../../../utils/urlImageOptimize";
+import { Moment } from "moment";
 
 export type MessageBubbleProps = {
   message: MessageModel;
   messages: MessageModel[];
   index: number;
+  date: Moment;
 };
 
 const MessageBubble: React.FC<MessageBubbleProps> = ({
   message,
   messages,
   index,
+  date,
 }) => {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
   const user = useSelector((state: RootState) => state.auth);
   const isGroupChat = selectedChat?.isGroupChat;
   const senderIsMe = user?._id === message.sender._id;
   const alignMessage = senderIsMe ? "end" : "start";
-  const date = new Date(message.frontendTimeStamp);
-  const createdAt = date.toLocaleString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-
   const marginTop = messageMarginTop(messages, message, index);
+
   const senderDetails = showSenderDetails(
     isGroupChat,
     index,
@@ -42,6 +39,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
     message,
     senderIsMe
   );
+
   const marginMessage = shouldMakeMarginLeftToMsg(
     isGroupChat,
     index,
@@ -100,7 +98,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
             </Typography>
           )}
           <Typography fontSize={10} color={"#888"}>
-            {createdAt}
+            {date.format("HH:mm")}
           </Typography>
         </Stack>
       </Stack>

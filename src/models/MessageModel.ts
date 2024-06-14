@@ -7,5 +7,6 @@ export type MessageModel = {
   content: string;
   chat: ChatModel;
   readBy: string[];
-  frontendTimeStamp: Date;
+  // frontendTimeStamp: Date;
+  createdAt: Date;
 };

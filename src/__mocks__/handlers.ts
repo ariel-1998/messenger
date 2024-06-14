@@ -66,14 +66,16 @@ const messages: MessageModel[] = [
     content: "someContent",
     readBy: [],
     sender: chats[0].users[0],
-    frontendTimeStamp: "2024-06-05T08:31:23.894Z" as unknown as Date,
+    createdAt: new Date(),
+    // createdAt: "2024-06-05T08:31:23.894Z" as unknown as Date,
   },
   {
     chat: chats[1],
     content: "someContent",
     readBy: [],
     sender: chats[1].users[0],
-    frontendTimeStamp: "2024-06-05T08:31:23.894Z" as unknown as Date,
+    createdAt: new Date(),
+    // createdAt: "2024-06-05T08:31:23.894Z" as unknown as Date,
   },
 ];
 

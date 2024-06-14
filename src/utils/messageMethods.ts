@@ -47,47 +47,55 @@ export const updateMessages = (
   checkCached = true
 ) => {
   //not updating message if its chat messages haven't been cached (fatched) yet.
-  if (checkCached) {
-    const isCached = queryClient.getQueryData<MessageModel[] | undefined>([
-      "messages",
-      `{chatId: ${message.chat._id}}`,
-    ]);
-    if (!isCached) return;
-  }
-  queryClient.setQueryData<Omit<MessageModel, "_id" | "createdAt">[]>(
+  // let cachedData: MessageModel[] | undefined = undefined;
+  const cachedData = queryClient.getQueryData<MessageModel[] | undefined>([
+    "messages",
+    `{chatId: ${message.chat._id}}`,
+  ]);
+  if (checkCached && !cachedData) return;
+
+  queryClient.setQueryData<Omit<MessageModel, "_id">[]>(
     ["messages", `{chatId: ${message.chat._id}}`],
     (oldData) => {
       if (!oldData) return [message];
       return [...oldData, message];
     }
   );
+  return { prevCache: cachedData };
 };
 
-type RevertMessage = Omit<
-  MessageModel,
-  "chat" | "_id" | "content" | "readBy"
-> & {
-  chatId: string;
-};
+// type RevertMessage = Omit<
+//   MessageModel,
+//   "chat" | "_id" | "content" | "readBy"
+// > & {
+//   chatId: string;
+// };
 export const revertMessageOnError = (
-  message: RevertMessage,
+  chatId: string,
+  prevState: ReturnType<typeof updateMessages>,
   queryClient: QueryClient
 ) => {
-  queryClient.setQueryData<Omit<MessageModel, "_id" | "createdAt">[]>(
-    ["messages", `{chatId: ${message.chatId}}`],
-    (oldData) => {
-      if (!oldData) return;
-      return oldData.filter((cachedMessage) => {
-        if (
-          new Date(cachedMessage.frontendTimeStamp).getTime() ===
-            new Date(message.frontendTimeStamp).getTime() &&
-          cachedMessage.sender._id === message.sender._id
-        )
-          return;
-        return message;
-      });
-    }
+  if (!prevState) return;
+  const { prevCache } = prevState;
+  queryClient.setQueryData<MessageModel[]>(
+    ["messages", `{chatId: ${chatId}}`],
+    prevCache
   );
+  // queryClient.setQueryData<Omit<MessageModel, "_id">[]>(
+  //   ["messages", `{chatId: ${message.chatId}}`],
+  //   (oldData) => {
+  //     if (!oldData) return;
+  //     return oldData.filter((cachedMessage) => {
+  //       if (
+  //         new Date(cachedMessage.createdAt).getTime() ===
+  //           new Date(message.createdAt).getTime() &&
+  //         cachedMessage.sender._id === message.sender._id
+  //       )
+  //         return;
+  //       return message;
+  //     });
+  //   }
+  // );
 };
 
 export const updateMessagesReadBy = (

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { Fragment, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/reduxStore";
 import MessageBubble from "./MessageBubble";
@@ -11,6 +11,7 @@ import LoadingSkeletons, {
 } from "../../CustomComponents/LoadingSkeletons";
 import useUnreadMessages from "../../../hooks/useUnreadMessages";
 import useSocket from "../../../hooks/useSocket";
+import moment, { Moment } from "moment";
 
 const MessageList: React.FC = () => {
   const { selectedChat } = useSelector((state: RootState) => state.chat);
@@ -88,14 +89,24 @@ const MessageList: React.FC = () => {
       )}
       {!!messages?.length && (
         <>
-          {messages.map((msg, i) => (
-            <MessageBubble
-              messages={messages}
-              index={i}
-              message={msg}
-              key={i}
-            />
-          ))}
+          {messages.map((msg, i) => {
+            const date = getLocalTime(msg.createdAt);
+            const show = shouldShowDateBlock(
+              msg.createdAt,
+              messages[i - 1]?.createdAt
+            );
+            return (
+              <Fragment key={i}>
+                {show && <MessageDateBlock date={date} />}
+                <MessageBubble
+                  messages={messages}
+                  index={i}
+                  message={msg}
+                  date={date}
+                />
+              </Fragment>
+            );
+          })}
           <div ref={bottomRef}></div>
         </>
       )}
@@ -103,3 +114,56 @@ const MessageList: React.FC = () => {
   );
 };
 export default MessageList;
+
+function shouldShowDateBlock(
+  currentMessageDate: Date,
+  prevMessageDate: Date | undefined
+) {
+  const prev = moment(prevMessageDate).startOf("day");
+  const current = moment(currentMessageDate).startOf("day");
+  return current.isAfter(prev);
+}
+
+const MessageDateBlock = ({ date }: { date: Moment }) => {
+  return (
+    // <Stack
+    //   alignItems="center"
+    //   justifyContent="center"
+    //   position={"sticky"}
+    //   top={0}
+    //   m={"auto"}
+    //   sx={{
+    //     backgroundColor: "#f0f0f0",
+    //     color: "#555",
+    //     width: "50%",
+    //     py: 0.5,
+    //     px: 1,
+    //     borderRadius: "4px",
+    //     mt: "4px",
+    //   }}
+    // >
+    //   <Typography variant="caption">{date.format("MMM D, YYYY")}</Typography>
+    // </Stack>
+    <Stack
+      alignItems="center"
+      justifyContent="center"
+      m={"auto"}
+      sx={{
+        backgroundColor: "#f0f0f0",
+        color: "#555",
+        width: "50%",
+        py: 0.5,
+        px: 1,
+        borderRadius: "4px",
+        mt: "4px",
+      }}
+    >
+      <Typography variant="caption">{date.format("MMM D, YYYY")}</Typography>
+    </Stack>
+  );
+};
+
+function getLocalTime(timeStamp: Date) {
+  const localTime = moment.utc(timeStamp).local();
+  return localTime;
+}
