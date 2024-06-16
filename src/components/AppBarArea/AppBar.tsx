@@ -34,6 +34,7 @@ const AppBar: React.FC = () => {
       }}
     >
       <MuiAppBar
+        data-testid="mui-app-bar"
         sx={{
           width: "100%",
           position: "relative",
@@ -42,8 +43,11 @@ const AppBar: React.FC = () => {
           justifyContent: "center",
         }}
       >
-        <Toolbar sx={{ justifyContent: "space-between" }}>
-          <Box>
+        <Toolbar
+          data-testid="mui-tool-bar"
+          sx={{ justifyContent: "space-between" }}
+        >
+          <Box data-testid="drawer-wrapper">
             <Drawer>
               <DrawerSearch />
             </Drawer>
@@ -51,7 +55,7 @@ const AppBar: React.FC = () => {
           <Typography sx={headerStyle} variant={isSmallScreen ? "h6" : "h4"}>
             Messenger
           </Typography>
-          <Box sx={{ display: "flex" }}>
+          <Box data-testid="menus-wrapper" sx={{ display: "flex" }}>
             <NotificationMenu />
             <ProfileMenu />
           </Box>

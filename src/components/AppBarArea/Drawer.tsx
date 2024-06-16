@@ -24,6 +24,7 @@ const Drawer: React.FC<DrawerProps> = ({ children }) => {
           }}
         >
           <div
+            role="drawer-opener"
             onClick={openDrawer}
             style={{
               position: "absolute",
@@ -44,11 +45,20 @@ const Drawer: React.FC<DrawerProps> = ({ children }) => {
           />
         </Box>
       ) : (
-        <IconButton onClick={openDrawer} sx={{ color: "white" }}>
+        <IconButton
+          role="drawer-opener"
+          onClick={openDrawer}
+          sx={{ color: "white" }}
+        >
           <MenuIcon />
         </IconButton>
       )}
-      <MuiDrawer anchor={"left"} open={open} onClose={closeDrawer}>
+      <MuiDrawer
+        data-testid="mui-drawer"
+        anchor={"left"}
+        open={open}
+        onClose={closeDrawer}
+      >
         {children}
       </MuiDrawer>
     </>
