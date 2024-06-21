@@ -24,7 +24,7 @@ class UserService {
   }
 
   async searchUsers(search: string | undefined): Promise<UserModel[]> {
-    const { data } = await authenticatedAxios.get(searchEndpoint, {
+    const { data } = await authenticatedAxios.get<UserModel[]>(searchEndpoint, {
       params: { search: search },
     });
     return data;

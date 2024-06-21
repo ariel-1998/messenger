@@ -1,7 +1,13 @@
 import type { Config } from "@jest/types";
 
 const config: Config.InitialOptions = {
-  // verbose: true,
+  verbose: true,
+
+  forceExit: true,
+  // clearMocks: false,
+  // resetMocks: true,
+  // restoreMocks: true,
+
   preset: "ts-jest",
   testEnvironment: "jest-environment-jsdom",
   testMatch: ["**/__tests__/**/*.test.(ts|tsx)"],

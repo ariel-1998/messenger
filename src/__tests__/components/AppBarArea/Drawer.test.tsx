@@ -35,6 +35,7 @@ describe("Drawer", () => {
     expect(drawerChildren).not.toBeInTheDocument();
     expect(muiDrawer).not.toBeInTheDocument();
     expect(inputField).toBeInTheDocument();
+    expect(inputField).toBeDisabled();
   });
   it("should render properly in smaller then medium screen sizes", () => {
     (useMediaQuery as jest.Mock).mockReturnValueOnce(false),

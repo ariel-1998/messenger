@@ -8,7 +8,7 @@ import {
   Divider,
   CircularProgress,
 } from "@mui/material";
-import React, { useRef, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import CustomSearchInput from "../CustomComponents/CustomSearchInput";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toastifyService } from "../../services/toastifyService";
@@ -23,21 +23,20 @@ import ListItems from "../ChatArea/GroupForms/ListItems";
 import useDrawer from "../../hooks/useDrawer";
 
 const DrawerSearch: React.FC = () => {
-  const searchRef = useRef<HTMLInputElement>(null);
   const [userSearch, setUserSearch] = useState("");
   const { closeDrawer } = useDrawer();
   const { debounce, isLoading } = useDebounce({ fn: fetchUsers, wait: 700 });
   const theme = useTheme();
   const small = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const chatAccessMutation = useMutation({
+  const { mutate: accessChatMutate, isLoading: chatLoading } = useMutation({
     mutationFn: chatService.accessChat,
     onSuccess: closeDrawer,
     onError: (err) => toastifyService.error(err),
   });
 
   const fetchChat = (userId: string) => {
-    chatAccessMutation.mutate(userId);
+    accessChatMutate(userId);
   };
 
   const {
@@ -48,18 +47,21 @@ const DrawerSearch: React.FC = () => {
     queryKey: ["search", userSearch],
     queryFn: () => userService.searchUsers(userSearch),
     enabled: !!userSearch,
+    onError(err) {
+      console.log(err);
+    },
   });
 
-  function fetchUsers() {
-    if (!searchRef.current?.value) return;
-    setUserSearch(searchRef.current?.value);
+  function fetchUsers(e: ChangeEvent<HTMLInputElement>) {
+    setUserSearch(e.target.value);
   }
 
   return (
     <Box
+      data-testid="drawer-wrapper"
       sx={{
         width: small ? "80vw" : 400,
-        height: "100vh",
+        height: "100dvh",
         bgcolor: "#E5E5E5",
         overflowY: isUserFetch ? "hidden" : "auto",
         m: 0,
@@ -69,6 +71,7 @@ const DrawerSearch: React.FC = () => {
     >
       <List sx={{ width: "100%", pt: 0 }}>
         <Stack
+          data-testid="input-wrapper"
           margin={"auto"}
           position={"sticky"}
           top={0}
@@ -78,7 +81,6 @@ const DrawerSearch: React.FC = () => {
         >
           <Box position={"relative"}>
             <CustomSearchInput
-              ref={searchRef}
               isIcon={false}
               placeholder="Search Users..."
               onChange={debounce}
@@ -99,11 +101,11 @@ const DrawerSearch: React.FC = () => {
                 flexItem
                 sx={{ justifySelf: "start" }}
               />
-              <Box width={20}>
+              <Box width={20} data-testid="icon-wrapper">
                 {!isLoading ? (
                   <SearchIcon sx={{ fill: "#999" }} />
                 ) : (
-                  <CircularProgress size={20} />
+                  <CircularProgress data-testid="progress-bar" size={20} />
                 )}
               </Box>
             </Stack>
@@ -113,7 +115,7 @@ const DrawerSearch: React.FC = () => {
         {isError && <Typography align="center">Users not found!</Typography>}
 
         {isUserFetch && (
-          <Stack spacing={1}>
+          <Stack spacing={1} data-testid="skeletons-wrapper">
             <LoadingSkeletons amount={12}>
               <SkeletonUser />
             </LoadingSkeletons>
@@ -121,10 +123,11 @@ const DrawerSearch: React.FC = () => {
         )}
 
         {users && (
-          <Stack pb={2}>
+          <Stack pb={2} role="user-list">
             {users.map((user) => (
               <ListItems.User
-                disableBtnProps={chatAccessMutation.isLoading}
+                role="user-list-item"
+                disableBtnProps={chatLoading}
                 sx={{ mb: 0.5 }}
                 key={user._id}
                 user={user}
@@ -134,8 +137,9 @@ const DrawerSearch: React.FC = () => {
           </Stack>
         )}
       </List>
-      {chatAccessMutation.isLoading && (
+      {chatLoading && (
         <Box
+          data-testid="loading-chat"
           sx={{
             position: "absolute",
             top: "50%",
