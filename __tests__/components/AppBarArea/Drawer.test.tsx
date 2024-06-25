@@ -1,9 +1,9 @@
 import { ThemeProvider, useMediaQuery } from "@mui/material";
-import Drawer from "../../../components/AppBarArea/Drawer";
-import DrawerProvider from "../../../contexts/DrawerProvider";
-import { theme } from "../../../utils/theme";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import Drawer from "../../../src/components/AppBarArea/Drawer";
+import DrawerProvider from "../../../src/contexts/DrawerProvider";
+import { theme } from "../../../src/utils/theme";
 
 jest.mock("@mui/material", () => ({
   ...jest.requireActual("@mui/material"),
@@ -52,8 +52,8 @@ describe("Drawer", () => {
     expect(drawerChildren).not.toBeInTheDocument();
   });
   it("should open and close drawer properly in smaller then medium screen sizes", async () => {
-    (useMediaQuery as jest.Mock).mockReturnValueOnce(false),
-      render(<DrawerTest />);
+    (useMediaQuery as jest.Mock).mockReturnValueOnce(false);
+    render(<DrawerTest />);
     const user = userEvent.setup();
 
     expect(screen.queryByTestId("mui-drawer")).not.toBeInTheDocument();

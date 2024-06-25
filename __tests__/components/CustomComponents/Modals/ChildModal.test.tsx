@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
-import ChildModal from "../../../../components/CustomComponents/Modals/ChildModal";
 import { ThemeProvider } from "@mui/material";
-import { theme } from "../../../../utils/theme";
 import { useState } from "react";
 import userEvent from "@testing-library/user-event";
+import { theme } from "../../../../src/utils/theme";
+import ChildModal from "../../../../src/components/CustomComponents/Modals/ChildModal";
 
 const ChildModalTest = () => {
   const [open, setOpen] = useState(false);

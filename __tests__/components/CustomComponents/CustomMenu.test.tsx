@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import CustomMenu from "../../../components/CustomComponents/CustomMenu";
 import { useState } from "react";
 import userEvent from "@testing-library/user-event";
+import CustomMenu from "../../../src/components/CustomComponents/CustomMenu";
 
 const CustomMenuTest = () => {
   const [open, setOpen] = useState(false);

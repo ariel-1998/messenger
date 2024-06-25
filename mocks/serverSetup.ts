@@ -1,4 +1,4 @@
-import { server } from "../__mocks__/mswServer";
+import { server } from "./mswServer";
 
 beforeAll(() =>
   server.listen({

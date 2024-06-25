@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import CustomListItem from "../../../components/CustomComponents/CustomListItem";
+import CustomListItem from "../../../src/components/CustomComponents/CustomListItem";
 
 const CustomListItemTest = () => (
   <CustomListItem>

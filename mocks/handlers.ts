@@ -1,7 +1,7 @@
 import { rest } from "msw";
-import { ChatModel } from "../models/ChatModel";
-import { MessageModel } from "../models/MessageModel";
-import { UserModel } from "../models/UserModel";
+import { ChatModel } from "../src/models/ChatModel";
+import { MessageModel } from "../src/models/MessageModel";
+import { UserModel } from "../src/models/UserModel";
 
 const baseUrl = import.meta.env.VITE_BASE_API_URL;
 const path = (path: string) => `${baseUrl}${path}`;

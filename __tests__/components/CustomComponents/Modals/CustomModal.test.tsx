@@ -1,9 +1,9 @@
 import { ThemeProvider } from "@mui/material";
-import { theme } from "../../../../utils/theme";
-import CustomModal from "../../../../components/CustomComponents/Modals/CustomModal";
 import { useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { theme } from "../../../../src/utils/theme";
+import CustomModal from "../../../../src/components/CustomComponents/Modals/CustomModal";
 
 const CustomModalTest = () => {
   const [open, setOpen] = useState(false);

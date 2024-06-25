@@ -36,6 +36,7 @@ const DrawerSearch: React.FC = () => {
   });
 
   const fetchChat = (userId: string) => {
+    console.log("called fetchChat");
     accessChatMutate(userId);
   };
 
@@ -47,9 +48,6 @@ const DrawerSearch: React.FC = () => {
     queryKey: ["search", userSearch],
     queryFn: () => userService.searchUsers(userSearch),
     enabled: !!userSearch,
-    onError(err) {
-      console.log(err);
-    },
   });
 
   function fetchUsers(e: ChangeEvent<HTMLInputElement>) {

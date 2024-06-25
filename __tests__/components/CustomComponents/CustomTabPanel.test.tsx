@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import CustomTabPanel, {
   CustomTabPanelProps,
-} from "../../../components/CustomComponents/CustomTabPanel";
+} from "../../../src/components/CustomComponents/CustomTabPanel";
 
 const CustomTabPanelTest = ({
   index,

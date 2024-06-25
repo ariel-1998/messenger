@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import CustomSearchInput from "../../../components/CustomComponents/CustomSearchInput";
+import CustomSearchInput from "../../../src/components/CustomComponents/CustomSearchInput";
 
 describe("CustomSearchInput", () => {
   it("should render properly props", () => {

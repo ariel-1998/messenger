@@ -36,6 +36,7 @@ const UnreadMessagesProvider: React.FC<UnreadMessagesProviderProps> = ({
     queryKey: ["getAllUnreadMessages"],
     queryFn: messageService.getAllUnreadMessages,
     onSuccess: (data) => {
+      console.log("data ", data);
       const messagesByChatId: UnreadMessages = {};
       data.forEach((message) => addMessageToObj(messagesByChatId, message));
       setUnreadMessages(messagesByChatId);

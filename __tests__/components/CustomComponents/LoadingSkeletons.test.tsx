@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/react";
 import LoadingSkeletons, {
   SkeletonMessage,
   SkeletonUser,
-} from "../../../components/CustomComponents/LoadingSkeletons";
-import * as messageMethods from "../../../utils/messageMethods";
+} from "../../../src/components/CustomComponents/LoadingSkeletons";
+import * as messageMethods from "../../../src/utils/messageMethods";
 
 describe("LoadingSkeletons", () => {
   it("should render properly", () => {

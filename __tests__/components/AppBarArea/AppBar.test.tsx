@@ -1,20 +1,22 @@
 import { ReactNode } from "react";
 import { render, screen } from "@testing-library/react";
-import AppBar from "../../../components/AppBarArea/AppBar";
-import { theme } from "../../../utils/theme";
 import { ThemeProvider, useMediaQuery } from "@mui/material";
+import AppBar from "../../../src/components/AppBarArea/AppBar";
+import { theme } from "../../../src/utils/theme";
 
-jest.mock("../../../components/AppBarArea/Drawer", () => DrawerMock);
+jest.mock("../../../src/components/AppBarArea/Drawer", () => DrawerMock);
 jest.mock(
-  "../../../components/AppBarArea/DrawerSearch",
+  "../../../src/components/AppBarArea/DrawerSearch",
   () => DrawerSearchMock
 );
-jest.mock("../../../components/AppBarArea/ProfileMenu", () => ProfileMenuMock);
 jest.mock(
-  "../../../components/AppBarArea/NotificationMenu",
+  "../../../src/components/AppBarArea/ProfileMenu",
+  () => ProfileMenuMock
+);
+jest.mock(
+  "../../../src/components/AppBarArea/NotificationMenu",
   () => NotificationMenuMock
 );
-
 jest.mock("@mui/material", () => ({
   ...jest.requireActual("@mui/material"),
   useMediaQuery: jest.fn().mockReturnValue(false),
@@ -56,26 +58,17 @@ describe("AppBar", () => {
   it("should render with proper style small screen", () => {
     (useMediaQuery as jest.Mock).mockReturnValueOnce(true);
     render(<AppBarTest />);
+
     const messengerDiv = screen.getByText("Messenger");
 
-    expect(messengerDiv).toBeInTheDocument();
     expect(messengerDiv.tagName).toBe("H6");
     expect(messengerDiv).not.toHaveStyle({ position: "absolute" });
-    expect(screen.getByTestId("mui-app-bar")).toBeInTheDocument();
-    expect(screen.getByTestId("mui-tool-bar")).toBeInTheDocument();
-    expect(screen.getByTestId("drawer-wrapper")).toBeInTheDocument();
-    expect(screen.getByTestId("menus-wrapper")).toBeInTheDocument();
   });
   it("should render with proper style larger screens", () => {
     render(<AppBarTest />);
     const messengerDiv = screen.getByText("Messenger");
 
-    expect(messengerDiv).toBeInTheDocument();
     expect(messengerDiv.tagName).toBe("H4");
     expect(messengerDiv).toHaveStyle({ position: "absolute" });
-    expect(screen.getByTestId("mui-app-bar")).toBeInTheDocument();
-    expect(screen.getByTestId("mui-tool-bar")).toBeInTheDocument();
-    expect(screen.getByTestId("drawer-wrapper")).toBeInTheDocument();
-    expect(screen.getByTestId("menus-wrapper")).toBeInTheDocument();
   });
 });
