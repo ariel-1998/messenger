@@ -17,7 +17,6 @@ const useDebounce = <T extends unknown[]>({
       setIsLoading(true);
       if (timeout.current) clearTimeout(timeout.current);
       timeout.current = setTimeout(() => {
-        console.log("call");
         setIsLoading(false);
         fn(...args);
       }, wait);

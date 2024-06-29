@@ -5,7 +5,7 @@ import { messageService } from "../services/messageService";
 import { chatService } from "../services/chatService";
 import { toastifyService } from "../services/toastifyService";
 
-type UnreadMessages = Record<string, MessageModel[]>;
+export type UnreadMessages = Record<string, MessageModel[]>;
 type UnreadMessagesContextProps = {
   unreadMessages: UnreadMessages;
   unreadAmount: number;

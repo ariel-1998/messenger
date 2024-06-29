@@ -44,6 +44,7 @@ const NotificationMenu: React.FC = () => {
       {unreadAmount ? (
         notifications.map((val, i) => (
           <MenuItem
+            role="unread-message-list-item"
             key={i}
             onClick={() => onItemClick(val.chat)}
             sx={{ padding: 0 }}
@@ -93,7 +94,7 @@ type NotificationIconProps = {
 };
 function NotificationIcon({ unreadAmount }: NotificationIconProps) {
   return (
-    <Badge badgeContent={unreadAmount} color="error">
+    <Badge badgeContent={unreadAmount} color="error" data-testid="icon-badge">
       <Notifications sx={{ fill: "#E5E5E5" }} />
     </Badge>
   );
