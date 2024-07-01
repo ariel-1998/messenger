@@ -19,22 +19,17 @@ const CustomMenuTest = () => {
 
 describe("CustomMenu", () => {
   it("should render properly", () => {
-    render(
-      <CustomMenu onOpen={jest.fn()} open={false} icon={<div>icon</div>}>
-        <div>children</div>
-      </CustomMenu>
-    );
-    const menu = screen.getByRole("menu-field");
+    render(<CustomMenuTest />);
+    const menu = screen.getByTestId("menu-field");
     const openBtn = screen.getByRole("open-menu-button");
-    const children = screen.getByText("children");
 
     expect(menu).toBeInTheDocument();
     expect(openBtn).toBeInTheDocument();
-    expect(children).toBeInTheDocument();
 
     expect(menu).toBeVisible();
     expect(openBtn).toBeVisible();
-    expect(children).not.toBeVisible();
+
+    expect(screen.queryByText("children")).not.toBeInTheDocument();
   });
   it("should hide and show menu properly", async () => {
     render(<CustomMenuTest />);
@@ -43,12 +38,13 @@ describe("CustomMenu", () => {
     const openBtn = screen.getByRole("open-menu-button");
     const closeBtn = screen.getByText("close");
 
-    const children = screen.getByText("children");
-
     await user.click(openBtn);
+
+    const children = screen.queryByText("children");
+    expect(children).toBeInTheDocument();
     expect(children).toBeVisible();
 
     await user.click(closeBtn);
-    expect(children).not.toBeVisible();
+    expect(children).not.toBeInTheDocument();
   });
 });

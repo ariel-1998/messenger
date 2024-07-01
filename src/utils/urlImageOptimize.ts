@@ -17,9 +17,3 @@ class UrlImageOptimize {
 }
 
 export const urlImageOptimize = new UrlImageOptimize();
-
-// type GenerateProfileCardUrl = {
-//   url?: string;
-//   width?: number;
-//   height?: number;
-// };

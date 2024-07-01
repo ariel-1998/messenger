@@ -22,7 +22,7 @@ const ProfileMenu: React.FC = () => {
     <CustomMenu onOpen={handleOpen} open={open} icon={avatarIcon}>
       <MenuItem sx={{ padding: 0 }} onClick={handleClose}>
         <ProfileModal.User
-          btnText="My profile"
+          btnText="My Profile"
           sx={{ ...MENU_ITEM_PADDING, fontWeight: "bold" }}
           profile={user}
         />

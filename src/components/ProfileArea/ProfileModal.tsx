@@ -22,7 +22,7 @@ import CustomMenu from "../CustomComponents/CustomMenu";
 import { Settings } from "@mui/icons-material";
 import { urlImageOptimize } from "../../utils/urlImageOptimize";
 
-type UserProfileModalProps<T> = {
+export type UserProfileModalProps<T> = {
   profile?: T;
   btnText?: string;
   sx?: SxProps<Theme>;

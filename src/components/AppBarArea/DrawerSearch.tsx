@@ -36,7 +36,6 @@ const DrawerSearch: React.FC = () => {
   });
 
   const fetchChat = (userId: string) => {
-    console.log("called fetchChat");
     accessChatMutate(userId);
   };
 
@@ -101,7 +100,7 @@ const DrawerSearch: React.FC = () => {
               />
               <Box width={20} data-testid="icon-wrapper">
                 {!isLoading ? (
-                  <SearchIcon sx={{ fill: "#999" }} />
+                  <SearchIcon sx={{ fill: "#999" }} data-testid="search-icon" />
                 ) : (
                   <CircularProgress data-testid="progress-bar" size={20} />
                 )}

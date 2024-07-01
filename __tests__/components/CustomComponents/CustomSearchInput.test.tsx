@@ -16,4 +16,6 @@ describe("CustomSearchInput", () => {
     const searchIconBtn = screen.queryByRole("button");
     expect(searchIconBtn).not.toBeInTheDocument();
   });
+  //need to test that its writable, test when user types that it actually typing
+  //also test when disabled thats not typing
 });

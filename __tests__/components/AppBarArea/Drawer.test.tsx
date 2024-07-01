@@ -1,14 +1,18 @@
 import { ThemeProvider, useMediaQuery } from "@mui/material";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Drawer from "../../../src/components/AppBarArea/Drawer";
 import DrawerProvider from "../../../src/contexts/DrawerProvider";
 import { theme } from "../../../src/utils/theme";
+import useDrawer from "../../../src/hooks/useDrawer";
 
 jest.mock("@mui/material", () => ({
   ...jest.requireActual("@mui/material"),
   useMediaQuery: jest.fn().mockReturnValue(true),
 }));
+
+jest.mock("../../../src/components/CustomComponents/CustomSearchInput");
+jest.mock("../../../src/hooks/useDrawer");
 
 function DrawerTest() {
   return (
@@ -23,76 +27,89 @@ function DrawerTest() {
 }
 
 describe("Drawer", () => {
-  it("should render properly in larger then medium screen sizes", () => {
+  it("should initial render properly in larger then medium screen sizes", () => {
     render(<DrawerTest />);
     const inputField = screen.getByRole("textbox");
-    const drawerOpener = screen.getByRole("drawer-opener");
-    const muiDrawer = screen.queryByTestId("mui-drawer");
-    const drawerChildren = screen.queryByText("mui drawer children");
-
-    expect(drawerOpener).toBeInTheDocument();
-    expect(drawerOpener.tagName).toBe("DIV");
-    expect(drawerChildren).not.toBeInTheDocument();
-    expect(muiDrawer).not.toBeInTheDocument();
     expect(inputField).toBeInTheDocument();
     expect(inputField).toBeDisabled();
+
+    const drawerOpener = screen.getByRole("drawer-opener");
+    expect(drawerOpener).toBeInTheDocument();
+    expect(drawerOpener.tagName).toBe("DIV");
+
+    expect(screen.queryByText("mui drawer children")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("mui-drawer")).not.toBeInTheDocument();
   });
-  it("should render properly in smaller then medium screen sizes", () => {
+  it("should initial render properly in smaller then medium screen sizes", () => {
     (useMediaQuery as jest.Mock).mockReturnValueOnce(false),
       render(<DrawerTest />);
-    const drawerOpener = screen.getByRole("drawer-opener");
-    const inputField = screen.queryByRole("textbox");
-    const muiDrawer = screen.queryByTestId("mui-drawer");
-    const drawerChildren = screen.queryByText("mui drawer children");
 
+    const drawerOpener = screen.getByRole("drawer-opener");
     expect(drawerOpener).toBeInTheDocument();
     expect(drawerOpener.tagName).toBe("BUTTON");
-    expect(inputField).not.toBeInTheDocument();
-    expect(muiDrawer).not.toBeInTheDocument();
-    expect(drawerChildren).not.toBeInTheDocument();
+
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
   });
-  it("should open and close drawer properly in smaller then medium screen sizes", async () => {
+  it("should open drawer when useDrawer hook return open == true", () => {
+    (useDrawer as jest.Mock).mockReturnValueOnce({
+      open: true,
+      closeDrawer: jest.fn(),
+      openDrawer: jest.fn(),
+    });
+    render(<DrawerTest />);
+    expect(screen.getByText("mui drawer children")).toBeInTheDocument();
+  });
+  it("should call openDrawer when opening drawer in smaller then medium screen sizes", async () => {
     (useMediaQuery as jest.Mock).mockReturnValueOnce(false);
     render(<DrawerTest />);
     const user = userEvent.setup();
 
-    expect(screen.queryByTestId("mui-drawer")).not.toBeInTheDocument();
-    expect(screen.queryByText("mui drawer children")).not.toBeInTheDocument();
-
     await user.click(screen.getByRole("drawer-opener"));
-    expect(screen.queryByText("mui drawer children")).toBeInTheDocument();
-
-    const backdrop = screen
-      .getByTestId("mui-drawer")
-      .querySelector(".MuiBackdrop-root");
-
-    await user.click(backdrop as HTMLElement);
-
-    await waitFor(() => {
-      expect(screen.queryByTestId("mui-drawer")).not.toBeInTheDocument();
-      expect(screen.queryByText("mui drawer children")).not.toBeInTheDocument();
-    });
+    expect(useDrawer().openDrawer).toHaveBeenCalledTimes(1);
   });
-
-  it("should open and close drawer properly in larger then medium screen sizes", async () => {
+  it("should call closeDrawer when closing drawer in smaller then medium screen sizes", async () => {
+    const closeDrawer = jest.fn();
+    const openDrawer = jest.fn();
+    (useDrawer as jest.Mock).mockReturnValueOnce({
+      open: true,
+      closeDrawer,
+      openDrawer,
+    });
+    (useMediaQuery as jest.Mock).mockReturnValueOnce(false);
     render(<DrawerTest />);
     const user = userEvent.setup();
 
-    expect(screen.queryByTestId("mui-drawer")).not.toBeInTheDocument();
-    expect(screen.queryByText("mui drawer children")).not.toBeInTheDocument();
+    const backdrop = screen
+      .getByTestId("mui-drawer")
+      .querySelector(".MuiBackdrop-root");
+
+    await user.click(backdrop as HTMLElement);
+    expect(closeDrawer).toHaveBeenCalledTimes(1);
+  });
+
+  it("should call openDrawer when opening drawer in larger screen sizes", async () => {
+    render(<DrawerTest />);
+    const user = userEvent.setup();
 
     await user.click(screen.getByRole("drawer-opener"));
-    expect(screen.queryByText("mui drawer children")).toBeInTheDocument();
+    expect(useDrawer().openDrawer).toHaveBeenCalledTimes(1);
+  });
+  it("should call closeDrawer when closing drawer in larger screen sizes", async () => {
+    const closeDrawer = jest.fn();
+    const openDrawer = jest.fn();
+    (useDrawer as jest.Mock).mockReturnValueOnce({
+      open: true,
+      closeDrawer,
+      openDrawer,
+    });
+    render(<DrawerTest />);
+    const user = userEvent.setup();
 
     const backdrop = screen
       .getByTestId("mui-drawer")
       .querySelector(".MuiBackdrop-root");
 
     await user.click(backdrop as HTMLElement);
-
-    await waitFor(() => {
-      expect(screen.queryByTestId("mui-drawer")).not.toBeInTheDocument();
-      expect(screen.queryByText("mui drawer children")).not.toBeInTheDocument();
-    });
+    expect(closeDrawer).toHaveBeenCalledTimes(1);
   });
 });

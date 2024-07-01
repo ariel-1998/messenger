@@ -36,7 +36,6 @@ const NotificationMenu: React.FC = () => {
 
   return (
     <CustomMenu
-      role="notification-menu"
       icon={<NotificationIcon unreadAmount={unreadAmount} />}
       open={open}
       onOpen={handleOpen}

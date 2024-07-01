@@ -4,14 +4,11 @@ import { ThemeProvider, useMediaQuery } from "@mui/material";
 import AppBar from "../../../src/components/AppBarArea/AppBar";
 import { theme } from "../../../src/utils/theme";
 
+jest.mock("../../../src/components/AppBarArea/ProfileMenu", () => ProfileMenu);
 jest.mock("../../../src/components/AppBarArea/Drawer", () => DrawerMock);
 jest.mock(
   "../../../src/components/AppBarArea/DrawerSearch",
   () => DrawerSearchMock
-);
-jest.mock(
-  "../../../src/components/AppBarArea/ProfileMenu",
-  () => ProfileMenuMock
 );
 jest.mock(
   "../../../src/components/AppBarArea/NotificationMenu",
@@ -22,16 +19,16 @@ jest.mock("@mui/material", () => ({
   useMediaQuery: jest.fn().mockReturnValue(false),
 }));
 
+function ProfileMenu() {
+  return <div data-testid="profile-menu" />;
+}
+
 function DrawerMock({ children }: { children: ReactNode }) {
   return <div data-testid="drawer-mock">{children}</div>;
 }
 
 function DrawerSearchMock() {
   return <input data-testid="drawer-search-mock" />;
-}
-
-function ProfileMenuMock() {
-  return <div data-testid="profile-menu-mock">profile menu</div>;
 }
 
 function NotificationMenuMock() {
@@ -54,6 +51,11 @@ describe("AppBar", () => {
     expect(screen.getByTestId("drawer-wrapper")).toBeInTheDocument();
     expect(screen.getByTestId("menus-wrapper")).toBeInTheDocument();
     expect(screen.getByText("Messenger")).toBeInTheDocument();
+
+    expect(screen.getByTestId("profile-menu")).toBeInTheDocument();
+    expect(screen.getByTestId("drawer-mock")).toBeInTheDocument();
+    expect(screen.getByTestId("drawer-search-mock")).toBeInTheDocument();
+    expect(screen.getByTestId("notification-menu-mock")).toBeInTheDocument();
   });
   it("should render with proper style small screen", () => {
     (useMediaQuery as jest.Mock).mockReturnValueOnce(true);

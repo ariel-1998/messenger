@@ -4,7 +4,7 @@ import CustomListItem from "./CustomListItem";
 import { ChatModel } from "../../models/ChatModel";
 import { skeletonRandomSender } from "../../utils/messageMethods";
 
-interface LoadingSkeletonsProps {
+export interface LoadingSkeletonsProps {
   amount: number;
   children: ReactNode;
 }
@@ -66,11 +66,9 @@ export function SkeletonUser() {
 
 type SkeletonMessageProps = {
   isGroupChat: ChatModel["isGroupChat"];
-  senderIsMe?: boolean;
 };
 
 export function SkeletonMessage({ isGroupChat }: SkeletonMessageProps) {
-  //made it a function for testing purposes
   const senderIsMe = skeletonRandomSender();
   const alignMessage = senderIsMe ? "end" : "start";
   return (

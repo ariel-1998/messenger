@@ -1,14 +1,15 @@
 import { Box, IconButton } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
 
-import React, { forwardRef } from "react";
+import React, { forwardRef, ComponentProps } from "react";
 
-type CustomSearchInputProps = {
+export type CustomSearchInputProps = {
   disableRipple?: boolean;
   disableFocusRipple?: boolean;
   isIcon?: boolean;
   style?: React.CSSProperties;
-} & React.InputHTMLAttributes<HTMLInputElement>;
+} & ComponentProps<"input">;
+// } & React.InputHTMLAttributes<HTMLInputElement>;
 
 const CustomSearchInput = forwardRef<HTMLInputElement, CustomSearchInputProps>(
   (

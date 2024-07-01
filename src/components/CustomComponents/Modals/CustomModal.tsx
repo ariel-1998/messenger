@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import React, { ReactNode } from "react";
 
-interface CustomModalProps {
+export interface CustomModalProps {
   open: boolean;
   children: ReactNode;
   sx?: SxProps<Theme>;

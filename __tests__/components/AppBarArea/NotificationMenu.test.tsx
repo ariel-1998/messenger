@@ -6,13 +6,14 @@ import userEvent from "@testing-library/user-event";
 import useUnreadMessages from "../../../src/hooks/useUnreadMessages";
 import { useDispatch } from "react-redux";
 
+jest.mock("../../../src/components/CustomComponents/CustomMenu");
+
 jest.mock("react-redux", () => ({
   useDispatch: jest.fn().mockReturnValue(jest.fn()),
 }));
-
 jest.mock("../../../src/hooks/useUnreadMessages");
-const mockSetSelectedChat = jest.spyOn(chatSlice, "setSelectedChat");
 
+const mockSetSelectedChat = jest.spyOn(chatSlice, "setSelectedChat");
 const mockUseUnreadMessages = useUnreadMessages as jest.MockedFunction<
   typeof useUnreadMessages
 >;
@@ -21,8 +22,7 @@ const mockUseDispatch = useDispatch as jest.MockedFunction<typeof useDispatch>;
 describe("NotificationMenu", () => {
   it("should render properly when there are unread messages", () => {
     render(<NotificationMenu />);
-    expect(screen.getByRole("notification-menu")).toBeInTheDocument();
-    expect(screen.getByRole("open-menu-button")).toBeInTheDocument();
+    expect(screen.getByTestId("menu-field")).toBeInTheDocument();
     const bagdge = screen.getByTestId("icon-badge");
     expect(bagdge).toBeInTheDocument();
     expect(bagdge).toHaveTextContent("2");

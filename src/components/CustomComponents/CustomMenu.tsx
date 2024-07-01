@@ -2,7 +2,7 @@ import { Menu, SxProps, Theme } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import React, { ComponentProps, ReactNode, useState } from "react";
 
-type CustomMenuProps = {
+export type CustomMenuProps = {
   icon?: ReactNode;
   children: ReactNode;
   open: boolean;
@@ -30,9 +30,10 @@ const CustomMenu: React.FC<CustomMenuProps> = ({
   };
 
   return (
-    <div role="menu-field" {...rest}>
+    <div data-testid="menu-field" {...rest}>
       <IconButton
         role="open-menu-button"
+        data-testid="open-menu-button"
         sx={sx}
         size="large"
         onClick={handleMenu}
@@ -48,7 +49,6 @@ const CustomMenu: React.FC<CustomMenuProps> = ({
           vertical: "top",
           horizontal: "right",
         }}
-        keepMounted
         transformOrigin={{
           vertical: "top",
           horizontal: "right",

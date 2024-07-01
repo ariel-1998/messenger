@@ -1,8 +1,17 @@
-import { ComponentProps } from "react";
-
-type CustomSearchInputProps = ComponentProps<"input">;
-const CustomSearchInput: React.FC<CustomSearchInputProps> = ({ ...rest }) => {
-  return <input className="custom-input" {...rest} />;
+import { CustomSearchInputProps } from "../CustomSearchInput";
+const CustomSearchInput: React.FC<CustomSearchInputProps> = ({
+  isIcon,
+  disableRipple,
+  disableFocusRipple,
+  ...rest
+}) => {
+  return (
+    <>
+      {isIcon && <span>icon</span>}
+      {disableFocusRipple && <span>Disable Focus Ripple</span>}
+      <input className="custom-input" {...rest} disabled={disableRipple} />
+    </>
+  );
 };
 
 export default CustomSearchInput;
