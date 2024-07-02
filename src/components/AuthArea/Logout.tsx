@@ -1,6 +1,6 @@
 import { Typography, Box, SxProps, Theme } from "@mui/material";
 import React from "react";
-import { authService } from "../../services/authServices";
+import { authService } from "../../services/authService";
 import { Logout as LogoutIcon } from "@mui/icons-material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";

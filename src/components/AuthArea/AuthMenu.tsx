@@ -12,7 +12,7 @@ const AuthMenu: React.FC = () => {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%" }} data-testid="menu-wrapper">
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} onChange={handleChange}>
           <Tab label="Login" />
