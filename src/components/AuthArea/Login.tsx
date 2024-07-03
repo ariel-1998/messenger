@@ -42,7 +42,7 @@ const Login: React.FC = () => {
       <Stack>
         <FormControl margin="dense" data-testid="form-control">
           <InputLabel htmlFor="email">Email address</InputLabel>
-          <Input id="email" type="email" {...register("email")} />
+          <Input id="email" type="text" {...register("email")} />
           {errors?.email && (
             <FormHelperText data-testid="error-message">
               {errors.email.message}

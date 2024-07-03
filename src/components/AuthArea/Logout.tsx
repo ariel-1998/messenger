@@ -9,21 +9,25 @@ type LogoutProps = {
   sx?: SxProps<Theme>;
 };
 const Logout: React.FC<LogoutProps> = ({ sx }) => {
-  const queryClient = useQueryClient();
+  const { clear } = useQueryClient();
   const navigate = useNavigate();
 
   const logout = () => {
     authService.logout();
-    queryClient.clear();
+    clear();
     navigate("/auth");
   };
 
   return (
-    <Box onClick={logout} sx={{ display: "flex", gap: 1, ...sx }}>
+    <Box
+      onClick={logout}
+      sx={{ display: "flex", gap: 1, ...sx }}
+      data-testid="logout"
+    >
       <Typography color={"error"} sx={{ fontWeight: "bold" }}>
         Logout
       </Typography>
-      <LogoutIcon sx={{ fill: "#d32f2f" }} />
+      <LogoutIcon sx={{ fill: "#d32f2f" }} data-testid="icon" />
     </Box>
   );
 };

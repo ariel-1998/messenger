@@ -24,89 +24,119 @@ describe("Login", () => {
   beforeEach(() => {
     jest.restoreAllMocks();
   });
+  describe("render and submition", () => {
+    it("should render form properly", () => {
+      const {
+        getAllByTestId,
+        getByText,
+        getByRole,
+        queryAllByTestId,
+        getByLabelText,
+      } = render(<MockLogin />);
 
-  it("should render form properly", () => {
-    const {
-      getAllByTestId,
-      getByText,
-      getByRole,
-      queryAllByTestId,
-      getByLabelText,
-    } = render(<MockLogin />);
+      expect(getByRole("form")).toBeInTheDocument();
 
-    expect(getByRole("form")).toBeInTheDocument();
+      expect(getAllByTestId("form-control")).toHaveLength(2);
 
-    expect(getAllByTestId("form-control")).toHaveLength(2);
+      expect(getByText("Email address")).toBeInTheDocument();
+      const emailInput = getByLabelText("Email address");
+      expect(emailInput).toHaveAttribute("type", "text");
 
-    expect(getByText("Email address")).toBeInTheDocument();
-    const emailInput = getByLabelText("Email address");
-    expect(emailInput).toHaveAttribute("type", "email");
+      expect(getByText("Password")).toBeInTheDocument();
+      const passwordInput = getByLabelText("Password");
+      expect(passwordInput).toHaveAttribute("type", "password");
 
-    expect(getByText("Password")).toBeInTheDocument();
-    const passwordInput = getByLabelText("Password");
-    expect(passwordInput).toHaveAttribute("type", "password");
+      expect(queryAllByTestId("error-message")).toHaveLength(0);
+      const loginBtn = getByRole("button", {
+        name: "Login",
+      });
+      const resetBtn = getByRole("button", {
+        name: "Reset",
+      });
 
-    expect(queryAllByTestId("error-message")).toHaveLength(0);
-    const loginBtn = getByRole("button", {
-      name: "Login",
+      expect(loginBtn).not.toBeDisabled();
+      expect(resetBtn).not.toBeDisabled();
+      expect(loginBtn).toHaveAttribute("type", "submit");
+      expect(resetBtn).toHaveAttribute("type", "reset");
     });
-    const resetBtn = getByRole("button", {
-      name: "Reset",
+    it("should be able to type in all inputs", async () => {
+      const { getByLabelText } = render(<MockLogin />);
+      const user = userEvent.setup();
+
+      const emailType = "email";
+      const passwordType = "password";
+
+      await user.type(getByLabelText("Email address"), emailType);
+      await user.type(getByLabelText("Password"), passwordType);
+
+      expect(getByLabelText("Email address")).toHaveValue(emailType);
+      expect(getByLabelText("Password")).toHaveValue(passwordType);
     });
+    it("should display loading state when request is loading", async () => {
+      const mutationRes = {
+        mutate: jest.fn(),
+        isLoading: true,
+      } as unknown as query.UseMutationResult;
+      jest.spyOn(query, "useMutation").mockReturnValueOnce(mutationRes);
 
-    expect(loginBtn).not.toBeDisabled();
-    expect(resetBtn).not.toBeDisabled();
-    expect(loginBtn).toHaveAttribute("type", "submit");
-    expect(resetBtn).toHaveAttribute("type", "reset");
+      const { getByRole } = render(<MockLogin />);
+
+      expect(getByRole("button", { name: "Login" })).toBeDisabled();
+    });
+    it("should login properly", async () => {
+      const { getByLabelText, getByRole } = render(<MockLogin />);
+      const user = userEvent.setup();
+
+      const email = "email@gmail.com";
+      const password = "password";
+
+      await user.type(getByLabelText("Email address"), email);
+      await user.type(getByLabelText("Password"), password);
+
+      await user.click(getByRole("button", { name: "Login" }));
+
+      expect(authService.login).toHaveBeenCalledTimes(1);
+      expect(authService.login).toHaveBeenCalledWith({ email, password });
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).toHaveBeenCalledWith("/chat");
+    });
   });
-  it("should be able to type in all inputs", async () => {
-    const { getByLabelText } = render(<MockLogin />);
-    const user = userEvent.setup();
+  describe("schema validation", () => {
+    const mutate = jest.fn();
+    beforeEach(() => {
+      const mutationRes = {
+        mutate,
+        isLoading: false,
+      } as unknown as query.UseMutationResult;
+      jest.spyOn(query, "useMutation").mockReturnValue(mutationRes);
+    });
+    it("should display email required error", async () => {
+      const { getByRole, getByText } = render(<MockLogin />);
+      const user = userEvent.setup();
 
-    const emailType = "email";
-    const passwordType = "password";
+      await user.click(getByRole("button", { name: "Login" }));
 
-    await user.type(getByLabelText("Email address"), emailType);
-    await user.type(getByLabelText("Password"), passwordType);
+      expect(getByText("Invalid email address")).toBeInTheDocument();
+      expect(mutate).not.toHaveBeenCalled();
+    });
+    it("should display error when email is invalid", async () => {
+      const { getByRole, getByLabelText, getByText } = render(<MockLogin />);
+      const user = userEvent.setup();
 
-    expect(getByLabelText("Email address")).toHaveValue(emailType);
-    expect(getByLabelText("Password")).toHaveValue(passwordType);
-  });
-  it("should display errors properly when schema validation fails", async () => {
-    const { getAllByTestId, getByRole } = render(<MockLogin />);
-    const user = userEvent.setup();
+      await user.type(getByLabelText("Email address"), "invalid-email");
+      await user.click(getByRole("button", { name: "Login" }));
 
-    await user.click(getByRole("button", { name: "Login" }));
+      expect(getByText("Invalid email address")).toBeInTheDocument();
+      expect(mutate).not.toHaveBeenCalled();
+    });
+    it("should display password required error", async () => {
+      const { getByRole, getByText } = render(<MockLogin />);
+      const user = userEvent.setup();
 
-    expect(getAllByTestId("error-message")).toHaveLength(2);
-    expect(authService.login).not.toHaveBeenCalled();
-  });
-  it("should display loading state when request is loading", async () => {
-    const mutationRes = {
-      mutate: jest.fn(),
-      isLoading: true,
-    } as unknown as query.UseMutationResult;
-    jest.spyOn(query, "useMutation").mockReturnValueOnce(mutationRes);
+      await user.click(getByRole("button", { name: "Login" }));
 
-    const { getByRole } = render(<MockLogin />);
-
-    expect(getByRole("button", { name: "Login" })).toBeDisabled();
-  });
-  it("should login properly", async () => {
-    const { getByLabelText, getByRole } = render(<MockLogin />);
-    const user = userEvent.setup();
-
-    const email = "email@gmail.com";
-    const password = "password";
-
-    await user.type(getByLabelText("Email address"), email);
-    await user.type(getByLabelText("Password"), password);
-
-    await user.click(getByRole("button", { name: "Login" }));
-
-    expect(authService.login).toHaveBeenCalledTimes(1);
-    expect(authService.login).toHaveBeenCalledWith({ email, password });
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith("/chat");
+      expect(getByText("Password is required")).toBeInTheDocument();
+      expect(mutate).not.toHaveBeenCalled();
+    });
   });
 });

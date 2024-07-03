@@ -5,7 +5,9 @@ import { defaultAxios } from "../utils/axiosInterceptors";
 
 const registerEndpoint = "auth/register";
 const loginEndpoint = "auth/login";
-type Registration = Omit<UserModel, "image"> & { image?: string };
+type Registration = Omit<UserModel, "image" | "_id"> & {
+  image?: string;
+};
 class AuthService {
   async register(user: Registration) {
     const { data } = await defaultAxios.post<string>(registerEndpoint, user);
